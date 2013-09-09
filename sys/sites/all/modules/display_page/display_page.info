@@ -1,0 +1,4 @@
+name = Display Page
+description = display page manager
+package = SSKRU
+core = 7.x

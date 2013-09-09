@@ -1,0 +1,5 @@
+name = Import Data
+description = import data from excel file
+package = HRMS
+core = 7.x
+files[] = import_data.module

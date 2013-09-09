@@ -1,0 +1,6 @@
+; $Id$
+name = Excel Report
+description = Excel report generator
+package = Phisan Shukkhi
+version = VERSION
+core = 7.x

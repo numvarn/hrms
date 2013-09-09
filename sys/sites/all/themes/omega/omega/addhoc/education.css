@@ -1,0 +1,35 @@
+.ed-level-list {
+    width: 960px;
+    margin:0 auto;
+    margin-bottom: 20px
+}
+
+.no,
+.ed-edit {
+    width:50px;
+    text-align: center;
+}
+
+.ed-level {
+    width:120px;
+}
+
+.ed-wrapper .input.grid_3 input {
+    width:220px;
+    font-size:14px;
+}
+
+.ed-wrapper {
+    width:550px;
+    margin:0 auto;
+    margin-bottom: 30px;
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 1px solid #F0F0F0 !important;
+    border-radius: 5px 5px 5px 5px;
+    padding: 15px 25px 25px 20px !important;
+}
+
+.form-item.form-item-field-ed-level-ref-und {
+    display:none;
+}
+

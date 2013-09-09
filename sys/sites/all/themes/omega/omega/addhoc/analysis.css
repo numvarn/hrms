@@ -1,0 +1,417 @@
+.analysis-wrapper {
+    width:960px;
+    margin: 0 auto;
+    padding:10px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+
+    margin-bottom: 20px;
+}
+
+.analysis-wrapper td {
+    border:1px solid #DAD9D9!important;
+    vertical-align: top;
+}
+
+.analysis-wrapper td.choices .form-radios {
+    text-align: left;
+}
+
+.analysis-wrapper td.choices .form-radios .form-item {
+    display:inline;
+    float:right;
+    width:80px;
+    text-align: center;
+}
+
+.analysis-wrapper td.choices label {
+    display:none;
+}
+
+.analysis-wrapper td.number {
+    width:30px;
+    text-align: center;
+}
+
+.analysis-wrapper td.note {
+    width:180px;
+}
+
+.analysis-wrapper td.choice {
+    width:64px;
+    text-align: center;
+}
+
+.analysis-wrapper td.head {
+    text-align: center;
+    font-weight: bold;
+}
+
+.analysis-wrapper td.note label {
+    display: none;
+}
+
+.analysis-wrapper td.note input {
+    width:150px;
+    border:1px solid #ccc;
+}
+
+.analysis-wrapper td.note {
+    text-align: center;
+}
+
+.analysis-wrapper #edit-actions {
+    text-align: center;
+}
+
+.analysis-wrapper .grid-1 {
+    width:200px;
+}
+
+.analysis-wrapper td.choices {
+    text-align: center;
+    font-size: 14px;
+}
+
+.analysis-self-me .analysis-wrapper {
+    width:98%;
+}
+
+.analysis-self-me h2.node-title {
+    display: none!important;
+}
+
+form#views-exposed-form-analysis-self-dispaly-default,
+form#views-exposed-form-analysis-self-to-work-dispaly-default,
+form#views-exposed-form-analysis-self-to-university-dispaly-default {
+    padding: 0px 10px!important;
+}
+
+form#views-exposed-form-analysis-self-dispaly-default #edit-field-budget-year-tid,
+form#views-exposed-form-analysis-self-to-work-dispaly-default #edit-field-budget-year-tid,
+form#views-exposed-form-analysis-self-to-university-dispaly-default #edit-field-budget-year-tid {
+    margin-top: 6px;
+}
+
+form#views-exposed-form-analysis-self-dispaly-default label,
+form#views-exposed-form-analysis-self-to-work-dispaly-default label,
+form#views-exposed-form-analysis-self-to-university-dispaly-default label {
+    display: none;
+}
+
+form#views-exposed-form-analysis-self-dispaly-default .views-submit-button,
+form#views-exposed-form-analysis-self-to-work-dispaly-default .views-submit-button,
+form#views-exposed-form-analysis-self-to-university-dispaly-default .views-submit-button {
+    margin-top: -14px;
+}
+
+.analysis-wrapper .grid-3,
+.analysis-wrapper .grid-3 input {
+    width:250px;
+    margin-right: 40px;
+}
+
+.analysis-wrapper .subject-analysis {
+    margin-left: 20px;
+}
+
+
+.recipe-wrapper {
+    width:650px;
+    margin:0 auto;
+    padding:10px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+
+    margin-bottom: 20px;
+}
+
+.recipe-wrapper .recipe-name .form-type-radio {
+    display: inline;
+    float: left;
+    width:100px;
+}
+
+.recipe-wrapper .grid-3 {
+    width:350px;
+    border-right: 1px solid #bbb;
+}
+
+.recipe-wrapper .grid-4 {
+    width:250px;
+}
+
+.recipe-wrapper fieldset {
+    border:0px none;
+}
+
+.recipe-wrapper .grid-3 .grid-1 {
+    margin-left: 0px;
+}
+
+.recipe-wrapper .tabledrag-toggle-weight-wrapper {
+    display: none;
+}
+
+.recipe-wrapper #edit-field-member-ref {
+    margin-top:20px;
+}
+
+.recipe-wrapper #edit-field-member-ref table,
+.recipe-wrapper #edit-field-member-ref td,
+.recipe-wrapper #edit-field-member-ref th {
+    border:0px none;
+}
+
+.recipe-wrapper #edit-field-member-ref td {
+    border-bottom: 1px solid #ccc;
+}
+
+.recipe-wrapper #edit-field-member-ref th {
+    background-color: transparent;
+    border-bottom:3px solid #eee;
+}
+
+.research-wrapper {
+    width:900px;
+    margin:0 auto;
+    padding:20px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+
+    margin-bottom: 20px;
+}
+
+.research-wrapper .grid-1 {
+    padding-right: 10px;
+    width:400px;
+}
+
+.research-wrapper .grid-1 input {
+    width:98%;
+}
+
+.research-wrapper .grid-2 {
+    border-left: 1px solid #ccc;
+    width:400px;
+    padding-left: 20px;
+}
+
+.research-wrapper .grid-2 fieldset {
+    border:0px none;
+}
+
+.research-wrapper .tabledrag-toggle-weight-wrapper {
+    display:none;
+}
+
+.research-wrapper .research-name {
+    margin-bottom: 20px;
+}
+
+#edit-field-research-inner-member {
+    margin-top:20px;
+}
+
+#edit-field-research-inner-member table {
+    margin-bottom: 20px;
+}
+
+.research-wrapper .grid-3 {
+    width:180px;
+    margin-left: 0px;
+}
+
+.research-wrapper #edit-field-research-status {
+    margin-left: 10px;
+}
+
+.publication-wrapper {
+    width:900px;
+    margin:0 auto;
+    padding:20px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+
+    margin-bottom: 20px;
+}
+
+.publication-wrapper .grid-1 {
+    width:500px;
+    border-right:1px solid #ccc;
+}
+
+.publication-wrapper .grid-2 {
+    width:300px;
+}
+
+.publication-wrapper .grid-2 fieldset {
+    border: 0px none;
+}
+
+.publication-wrapper .grid-3 {
+    width:130px;
+    margin-left: 0px;
+}
+
+.publication-wrapper #edit-field-publication-year-und-0-value,
+.publication-wrapper #edit-field-publication-no-und-0-value {
+    width:120px;
+}
+
+.publication-wrapper #edit-field-publisher-und {
+    width:430px;
+}
+
+.publication-wrapper .inner-member .tabledrag-toggle-weight-wrapper {
+    display:none;
+}
+
+.publication-wrapper .inner-member table {
+    width:90%;
+}
+
+.publication-wrapper .inner-member th {
+    background-color: transparent;
+}
+
+.publication-wrapper .inner-member th,
+.publication-wrapper .inner-member td,
+.publication-wrapper .inner-member table {
+    border:0px none;
+}
+
+.form-item-field-research-member-order-und-0-value label {
+    display: none;
+}
+
+#field-research-member-order-add-more-wrapper .description {
+    line-height: 25px;
+}
+
+.conference-wrapper {
+    width:700px;
+    margin:0 auto;
+    padding:20px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+
+    margin-bottom: 20px;
+}
+
+.conference-wrapper .grid-1 {
+    width:400px;
+    margin-left: 0px;
+}
+
+.conference-wrapper .grid-3 {
+    width:180px;
+    margin-left: 0px;
+}
+
+.conference-wrapper .grid-3 select {
+    width:180px;
+}
+
+.conference-wrapper .grid-2 {
+    width:240px;
+    border-left: 1px solid #ccc;
+    padding-right: 10px;
+}
+
+.conference-wrapper .grid-2 fieldset {
+    border:0px none;
+}
+
+.conference-wrapper .tabledrag-toggle-weight-wrapper {
+    display: none;
+}
+
+.conference-wrapper table,
+.conference-wrapper th {
+    border:0px none;
+}
+
+.conference-wrapper th {
+    background-color: transparent;
+}
+
+.conference-wrapper td {
+    border-bottom: 1px solid #ccc;
+}
+
+.serives-wrapper {
+    width:700px;
+    margin:0 auto;
+    padding:20px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+
+    margin-bottom: 20px;
+}
+
+.serives-wrapper .grid-1 {
+    width: 320px;
+}
+
+.serives-wrapper .grid-2 {
+    width: 140px;
+    margin-left: 0px;
+}
+
+.serives-wrapper #edit-field-services-type-und {
+    width:300px;
+}
+
+.conference-wrapper.lecturer .grid-1 {
+    width:320px;
+}
+
+.conference-wrapper.lecturer .grid-1 fieldset {
+    border:0px none;
+}
+
+.conference-wrapper.lecturer .grid-1.right {
+    border-left: 1px solid #ccc;
+    padding-left: 10px;
+}
+
+.thesis #edit-field-thesis-student-name-und-0-tablefield-import {
+    display:none;
+}
+
+fieldset#form-tablefield-field_thesis_student_name-0 {
+    border:0px none;
+}
+
+.thesis .tabledrag-toggle-weight-wrapper {
+    display:none;
+}
+
+.thesis .fieldset-description {
+    display: none;
+}
+
+.thesis .form-item-field-thesis-student-name-und-0-tablefield-rebuild-count-cols {
+    display: none;
+}
+
+
+
+
+
+
+
+

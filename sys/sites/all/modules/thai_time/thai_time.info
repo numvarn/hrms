@@ -1,0 +1,5 @@
+name = Thai time
+description = Convert and Display time for thai format
+package = Phisan Shukkhi
+core = 7.x
+files[] = thai_time.module

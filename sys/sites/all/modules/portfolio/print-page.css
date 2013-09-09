@@ -1,0 +1,218 @@
+div.view-filters {
+    display: none;
+}
+
+td.views-field-edit-node a {
+    display: none;
+}
+
+.views-field-field-ed-grad-country {width: 100px; text-align: center;}
+.views-field-field-ed-grad-year {width:100px; text-align: center;}
+.views-field-field-person-working-locate {width:200px;}
+
+.view-working-profile-content-print .views-field-php,
+.view-working-profile-content-print .views-field-php-1 {width:100px;}
+
+@media print, screen {
+    .page-print-title,
+    .page-2-cover div.label {
+        color: #000000;
+        font-family: supermarketRegular;
+        font-size: 28px;
+        font-weight: normal;
+        letter-spacing: 0;
+        line-height: 1.3em;
+        margin: 20px 0 10px;
+        padding-bottom: 0;
+        padding-top: 0px;
+        text-shadow: 0 1px 0 #FFFFFF;
+        text-align: center;
+    }
+
+    .portfolio-me-sec-1 .sub-title {
+        border-bottom: 0px none!important;
+    }
+
+    #page-title {
+        display: none;
+    }
+
+    .assessment-edit-link {
+        display: none;
+    }
+
+    .page-1 .assessment-wrapper {
+        border: 0px none!important;
+        background-color: transparent!important;
+        padding: 0px!important;
+    }
+
+    .page-1 .signature {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .page-1 .signature div {
+        margin-bottom: 20px;
+    }
+
+    .annouce {
+        border: 1px solid #ccc;
+        padding: 20px;
+        width:860px;
+        margin:0 auto;
+    }
+
+    .annouce div {
+        margin-bottom: 10px;
+    }
+
+    .page-print-name {
+        margin: 0 auto;
+        width:800px;
+        margin-top:20px;
+        margin-bottom:20px;
+        text-align: center;
+    }
+
+    .page-print-name span.value {
+        margin:0px 10px;
+    }
+
+    .portfolio-me-sec-1 .sub-title {
+        margin-top: 60px!important;
+    }
+
+    .page-2-cover {
+        text-align: center;
+    }
+
+    .page-2-cover .logo {
+        margin-bottom: 50px;
+    }
+
+    .page-2-cover div.name {
+        margin-top: 50px;
+    }
+
+    .page-2-cover .separater {
+        margin-top: 100px;
+    }
+
+    div.notice {
+        border: 1px solid #CCCCCC !important;
+        border-radius: 5px 5px 5px 5px;
+        padding: 10px 20px 15px !important;
+        width:600px;
+        margin: 0 auto;
+        margin-top: 100px;
+    }
+
+    .page-3 .routine-assessment-footer,
+    .page-4 .routine-assessment-footer,
+    .page-5 .routine-assessment-footer {
+        display: none;
+    }
+
+    .seminar-name {
+        margin-bottom: 20px;
+    }
+
+    .page-4 .views-field-php,
+    .page-4 .views-field-php-1,
+    .page-4 .views-field-field-seminar-cost-receive,
+    .page-4 .views-field-field-seminar-cost-pay {
+        width: 70px;
+        text-align: center;
+    }
+
+    .print-footer div {
+        margin-bottom: 20px;
+    }
+
+    .print-footer .line-1 {
+        margin-left: 300px;
+    }
+
+    .print-footer .line-2 {
+        margin-left: 400px;
+    }
+
+    .view-content li {
+        margin-left: 10px;
+    }
+
+    .executive-profile .view-empty {
+        border: 0px none!important;
+        padding: 0px!important;
+    }
+
+}
+
+@media screen {
+    .annouce {
+        display: none;
+    }
+
+    .page-2 {
+        display: none;
+    }
+
+    .signature {
+        display: none;
+    }
+
+    .print-footer.comment {
+        display: none;
+    }
+
+    .print-button {
+        text-align: right;
+    }
+}
+
+@media print {
+    #zone-footer-wrapper, #section-header {
+        display: none;
+    }
+
+    .breadcrumb {
+        display: none;
+    }
+
+    .print-button {
+        display: none;
+    }
+
+    #section-content {
+        font: 15px/1.6em Helvetica,Thonburi,Arial,Tahoma,sans-serif!important;
+        color:#000!important;
+    }
+
+    table {
+        border-collapse:collapse!important;
+        border:1px solid #000!important;
+    }
+
+    table.views-table th {
+        background-color: #ccc!important;
+        padding:10px 5px 10px 5px!important;
+    }
+
+    th {
+        border-bottom:1px solid #000!important;
+    }
+
+    td {
+        border-bottom:1px solid #000!important;
+    }
+
+    .page-1 .assessment-wrapper td {
+        border:1px solid #000!important;
+    }
+}
+
+@page {
+    margin: 1.5cm;
+}
+

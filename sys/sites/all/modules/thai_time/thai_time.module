@@ -1,0 +1,251 @@
+<?php
+/**
+ * Main API for convert date time to thai format
+ * @param $time : unix timestamp
+ * @param $format : custom format
+ */
+function thai_time_format($time, $format=NULL, $acronym=0) {
+	if (!$format) {
+		$date = format_date($time, 'custom', 'l-j-F-Y');
+		list($day, $date, $month, $year) = explode("-", $date);
+		return thai_time_get_day($day) .", ". $date ." ". thai_time_get_month($month) ." ". thai_time_get_year($year);
+	}
+	else {
+		switch ($format) {
+			case 'd-F-Y':
+				$date = format_date($time, 'custom', 'j-F-Y');
+				list($day,$month, $year) = explode("-", $date);
+				if ($acronym) {
+					return $day." ".thai_time_get_month_acronym($month) ." ". thai_time_get_year_acronnym($year);
+				}
+				else {
+					return $day." ".thai_time_get_month($month) ." ". thai_time_get_year($year);
+				}
+				break;
+
+			case 'F-Y':
+				$date = format_date($time, 'custom', 'F-Y');
+				list($month, $year) = explode("-", $date);
+				if ($acronym) {
+					return thai_time_get_month_acronym($month) ." ". thai_time_get_year_acronnym($year);
+				}else {
+					return thai_time_get_month($month) ." ". thai_time_get_year($year);
+				}
+				break;
+
+			case 'F':
+				$date = format_date($time, 'custom', 'F');
+				return thai_time_get_month($date);
+				break;
+
+			case 'Y':
+				$date = format_date($time, 'custom', 'Y');
+				return thai_time_get_year($date);
+				break;
+		}
+	}
+
+}
+
+function thai_time_get_year($year) {
+	return $year + 543;
+}
+
+function thai_time_get_year_acronnym($year) {
+	$year = $year + 543;
+	return mb_substr($year, 2, 4);
+}
+
+function thai_time_get_month($month) {
+	$list = array(
+			"January" => "มกราคม",
+			"February" => "กุมภาพันธ์",
+			"March" => "มีนาคม",
+			"April" => "เมษายน",
+			"May" => "พฤษภาคม",
+			"June" => "มิถุนายน",
+			"July" => "กรกฎาคม",
+			"August" => "สิงหาคม",
+			"September" => "กันยายน",
+			"October" => "ตุลาคม",
+			"November" => "พฤศจิกายน",
+			"December" => "ธันวาคม",
+		);
+
+	if (isset($list[$month])) {
+		return $list[$month];
+	}
+	else {
+		return $month;
+	}
+}
+
+/**
+ * Return Month Interval
+ */
+function thai_time_get_interval($start_stamp, $end_stamp) {
+	$startTime = $start_stamp;
+	$endTime   = $end_stamp;
+
+	$endTime = $endTime ? $endTime : time();
+
+	if ($endTime > $startTime) {
+	    $diff = $endTime - $startTime;
+        $hours = floor($diff/3600);
+       	$diff = $diff % 3600;
+
+	    $minutes = floor($diff/60);
+	    $diff = $diff % 60;
+
+	    $seconds = $diff;
+
+		return floor($hours/720);
+	}
+	else {
+	    return 0;//'Error: Start time should be less than end time!';
+	}
+}
+
+
+/**
+ * Return Day Interval
+ */
+function thai_time_get_interval_day($start_stamp, $end_stamp) {
+	$startTime = $start_stamp;
+	$endTime   = $end_stamp;
+
+	$endTime = $endTime ? $endTime : time();
+
+	if ($endTime > $startTime) {
+	    $diff = $endTime - $startTime;
+        $hours = floor($diff/3600);
+       	$diff = $diff % 3600;
+
+	    $minutes = floor($diff/60);
+	    $diff = $diff % 60;
+
+	    $seconds = $diff;
+
+		return floor($hours/24);
+	}
+	else {
+	    return 0; //'Error: Start time should be less than end time!';
+	}
+}
+
+/**
+ * Return Day Interval
+ */
+function thai_time_get_interval_hour($start_stamp, $end_stamp) {
+	$startTime = $start_stamp;
+	$endTime   = $end_stamp;
+
+	$endTime = $endTime ? $endTime : time();
+
+	if ($endTime > $startTime) {
+	    $diff = $endTime - $startTime;
+        $hours = floor($diff/3600);
+       	$diff = $diff % 3600;
+
+	    $minutes = floor($diff/60);
+	    $diff = $diff % 60;
+
+	    $seconds = $diff;
+
+		return floor($hours);
+	}
+	else {
+	    return 0; //'Error: Start time should be less than end time!';
+	}
+}
+
+function thai_time_get_month_acronym($month) {
+	$list = array(
+			"January" => "ม.ค.",
+			"February" => "ก.พ.",
+			"March" => "มี.ค.",
+			"April" => "เม.ย.",
+			"May" => "พ.ค.",
+			"June" => "มิ.ย.",
+			"July" => "ก.ค.",
+			"August" => "ส.ค.",
+			"September" => "ก.ย.",
+			"October" => "ต.ค.",
+			"November" => "พ.ย.",
+			"December" => "ธ.ค.",
+
+			"มกราคม" => "ม.ค.",
+			"กุมภาพันธ์" => "ก.พ.",
+			"มีนาคม" => "มี.ค.",
+			"เมษายน" => "เม.ย.",
+			"พฤษภาคม" => "พ.ค.",
+			"มิถุนายน" => "มิ.ย.",
+			"กรกฎาคม" => "ก.ค.",
+			"สิงหาคม" => "ส.ค.",
+			"กันยายน" => "ก.ย.",
+			"ตุลาคม" => "ต.ค.",
+			"พฤศจิกายน" => "พ.ย.",
+			"ธันวาคม" => "ธ.ค.",
+		);
+
+	return $list[$month];
+}
+
+function thai_time_get_month_acronym_eng($month) {
+	$list = array(
+			"Jan" => 1,
+			"Feb" => 2,
+			"Mar" => 3,
+			"Apr" => 4,
+			"May" => 5,
+			"Jun" => 6,
+			"Jul" => 7,
+			"Aug" => 8,
+			"Sep" => 9,
+			"Oct" => 10,
+			"Nov" => 11,
+			"Dec" => 12
+		);
+
+	return $list[$month];
+}
+
+
+/**
+ * @return thai day list
+ */
+function thai_time_get_day($day) {
+	$list = array(
+			"Monday" => "จันทร์",
+			"Tuesday" => "อังคาร",
+			"Wednesday" => "พุธ",
+			"Thursday" => "พฤหัสบดี",
+			"Friday" => "ศุกร์",
+			"Saturday" => "เสาร์",
+			"Sunday" => "อาทิตย์"
+		);
+	return $list[$day];
+}
+
+function thai_time_count_time($sum_day) {
+	$count = array();
+
+		//year
+		if ($sum_day >= 360) {
+			$count['year'] = floor($sum_day / 360);
+		}
+
+		//month
+		$month = $sum_day % 360;
+		if ($month != 0 && $month >= 30) {
+			$count['month'] = floor($month / 30);
+		}
+
+		//day
+		$day = $month % 30;
+		if ($day != 0) {
+			$count['day'] = floor($day);
+		}
+
+	return $count;
+}

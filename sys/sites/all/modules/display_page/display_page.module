@@ -1,0 +1,259 @@
+<?php
+/**
+ * @file display_page.module
+ * TODO: Enter file description here.
+ */
+
+function display_page_footer() {
+    $output = '';
+    $output .= '
+        <div class="menu-footer">
+            <div class="grid-6">
+                <div class="grid-3">
+                    <div class="sub-title">'.t("เกี่ยวกับเรา").'</div>
+                    '.theme('links', array('links' => menu_navigation_links('menu-user-about-us'))).'
+                </div>
+                <div class="grid-3">
+                    <div class="sub-title">'.t("ประชาสัมพันธ์").'</div>
+                    '.theme('links', array('links' => menu_navigation_links('menu-user-news'))).'
+                </div>
+            </div>
+            <div class="grid-5">
+                <div class="sub-title">'.t("ติดต่อเรา").'</div>
+                <div class="">
+                    <div class="">ฝ่ายบริหารงานบุคคล มหาวิทยาลัยราชภัฎศรีสะเกษ</div>
+                    <div class="">319 ถนนไทยพันทา ตำบลโพธิ์ อำเภอเมือง จังหวัดศรีสะเกษ 33000</div>
+                    <div class="">โทรศัพท์ : 045-643600-7 ต่อ 9121-23 email rasamee@sskru.ac.th</div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="copy-right">
+                Copyright © 2012. Sisaket Rajabhat University. All rights reserved.
+            </div>
+        </div>
+    ';
+    return $output;
+}
+
+function display_page_first_content() {
+    $output = '';
+    $output .= '
+        <div class="first-page-content">
+            <div class="grid-6">
+                <div class="sub-title2">
+                    '.t("ข่าวสารด้านบุคลากร").'
+                </div>
+                <div class="news-list">
+                    '.views_embed_view('news_list_front', 'default').'
+                </div>
+            </div>
+            <div class="grid-5">
+                <div class="sub-title2">
+                    '.t("จัดการข้อมูลส่วนตัว").'
+                </div>
+                <div class="menu-link">
+                    '.theme('links', array('links' => menu_navigation_links('menu-user-custom-menu'))).'
+                </div>
+
+                <div class="sub-title2">
+                    '.t("ระบบสารสนเทศที่เกี่ยวข้อง").'
+                </div>
+                <div class="menu-link">
+                    '.theme('links', array('links' => menu_navigation_links('menu-user-system-roles'))).'
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    ';
+    return $output;
+}
+
+function display_page_social_connect() {
+    $output = '';
+    $facebook = '<img src="'.drupal_get_path('module', 'display_page').'/imgs/facebook.png" / >';
+    $twitter = '<img src="'.drupal_get_path('module', 'display_page').'/imgs/twitter.png" / >';
+    $rss = '<img src="'.drupal_get_path('module', 'display_page').'/imgs/rss.png" / >';
+
+    $output .= '
+        <div class="section-wrapper social-connect clearfix">
+            <div class="grid-1">
+                <div class="connect-text">
+                    HRMS
+                </div>
+            </div>
+            <div class="grid-5">
+                <div class="social-text">ระบบบริหารงานบุคคล</div>
+                <div class="social-text">Human Resource Management Systgem</div>
+            </div>
+            <div class="grid-6 hrms-social-icon">
+                <span class="connect-text">
+                    Social
+                </span>
+                <span class="icons">
+                    '.$facebook.'
+                </span>
+                <span class="icons">
+                    '.$twitter.'
+                </span>
+                <span class="icons">
+                    '.$rss.'
+                </span>
+            </div>
+        </div>
+    ';
+    return $output;
+}
+
+function display_page_information() {
+    $output = '';
+
+    $output .= '
+        <div class="section-wrapper">
+            <div class="sub-title">
+                '.l(t("จำนวนบุคลากรจำแนกตามสายงาน และประเภท"), "info/persons/position-type").'
+            </div>
+            <div class="text">
+                จำแนกบุคลากรตามประเภท และสายงานรวมทั้งสรุปยอดจำนวนของบุคลากรตามหมวดหมู่
+            </div>
+        </div>
+    ';
+
+    $output .= '
+        <div class="section-wrapper">
+            <div class="sub-title">
+                '.l(t("จำนวนบุคลากรจำแนกตามสายงาน และระดับการศึกษา"), "info/persons/education-level").'
+            </div>
+            <div class="text">
+                จำแนกบุคลากรตามประเภท และระดับการศึกษารวมทั้งสรุปยอดจำนวนของบุคลากรตามหมวดหมู่
+            </div>
+        </div>
+    ';
+
+    $output .= '
+        <div class="section-wrapper">
+            <div class="sub-title">
+                '.l(t("จำนวนบุคลากรจำแนกตามระดับการศึกษา / โปรแกรมวิชา"), "info/persons/teacher-program").'
+            </div>
+            <div class="text">
+                จำนวนบุคลากรจำแนกตามระดับการศึกษา / โปรแกรมวิชา
+            </div>
+            <div class="text">
+                รวมทั้งสรุปยอดจำนวนของบุคลากรตามหมวดหมู่
+            </div>
+        </div>
+    ';
+
+    $output .= '
+        <div class="section-wrapper">
+            <div class="sub-title">
+                '.l(t("จำนวนบุคลากรจำแนกตามวุฒิการศึกษาและตำแหน่งทางวิชาการ"), "info/persons/education-positon").'
+            </div>
+            <div class="text">
+                จำนวนบุคลากรจำแนกตามระดับการศึกษาและตำแหน่งทางวิชาการ
+            </div>
+        </div>
+    ';
+
+    $output .= '
+        <div class="section-wrapper">
+            <div class="sub-title">
+                '.l(t("จำนวนอาจารย์ประจำจำแนกตามระบบประกันคุณภาพการศึกษา"), "info/persons/teacher-regular").'
+            </div>
+            <div class="text">
+                จำนวนอาจารย์ประจำจำแนกตามระบบประกันคุณภาพการศึกษา
+            </div>
+        </div>
+    ';
+
+    return $output;
+}
+
+function display_page_slide1() {
+  $output = '';
+  $img  = 'http://'.$_SERVER['SERVER_NAME'].base_path();
+  $img .= drupal_get_path('module', 'display_page').'/imgs/001.png';
+
+  $output .= '
+    <div class="page-container">
+        <div class="grid-1">
+            <img src="'.$img.'" />
+        </div>
+        <div class="grid-2">
+            <div class="teaser-wrapper">
+                <div class="sub-title">
+                    '.t("ระบบสารสนเทศเพื่องานด้านบุคลากร").'
+                </div>
+                <div class="text">
+                    เพื่อให้งานด้านบุคลากรภายในมหาวิทยาลัยราชภัฏศรีสะเกษ
+                    มีการบริหารจัดการได้อย่างมีประสิทธิภาพ จึงได้มีการนำระบบคอมพิวเตอร์เข้ามาช่วยในการ จัดการ จัดเก็บ และประมวลผลข้อมูล รวมทั้งการเชื่อมโยงข้อมูลต่างๆ เข้าด้วยกันผ่านระบบเครือข่าย
+                </div>
+                <div class="text">
+                    ซึ่งจะทำให้การบริหารจัดการ และการให้บริการต่างๆ ด้านข้อมูลบุคลากรเป็นไปได้อย่างเที่ยงตรง และมีประสิทธิภาพมากยิ่งขึ้น
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+  ';
+  return $output;
+}
+
+function display_page_slide2() {
+  $output = '';
+  $img  = 'http://'.$_SERVER['SERVER_NAME'].base_path();
+  $img .= drupal_get_path('module', 'display_page').'/imgs/002.png';
+
+  $output .= '
+    <div class="page-container">
+        <div class="grid-1">
+            <img src="'.$img.'" />
+        </div>
+        <div class="grid-2">
+            <div class="teaser-wrapper">
+                <div class="sub-title">
+                    '.t("ระบบแฟ้มสะสมผลงานออนไลน์").'
+                </div>
+                <div class="text">
+                    ระบบแฟ้มสะสมผลงานออนไลน์
+                    ถูกพัฒนาขึ้นเพื่ออำนวยความสะดวกให้แก่บุคคลากรในด้านการส่งข้อมูลผลงานด้านการดำเนินงานเพื่อเข้ารับการประเมินในแต่ละรอบการประเมิน
+                </div>
+                <div class="text">
+                    ด้วยวิธีการนำเอาระบบเทคโนโลยีสารสนเทศเข้ามาอำนวยความสะดวก ทำให้สามารถดำเนินการส่งข้อมูลผลงานได้แบบออนไลน์ ซึ่งช่วยให้บุคลากรสามารถส่งข้อมูลของตนเองได้จากทุกๆ ที่และทุกๆ เพื่อให้งานด้านบุคลากรภายในมหาวิทยาลัยราชภัฏศรีสะเกษ
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+  ';
+  return $output;
+}
+
+function display_page_slide3() {
+  $output = '';
+  $img  = 'http://'.$_SERVER['SERVER_NAME'].base_path();
+  $img .= drupal_get_path('module', 'display_page').'/imgs/003.png';
+
+  $output .= '
+    <div class="page-container">
+        <div class="grid-1 img-3">
+            <img src="'.$img.'" />
+        </div>
+        <div class="grid-2">
+            <div class="teaser-wrapper">
+                <div class="sub-title">
+                    '.t("ระบบฐานข้อมูลบุคคลากร").'
+                </div>
+                <div class="text">
+                    จัดเก็บข้อมูลบุคลากรด้วยระบบฐานข้อมูล เพื่อให้ข้อมูลที่เกี่ยวข้องกับบุคลากรต่างๆ สามารถถูกนำไปใช้งานได้อย่างสะดวกและถูกต้อง รวมถึงการสืบค้นข้อมูลต่างๆ สามารถกระทำได้อย่างรวดเร็วยิ่งขึ้น
+                </div>
+                <div class="text">
+                    รวมทั้งการให้บริการเชื่อมโยงข้อมูลบุคลากรไปสู่ระบบสารสนเทศอื่นๆ ผ่านระบบเครือข่าย เพื่อให้ข้อมูลบุคลากรถูกนำไปใช้ได้อย่างสอดคล้องและทั่วถึง
+                </div>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+  ';
+  return $output;
+}

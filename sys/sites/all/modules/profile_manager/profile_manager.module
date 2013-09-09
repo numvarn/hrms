@@ -1,0 +1,439 @@
+<?php
+/**
+ * @file profile_manager.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function profile_manager_menu() {
+  // This is the minimum information you can provide for a menu item.
+  $items['education-level/%node/page'] = array(
+    'title' => t('ระดับการศึกษา'),
+    'page callback' => 'profile_manager_education_page',
+    'access callback' => 'profile_manager_education_access',
+    'access arguments' => array(1),
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+
+  $items['profile/%node/quickview'] = array(
+    'title' => t('ประวัติบุคลากร'),
+    'page callback' => 'profile_quickview_page',
+    'access callback' => 'profile_quickview_access',
+    'access arguments' => array(1),
+    'page arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+function profile_manager_admin_paths() {
+    $paths['education-level/*/page'] = true;
+    $paths['profile/*/quickview'] = true;
+    return $paths;
+}
+
+function profile_quickview_access($node) {
+    $access = false;
+    if ($node->type == "personal_profile" && user_access('create personal_profile content')) {
+        $access = true;
+    }
+    return $access;
+}
+
+function profile_manager_node_update($node) {
+    if ($node->type == 'personal_profile') {
+        $work_position = $node->field_work_position['und'][0]['tid'];
+        $uid = profile_manager_create_account($node->field_citizen_id['und'][0]['value'], $work_position);
+
+        db_update('node')
+            ->fields(array('uid'=>$uid))
+            ->condition('nid', $node->nid, '=')
+            ->execute();
+    }
+}
+
+function profile_manager_node_insert($node) {
+    if ($node->type == 'personal_profile') {
+        $work_position = $node->field_work_position['und'][0]['tid'];
+        $uid = profile_manager_create_account($node->field_citizen_id['und'][0]['value'], $work_position);
+
+        db_update('node')
+            ->fields(array('uid'=>$uid))
+            ->condition('nid', $node->nid, '=')
+            ->execute();
+    }
+}
+
+/**
+ * function
+ */
+function profile_manager_create_account($citizen_id, $type_role){
+    /*get lastest uid*/
+    $lastest_uid = db_select('users', 'u')
+                    ->fields('u', array('uid'))
+                    ->range(0, 1)
+                    ->orderBy('uid', 'DESC')
+                    ->execute()
+                    ->fetchColumn();
+
+    $current_uid = intval($lastest_uid) + 1;
+
+    /*check duplicate account name*/
+    $check_account = 0;
+    $check_account = db_select('users', 'u')
+                        ->fields('u', array('uid'))
+                        ->condition('name', $citizen_id, '=')
+                        ->execute()
+                        ->fetchColumn();
+
+    /*if account dose not exist*/
+    if (!$check_account && $citizen_id != "") {
+        /*set email*/
+        $mail = "officer-".$current_uid."@sskru.ac.th";
+
+        if ($type_role == 24) {
+            $roles = array(4 => 'teacher');
+        }
+        else {
+            $roles = array(5 => 'officer');
+        }
+
+        /**
+         * Set User Value
+         */
+        $active = 1;
+
+        $account = array(
+                    'name' => $citizen_id,
+                    'pass' => $citizen_id,
+                    'mail' => $mail,
+                    'init' => $mail,
+                    'status' => $active,
+                    'roles' => $roles,
+            );
+
+        $new_user = user_save(NULL, $account, $category = 'account');
+
+        return $new_user->uid;
+    }
+    else {
+        return $check_account;
+    }
+}
+
+function profile_manager_start_working_thai_date($nid) {
+    $date = '';
+    $date = db_select('field_data_field_start_working_date', 'd')
+            ->fields('d', array('field_start_working_date_value'))
+            ->condition('d.entity_id', $nid, '=')
+            ->execute()
+            ->fetchColumn();
+
+    if ($date == '') {
+        return ' - ';
+    }
+    else {
+        return thai_time_format($date, 'd-F-Y', 1);
+    }
+}
+
+function profile_manger_get_educational_manager($nid) {
+    return views_embed_view('manager_educational_profile_content', 'references_1', $nid);
+}
+
+function profile_quickview_page($node) {
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/form-profile.css');
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+    drupal_add_css(drupal_get_path('theme', 'omega').'/custom/ps-page.css');
+
+    $output = "";
+    $output .= '<div class="container-12 profile-wrapper">
+                    '.drupal_render(node_show($node, 1)).'
+                </div>';
+    return $output;
+}
+
+function profile_quickview_link($nid) {
+    return l("แสดง", "profile/".$nid."/quickview");
+}
+
+
+
+function profile_manager_education_access($node) {
+    global $user;
+    $access = false;
+    if ($node->type == "personal_profile" && user_access('create personal_profile content')) {
+        $access = true;
+    }
+
+    if ($user->uid == $node->uid) {
+        $access = true;
+    }
+
+    return $access;
+}
+
+function profile_manager_get_working_start_time($nid, $field_name) {
+    $table_name = 'field_data_'.$field_name;
+    $field = $field_name."_value";
+    $date = '';
+    $date = db_select($table_name, 't')
+            ->fields('t', array($field))
+            ->condition('t.entity_id', $nid, '=')
+            ->execute()
+            ->fetchColumn();
+
+    if ($date != "") {
+        return thai_time_format($date, 'd-F-Y', 1);
+    }
+    else {
+        return ' ';
+    }
+}
+
+function profile_manager_get_bod($nid) {
+    $date = db_select('field_data_field_birthday', 'b')
+                ->fields('b', array('field_birthday_value'))
+                ->condition('b.entity_id', $nid, '=')
+                ->execute()
+                ->fetchColumn();
+    return thai_time_format($date, 'd-F-Y', 1);
+}
+
+function profile_manager_get_insignia_receive_date($profile_nid) {
+    $date = db_select('field_data_field_profile_insignia_date', 'n')
+            ->fields('n', array('field_profile_insignia_date_value'))
+            ->condition('n.entity_id', $profile_nid, '=')
+            ->execute()
+            ->fetchColumn();
+
+    return thai_time_format($date, 'd-F-Y', 1);
+}
+
+/**
+ * Display Personal Data
+ */
+function profile_manager_display_personal_data($profile_nid, $print) {
+    $profile = node_load($profile_nid);
+    $bank = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    $output = '';
+
+    /*get ed position*/
+    $ed_position = ' - ';
+    if (isset($profile->field_education_position['und'][0])) {
+        $ed_position = taxonomy_term_load($profile->field_education_position['und'][0]['tid'])->name;
+    }
+
+    /*get mb posion*/
+    $mb_position = ' - ';
+    if (isset($profile->field_administration_positoin['und'][0])) {
+        $mb_position = taxonomy_term_load($profile->field_administration_positoin['und'][0]['tid'])->name;
+    }
+
+    /*get start woking date*/
+    $start_working_date = ' - ';
+    if (isset($profile->field_start_working_date_first['und'][0]['value'])) {
+        $start_working_date = thai_time_format($profile->field_start_working_date_first['und'][0]['value'], 'd-F-Y');
+    }
+
+    $road = "";
+    if (isset($profile->field_home_address_road['und'])) {
+        $road = $profile->field_home_address_road['und'][0]['value'];
+    }
+
+    $class = "personal-profile-display-print";
+    $title_msg = "<br />1.1 ประวัติส่วนตัว";
+    if ($print == "not-print") {
+        $class = "personal-profile-display";
+        $title_msg = "ประวัติส่วนตัว";
+    }
+
+    $output .= '
+        <div class="sub-title-2">'.$title_msg.'</div>
+        <div class="'.$class.'">
+            <div class="section">
+                <div class="grid-1">
+                    <span class="label">ชื่อ : </span>
+                    <span class="value">
+                    '.$profile->field_name_th['und'][0]['value'].' '.$profile->field_lastname_th['und'][0]['value'].'
+                    </span>
+                </div>
+                <div class="grid-2">
+                    <span class="label">ว-ด-ป เกิด : </span>
+                    '.thai_time_format($profile->field_birthday['und'][0]['value'], 'd-F-Y').'
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="section">
+                <div class="grid-1">
+                    <span class="label">วันเริ่มงาน : </span>
+                    '.$start_working_date.'
+                </div>
+                <div class="grid-2">
+                    <span class="label">เลขบัตรประจำตัวประชาชน : </span>
+                    '.$profile->field_citizen_id['und'][0]['value'].'
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="section">
+                <div class="grid-1">
+                    <span class="label">ตำแหน่งทางวิชาการ : </span>
+                    '.$ed_position.'
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="section">
+                <div class="grid-1">
+                    <span class="label">ตำแหน่งบริหาร : </span>
+                    '.$mb_position.'
+                </div>
+                <div class="grid-2">
+                    <span class="label">สังกัด : </span>
+                    '.taxonomy_term_load($profile->field_faculty['und'][0]['tid'])->name.'
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="section">
+                <div class="grid-3">
+                    <span class="label">ที่อยู่ปัจจุบัน : </span>'.$bank.$profile->field_home_address['und'][0]['value'].$bank.'
+                    <span class="label">หมู่ที่</span>'.$bank.$profile->field_home_address_moo['und'][0]['value'].$bank.'
+                    <span class="label">ถนน</span>'.$bank.$road.$bank.'
+                </div>
+                <div class="grid-3">
+                    <span class="label">ตำบล/แขวง : </span>'
+                        .$bank.taxonomy_term_load($profile->field_home_address_tambon['und'][0]['tid'])->name.$bank.'
+                    <span class="label">อำเภอ/เขต : </span>'.$bank.taxonomy_term_load($profile->field_home_address_aumpur['und'][0]['tid'])->name.$bank.'
+                    <span class="label">จังหวัด : </span>'.$bank.taxonomy_term_load($profile->field_home_address_province['und'][0]['tid'])->name.$bank.'
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="section">
+                <div class="grid-3">
+                    <span class="label">รหัสไปรษณ์ : </span>'.$bank.taxonomy_term_load($profile->field_home_address_zipcode['und'][0]['tid'])->name.$bank.'
+                    <span class="label">หมายเลขโทรศัพท์</span>'.$bank.$profile->field_person_phone['und'][0]['value'].$bank.'
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    ';
+    return $output;
+}
+
+function profile_manager_get_lectuer_job_date($nid) {
+    $date = db_select('field_data_field_lecturer_date', 'd')
+                ->fields('d', array('field_lecturer_date_value', 'field_lecturer_date_value2'))
+                ->condition('d.entity_id', $nid, '=')
+                ->execute()
+                ->fetchObject();
+
+    $str = '';
+    $str .= thai_time_format($date->field_lecturer_date_value, 'd-F-Y', 1);
+
+    if ($date->field_lecturer_date_value != $date->field_lecturer_date_value2) {
+        $str .= " - ".thai_time_format($date->field_lecturer_date_value2, 'd-F-Y', 1);
+    }
+    return $str;
+}
+
+function profile_manager_get_ed_background_list($profile_nid) {
+    $output = "";
+    $output .= views_embed_view('degree_ref_content_list', 'default', $profile_nid);
+    return $output;
+}
+
+/**
+ * Get Profile NID form User ID
+ */
+function profile_manager_get_profile_nid($uid) {
+    $result = db_select('node', 'n')
+                ->fields('n', array('nid'))
+                ->condition('n.uid', $uid, '=')
+                ->condition('n.type', 'personal_profile', '=')
+                ->execute();
+
+    $profile_nid = $result->fetchColumn();
+    return $profile_nid;
+}
+
+/**
+ *@param node : Personal profile node
+ */
+function profile_manager_education_page($node) {
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/education.css');
+    drupal_set_title(t("ระดับการศึกษาของ ".$node->title));
+
+    $output = "";
+    $result = db_select('taxonomy_term_data', 't')
+                ->fields('t', array('tid'))
+                ->condition('t.vid', 14, '=')
+                ->orderBy('weight', 'ASC')
+                ->execute();
+
+    $rows = array();
+    $count = 1;
+
+    $destination = drupal_get_destination();
+
+    while ($tid = $result->fetchColumn()) {
+        $term = taxonomy_term_load($tid);
+
+        /*check*/
+        $check = 0;
+        $query = db_select('field_data_field_profile_ref', 'p');
+        $query->join('field_data_field_ed_level_ref', 'l', 'l.entity_id=p.entity_id');
+
+        $result2 = $query
+                    ->fields('p', array('entity_id'))
+                    ->condition('p.bundle', 'educational_background', '=')
+                    ->condition('p.field_profile_ref_nid', $node->nid, '=')
+                    ->condition('l.field_ed_level_ref_tid', $tid, '=')
+                    ->execute();
+
+        $check = $result2->fetchColumn();
+
+        if ($check == 0) {
+            $link = l(t('แก้ไข'),
+                  "node/add/educational-background/".$node->nid."/".$tid,
+                  array("query" => array("destination" => $destination["destination"])));
+        }
+        else {
+            $link = l(t('แก้ไข'),
+                  "node/".$check."/edit",
+                  array("query" => array("destination" => $destination["destination"])));
+        }
+
+        $rows[] = array(
+                array('class' => 'no', 'data' => $count),
+                array('class' => 'ed-level', 'data' => $term->name),
+                array('class' => 'ed-school', 'data' => views_embed_view('degree_ref_content', 'default', $node->nid, $tid)),
+                array('class' => 'ed-edit', 'data' => $link),
+            );
+
+        $count++;
+        unset($term);
+    }
+
+    $header = array(t('No.'), t('ระดับ'), t('จบจาก'), t('แก้ไข'));
+
+    $output .= '<div class="ed-level-list">
+                    '.theme('table', array('rows'=>$rows, 'header'=>$header)).'
+                </div>';
+
+    return $output;
+}
+
+function profile_manager_link_education_page($profile_nid) {
+    return l(t("edit"), 'education-level/'.$profile_nid.'/page');
+}

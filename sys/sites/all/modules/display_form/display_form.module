@@ -1,0 +1,1045 @@
+<?php
+/**
+ * @file display_form.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function display_form_theme($existing, $type, $theme, $path) {
+  return array(
+        'personal_profile_node_form' => array(
+            'render element' => 'form',
+        ),
+        'educational_background_node_form' => array(
+            'render element' => 'form',
+        ),
+        'personnal_working_profile_node_form' => array(
+            'render element' => 'form',
+        ),
+        'personnal_working_profile_inner_node_form' => array(
+            'render element' => 'form',
+        ),
+        'academic_position_profile_node_form' => array(
+            'render element' => 'form',
+        ),
+        'seminar_profile_inner_node_form' => array(
+            'render element' => 'form',
+        ),
+        'seminar_profile_outter_node_form' => array(
+            'render element' => 'form',
+        ),
+        'award_profile_node_form' => array(
+            'render element' => 'form',
+        ),
+        'analysis_self_node_form' => array(
+            'render element' => 'form',
+        ),
+        'analysis_self_to_work_node_form' => array(
+            'render element' => 'form',
+        ),
+        'analysis_self_to_university_node_form' => array(
+            'render element' => 'form',
+        ),
+        'requirement_in_education_node_form' => array(
+            'render element' => 'form',
+        ),
+        'requirement_in_work_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_teaching_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_recipe_node_form' => array(
+            'render element' => 'form',
+        ),
+        'research_node_form' => array(
+            'render element' => 'form',
+        ),
+        'publication_node_form' => array(
+            'render element' => 'form',
+        ),
+        'conference_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_article_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_student_union_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_culture_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_lecturer_inner_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_lecturer_outter_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_ed_services_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_thesis_consult_node_form' => array(
+            'render element' => 'form',
+        ),
+        'profile_profession_committee_node_form' => array(
+            'render element' => 'form',
+        ),
+        'education_committee_node_form' => array(
+            'render element' => 'form',
+        ),
+        'self_assessment_node_form' => array(
+            'render element' => 'form',
+        ),
+        'executive_profile_node_form' => array(
+            'render element' => 'form',
+        ),
+    );
+
+}
+
+function display_form_node_view($node) {
+    if ($node->type == "personal_profile") {
+        drupal_set_title('ประวัติบุคลากร');
+    }
+}
+
+function theme_executive_profile_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/executive.css');
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="executive-form-wrapper">
+            '.drupal_render_children($form).'
+        </div>';
+    return $output;
+}
+
+function theme_education_committee_node_form($variables) {
+    return theme_profile_profession_committee_node_form($variables);
+}
+
+function theme_self_assessment_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/assessment.css");
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+
+    $form = $variables['form'];
+    $output = '';
+
+    $rows = array();
+    $rows[] = array(
+        array("class" => "", "data" => t("ที่"), "rowspan" => 2),
+        array("class" => "", "data" => t("รายการ"), "rowspan" => 2),
+        array("class" => "value", "data" => t("น้ำหนักคะแนน"), "rowspan" => 2),
+        array("class" => "head", "data" => t("ผลการประเมิน"), "colspan" => 5),
+    );
+
+    $rows[] = array(
+        array("class" => "value", "data" => t("คุณภาพ")),
+        array("class" => "value", "data" => t("ประสิทธิภาพ")),
+        array("class" => "value", "data" => t("ประสิทธิผล")),
+        array("class" => "value", "data" => t("เต็ม")),
+        array("class" => "value", "data" => t("คะแนนที่ได้")),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t("1")),
+        array("class" => "", "data" => t("ภาระงานหลัก")),
+        array("class" => "value", "data" => t("50%")),
+        array("class" => "value", "data" => drupal_render($form['field_quality_1'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_1'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_1'])),
+        array("class" => "value", "data" => "50"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t("2")),
+        array("class" => "", "data" => t("ภาระงานอื่นๆ")),
+        array("class" => "value", "data" => t("10%")),
+        array("class" => "value", "data" => drupal_render($form['field_quality_2'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_2'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_2'])),
+        array("class" => "value", "data" => "10"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t("3")),
+        array("class" => "", "data" => t("จรรยาบรรณ")),
+        array("class" => "value", "data" => t("10%")),
+        array("class" => "value", "data" => drupal_render($form['field_quality_4'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_4'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_4'])),
+        array("class" => "value", "data" => "10"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t("4")),
+        array("class" => "", "data" => t("สมรรถนะ")),
+        array("class" => "value", "data" => t("30%")),
+        array("class" => "value", "data" => ""),
+        array("class" => "value", "data" => ""),
+        array("class" => "value", "data" => ""),
+        array("class" => "value", "data" => "-"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.1 การมุ่งผลสัมฤทธิ์")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($form['field_quality_3_1'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_3_1'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_3_1'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.2 การบริการที่ดี")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($form['field_quality_3_2'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_3_2'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_3_2'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.3 การสั่งสมความเชี่ยวชาญในอาชีพ")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($form['field_quality_3_3'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_3_3'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_3_3'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.4 การยิดมั่นในความถูกต้องชอบธรรมและจริยธรรม")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($form['field_quality_3_4'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_3_4'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_3_4'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.5 การทำงานเป็นทีม")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($form['field_quality_3_5'])),
+        array("class" => "value", "data" => drupal_render($form['field_efficiency_3_5'])),
+        array("class" => "value", "data" => drupal_render($form['field_effectiveness_3_5'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "", "data" => ""),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "head", "data" => t("รวม")),
+        array("class" => "value", "data" => "100%"),
+        array("class" => "", "data" => ""),
+        array("class" => "", "data" => ""),
+        array("class" => "", "data" => ""),
+        array("class" => "value", "data" => "100"),
+        array("class" => "", "data" => ""),
+    );
+
+    $output .= '
+        <div class="assessment-wrapper committee">
+            '.drupal_render($form['field_assessment_no']).'
+            '.theme('table', array('rows' => $rows)).'
+            <div class="hidden">
+                '.drupal_render($form['field_profile_ref']).'
+            </div>
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_profile_profession_committee_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+
+    $form = $variables['form'];
+    drupal_set_message('message = NULL');
+    $output = '';
+    $output .= '
+        <div class="serives-wrapper">
+
+        </div>
+    ';
+    $output .= '
+        <div class="serives-wrapper committee">
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_profile_thesis_consult_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="serives-wrapper thesis">
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_profile_ed_services_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="serives-wrapper">
+            '.drupal_render($form['field_profile_ref']).'
+            '.drupal_render($form['field_services_name']).'
+            <div class="clearfix"></div>
+
+            <div class="grid-1">
+                <div class="grid-2">'.drupal_render($form['field_services_budget']).'</div>
+                <div class="grid-2">'.drupal_render($form['field_activity_position']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="grid-2">'.drupal_render($form['field_lecture_payment']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="">'.drupal_render($form['field_services_type']).'</div>
+                <div class="clearfix"></div>
+            </div>
+
+            <div class="grid-1">
+                '.drupal_render($form['field_service_interval']).'
+            </div>
+            <div class="clearfix"></div>
+
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_profile_lecturer_outter_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="conference-wrapper lecturer">
+            '.drupal_render($form['field_profile_ref']).'
+            '.drupal_render($form['field_lecturer_topic']).'
+            '.drupal_render($form['field_lecture_organizer']).'
+            <div class="clearfix"></div>
+
+            <div class="grid-1">
+                '.drupal_render($form['field_lecturer_interval']).'
+                '.drupal_render($form['field_lecture_payment']).'
+            </div>
+            <div class="grid-1 right">
+                '.drupal_render($form['field_lecturer_date']).'
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_profile_lecturer_inner_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="conference-wrapper lecturer">
+            '.drupal_render($form['field_profile_ref']).'
+            '.drupal_render($form['field_lecturer_topic']).'
+            '.drupal_render($form['field_lecture_organizer']).'
+            <div class="clearfix"></div>
+
+            <div class="grid-1">
+                '.drupal_render($form['field_lecturer_interval']).'
+                '.drupal_render($form['field_lecture_payment']).'
+            </div>
+            <div class="grid-1 right">
+                '.drupal_render($form['field_lecturer_date']).'
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_profile_culture_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="conference-wrapper">
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_profile_student_union_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="conference-wrapper">
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_profile_article_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="conference-wrapper">
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_conference_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $output = '';
+    $form = $variables['form'];
+    $output .= '
+        <div class="conference-wrapper">
+            <div class="">'.drupal_render($form['field_profile_ref']).'</div>
+            <div class="">'.drupal_render($form['field_research_name']).'</div>
+            <div class="">'.drupal_render($form['field_research_name_en']).'</div>
+            <div class="">'.drupal_render($form['field_conference_name']).'</div>
+            <div class="">'.drupal_render($form['field_conference_place']).'</div>
+            <div class="clearfix"></div>
+
+            <div class="grid-1">
+                <div class="grid-3">'.drupal_render($form['field_conference_present_type']).'</div>
+                <div class="grid-3">'.drupal_render($form['field_conference_research_type']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="grid-3">'.drupal_render($form['field_publication_level']).'</div>
+                <div class="grid-3">'.drupal_render($form['field_conference_country']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="">'.drupal_render($form['field_conference_presenter']).'</div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_conference_date']).'
+            </div>
+            <div class="clearfix"></div>
+
+            '.drupal_render($form['field_research_inner_member']).'
+            '.drupal_render($form['field_research_member_order']).'
+            <div class="clearfix"></div>
+
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_publication_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="publication-wrapper">
+            <div class="publication-name">
+                '.drupal_render($form['field_profile_ref']).'
+                '.drupal_render($form['field_publication_name']).'
+            </div>
+            <div class="clearfix"></div>
+
+            <div class="grid-1">
+                <div class="">'.drupal_render($form['field_publisher']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="grid-3">'.drupal_render($form['field_publication_level']).'</div>
+                <div class="grid-3">'.drupal_render($form['field_publication_year']).'</div>
+                <div class="grid-3">'.drupal_render($form['field_publication_no']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="inner-member">
+                    '.drupal_render($form['field_research_inner_member']).'
+                </div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_publication_date']).'
+                <div class="inner-member">
+                    '.drupal_render($form['field_research_member_order']).'
+                </div>
+            </div>
+            <div class="clearfix"></div>
+
+            '.drupal_render_children($form).'
+        </div>
+    ';
+
+    return $output;
+}
+
+function theme_research_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '
+        <div class="research-wrapper">
+            <div class="research-name">
+                '.drupal_render($form['field_profile_ref']).'
+                '.drupal_render($form['field_research_name']).'
+                '.drupal_render($form['field_research_name_en']).'
+            </div>
+            <div class="grid-1">
+                <div class="grid-3">'.drupal_render($form['field_research_positon']).'</div>
+                <div class="grid-3">'.drupal_render($form['field_research_money']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="grid-3">
+                    '.drupal_render($form['field_research_funding_type']).'
+                </div>
+                <div class="grid-3">
+                    '.drupal_render($form['field_budget_year']).'
+                </div>
+                <div class="clearfix"></div>
+
+                '.drupal_render($form['field_funding_name']).'
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_research_status']).'
+                '.drupal_render($form['field_research_date']).'
+            </div>
+            <div class="clearfix"></div>
+
+            '.drupal_render_children($form).'
+        </div>';
+
+    return $output;
+}
+
+function theme_profile_recipe_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    drupal_add_js(drupal_get_path('module', 'display_form')."/hide-element.js");
+
+    $output = '';
+    $form = $variables['form'];
+    $output = '';
+    $output .= '<div class="recipe-wrapper">
+                    <div class="grid-1">
+                        '.drupal_render($form['field_profile_ref']).'
+                    </div>
+                    <div class="grid-2">
+                        '.drupal_render($form['field_budget_year']).'
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <div class="grid-3">
+                        <div class="recipe-name">'.drupal_render($form['field_recipe_name']).'</div>
+                        <div class="grid-1">'.drupal_render($form['field_recipe_type']).'</div>
+                        <div class="grid-2">'.drupal_render($form['field_recipe_page_number']).'</div>
+                        <div class="clearfix"></div>
+                        <div class="recipe-name">'.drupal_render($form['field_recipe_work_status']).'</div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="grid-4">
+                        <div class="">'.drupal_render($form['field_recipe_date']).'</div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="recipe-member">
+                        <div class="">'.drupal_render($form['field_member_ref']).'</div>
+                    </div>
+                    '.drupal_render_children($form).'
+                </div>';
+
+    return $output;
+}
+
+function theme_profile_teaching_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $output = '';
+    $form = $variables['form'];
+    $output = '';
+    $output .= '<div class="analysis-wrapper">
+                    <div class="grid-1">
+                        '.drupal_render($form['field_profile_ref']).'
+                    </div>
+                    <div class="grid-2">
+                        '.drupal_render($form['field_budget_year']).'
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_code']).'
+                    </div>
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_name']).'
+                    </div>
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_unit']).'
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_student']).'
+                    </div>
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_lab_per_week']).'
+                    </div>
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_meet_per_week']).'
+                    </div>
+                    <div class="clearfix"></div>
+
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_work_per_week']).'
+                    </div>
+                    <div class="grid-3">
+                        '.drupal_render($form['field_subject_outdoor_per_week']).'
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="subject-analysis">
+                        '.drupal_render($form['field_subject_exam_analysis']).'
+                    </div>
+                    <div class="clearfix"></div>
+                    '.drupal_render_children($form).'
+                </div>';
+
+    return $output;
+}
+
+function theme_requirement_in_work_node_form($variables) {
+    return theme_requirement_in_education_node_form($variables);
+}
+
+function theme_requirement_in_education_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $output .= '<div class="analysis-wrapper">
+                    <div class="grid-1">
+                        '.drupal_render($form['field_profile_ref']).'
+                    </div>
+                    <div class="grid-2">
+                        '.drupal_render($form['field_budget_year']).'
+                    </div>
+                    <div class="clearfix"></div>
+                    '.drupal_render_children($form).'
+                </div>';
+
+    return $output;
+}
+
+function theme_analysis_self_to_university_node_form($variables) {
+    return theme_analysis_self_node_form($variables);
+}
+
+function theme_analysis_self_to_work_node_form($variables) {
+    return theme_analysis_self_node_form($variables);
+}
+
+function theme_analysis_self_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+    $output = '';
+    $rows = array();
+
+    $rows[] = array(
+        array('class'=>'number head', 'data'=>t("ลำดับ"), 'rowspan'=>2),
+        array('class'=>'activity head', 'data'=>t("กิจกรรม"), 'rowspan'=>2),
+        array('class'=>'citeria head', 'data'=>t("ระดับความพึงพอใจ"), 'colspan'=>5),
+        array('class'=>'note head', 'data'=>t("หมายเหตุ"), 'rowspan'=>2),
+    );
+
+    $rows[] = array(
+        array('class'=>'choice', 'data'=>t("มากที่สุด")),
+        array('class'=>'choice', 'data'=>t("มาก")),
+        array('class'=>'choice', 'data'=>t("ปานกลาง")),
+        array('class'=>'choice', 'data'=>t("น้อย")),
+        array('class'=>'choice', 'data'=>t("น้อยที่สุด")),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'1'),
+        array('class'=>'activity', 'data'=>$form['field_activity_1']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_1']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_1'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'2'),
+        array('class'=>'activity', 'data'=>$form['field_activity_2']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_2']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_2'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'3'),
+        array('class'=>'activity', 'data'=>$form['field_activity_3']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_3']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_3'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'4'),
+        array('class'=>'activity', 'data'=>$form['field_activity_4']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_4']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_4'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'5'),
+        array('class'=>'activity', 'data'=>$form['field_activity_5']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_5']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_5'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'6'),
+        array('class'=>'activity', 'data'=>$form['field_activity_6']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_6']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_6'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'7'),
+        array('class'=>'activity', 'data'=>$form['field_activity_7']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_7']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_7'])),
+    );
+
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'8'),
+        array('class'=>'activity', 'data'=>$form['field_activity_8']['und']['#title']),
+        array('class'=>'choices', 'data'=>drupal_render($form['field_activity_8']), 'colspan'=>5),
+        array('class'=>'note', 'data'=>drupal_render($form['field_activity_note_8'])),
+    );
+
+    $output .= '<div class="analysis-wrapper">
+                    <div class="grid-1">
+                        '.drupal_render($form['field_profile_ref']).'
+                    </div>
+                    <div class="grid-2">
+                        '.drupal_render($form['field_budget_year']).'
+                    </div>
+                    <div class="clearfix"></div>
+                    '.theme('table', array('rows'=>$rows)).'
+                    '.drupal_render_children($form).'
+                </div>';
+
+    return $output;
+}
+
+function theme_academic_position_profile_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/personnal_working.css");
+
+    $form = $variables['form'];
+    $output = drupal_render_children($form);
+    return $output;
+}
+
+function theme_award_profile_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/personnal_working.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+
+    $output = '';
+    $output .= '
+        <div class="personnal-working-wrapper">
+            <div class="">'.drupal_render($form['field_profile_ref']).'</div>
+            <div class="grid-1">
+                <div class="">'.drupal_render($form['field_award_name']).'</div>
+                <div class="">'.drupal_render($form['field_award_detail']).'</div>
+                <div class="">'.drupal_render($form['field_award_money']).'</div>
+                <div class="">'.drupal_render($form['field_award_organizer']).'</div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_award_receive_date']).'
+                <div class="">'.drupal_render($form['field_award_level']).'</div>
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_seminar_profile_outter_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/personnal_working.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+
+    $output = '';
+    $output .= '
+        <div class="personnal-working-wrapper">
+            <div class="">'.drupal_render($form['field_profile_ref']).'</div>
+            <div class="">'.drupal_render($form['field_seminar_name']).'</div>
+            <div class="">'.drupal_render($form['field_seminar_place']).'</div>
+            <div class="grid-1">
+                <div class="">'.drupal_render($form['field_seminar_organizer']).'</div>
+                <div class="">'.drupal_render($form['field_seminar_cost_receive']).'</div>
+                <div class="">'.drupal_render($form['field_seminar_cost_pay']).'</div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_seminar_date']).'
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_seminar_profile_inner_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/personnal_working.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+
+    $output = '';
+    $output .= '
+        <div class="personnal-working-wrapper">
+            <div class="">'.drupal_render($form['field_profile_ref']).'</div>
+            <div class="">'.drupal_render($form['field_seminar_name']).'</div>
+            <div class="grid-1">
+                <div class="">'.drupal_render($form['field_seminar_organizer']).'</div>
+                <div class="">'.drupal_render($form['field_seminar_cost']).'</div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_seminar_date']).'
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_personnal_working_profile_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/personnal_working.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+
+    $output = '';
+    $output .= '
+        <div class="personnal-working-wrapper">
+            <div class="grid-1">
+                <div class="">'.drupal_render($form['field_profile_ref']).'</div>
+                <div class="">'.drupal_render($form['field_person_working_position']).'</div>
+                <div class="">'.drupal_render($form['field_person_working_company']).'</div>
+                <div class="">'.drupal_render($form['field_person_working_locate']).'</div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_person_working_date']).'
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_personnal_working_profile_inner_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/personnal_working.css");
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/960_12_col.css");
+
+    $form = $variables['form'];
+
+    $output = '';
+    $output .= '
+        <div class="personnal-working-wrapper">
+            <div class="grid-1">
+                <div class="">'.drupal_render($form['field_profile_ref']).'</div>
+                <div class="">'.drupal_render($form['field_person_working_position']).'</div>
+                <div class="">'.drupal_render($form['field_person_working_company']).'</div>
+            </div>
+            <div class="grid-2">
+                '.drupal_render($form['field_person_working_date']).'
+            </div>
+            <div class="clearfix"></div>
+            '.drupal_render_children($form).'
+        </div>
+    ';
+    return $output;
+}
+
+function theme_educational_background_node_form($variables) {
+    $ed_level = 0;
+    $ed_level = arg(4);
+
+    $form = $variables['form'];
+
+    if ($ed_level != 0) {
+        $form['field_ed_level_ref']['und']['#value'] = $ed_level;
+    }
+
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/education.css');
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+
+    $output = '';
+
+    $output .= '<div class="ed-wrapper clearfix">
+                    <div class="input grid-3">'.drupal_render($form['field_profile_ref']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_ed_degree_name']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_ed_degree_name_2']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_ed_major']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_ed_university']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_ed_gpa']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_ed_grad_year']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_ed_grad_country']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_ed_level_ref']).'</div>
+                    <div class="clearfix"></div>
+
+                    '.drupal_render_children($form).'
+                </div>';
+    return $output;
+}
+
+function theme_personal_profile_node_form($variables) {
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/form-profile.css');
+    drupal_add_css(drupal_get_path('theme', 'omega').'/addhoc/960_12_col.css');
+
+    $form = $variables['form'];
+
+    $output  = '';
+    $output .= '<div class="profile-form-wrapper clearfix">
+                    <div class="grid-1">
+                        <div class="input grid-3">'.drupal_render($form['field_name_prefix']).'</div>
+                        <div class="input grid-3">'.drupal_render($form['field_gender']).'</div>
+                        <div class="clearfix"></div>
+
+                        <div class="input grid-3">'.drupal_render($form['field_name_th']).'</div>
+                        <div class="input grid-3">'.drupal_render($form['field_lastname_th']).'</div>
+                        <div class="clearfix"></div>
+
+                        <div class="input grid-3">'.drupal_render($form['field_name_en']).'</div>
+                        <div class="input grid-3">'.drupal_render($form['field_lastname_en']).'</div>
+                        <div class="clearfix"></div>
+
+                        <div class="input grid-3">'.drupal_render($form['field_citizen_id']).'</div>
+                        <div class="input grid-3">'.drupal_render($form['field_nationality']).'</div>
+                        <div class="clearfix"></div>
+
+                        <div class="input grid-3">'.drupal_render($form['field_birthday']).'</div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="grid-2">
+                        '.drupal_render($form['field_person_image']).'
+                        '.drupal_render($form['field_working_status']).'
+                    </div>
+                </div>';
+
+    if (user_access('create personal_profile content')) {
+        $output .= '<div class="profile-form-wrapper clearfix">
+                    <div class="input grid-3">'.drupal_render($form['field_administration_positoin']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_work_position']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_officer_type']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_faculty']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_education_level']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_education_position']).'</div>
+                    <div class="clearfix"></div>
+                </div>';
+
+        $output .= '
+            <div class="profile-form-wrapper clearfix">
+                <div class="">'.t("วันที่เริ่มปฏิบัติงานในมหาวิทยาลัยราชภัฏศรีสะเกษด้วยฐานะ").'</div>
+                <div class="input grid-3">'.drupal_render($form['field_start_working_date']).'</div>
+                <div class="input grid-3">'.drupal_render($form['field_start_working_date2']).'</div>
+                <div class="input grid-3">'.drupal_render($form['field_start_working_date3']).'</div>
+                <div class="clearfix"></div>
+
+                <div class="input grid-3">'.drupal_render($form['field_start_working_date4']).'</div>
+                <div class="input grid-3">'.drupal_render($form['field_start_working_date5']).'</div>
+                <div class="input grid-3">'.drupal_render($form['field_start_working_date_first']).'</div>
+                <div class="clearfix"></div>
+            </div>
+        ';
+    }
+
+    $output .= '<div class="profile-form-wrapper clearfix">
+                    <div class="input grid-3">'.drupal_render($form['field_person_phone']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_person_email']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_home_address']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_home_address_moo']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_home_address_road']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_home_address_tambon']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_home_address_aumpur']).'</div>
+                    <div class="input grid-3">'.drupal_render($form['field_home_address_province']).'</div>
+                    <div class="clearfix"></div>
+
+                    <div class="input grid-3">'.drupal_render($form['field_home_address_zipcode']).'</div>
+                    <div class="clearfix"></div>
+                </div>';
+
+
+    $output .= '<div class="save-botton">
+                    '.drupal_render($form["actions"]["submit"]).'
+                </div>';
+
+
+    $output .= drupal_render_children($form);
+
+    return $output;
+}
+

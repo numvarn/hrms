@@ -1,0 +1,86 @@
+.profile-form-wrapper {
+    width:960px;
+    margin:0 auto;
+    margin-bottom: 30px;
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 1px solid #F0F0F0 !important;
+    border-radius: 5px 5px 5px 5px;
+    padding: 15px 25px 25px 20px !important;
+}
+
+.profile-form-wrapper .grid-1 {
+    width:560px;
+    margin-right: 0px!important;
+    border-right: 1px solid #eee;
+}
+
+.profile-form-wrapper .grid-2 {
+    width:350px;
+    padding-left: 10px;
+}
+
+.profile-form-wrapper .input.grid-3 {
+    width:240px;
+}
+
+.profile-form-wrapper .input.grid-3 input {
+    width:220px;
+    font-size:14px;
+}
+
+.profile-form-wrapper .input.grid-3 select {
+    width:220px;
+    font-size:12px;
+}
+
+.profile-form-wrapper .form-wrapper {
+    border:0px none;
+    padding-top:15px;
+    margin-top:0px;
+}
+
+.field-name-field-birthday .fieldset-wrapper,
+.field-name-field-start-working-date .fieldset-wrapper,
+.field-name-field-start-working-date2 .fieldset-wrapper,
+.field-name-field-start-working-date3 .fieldset-wrapper,
+.field-name-field-start-working-date4 .fieldset-wrapper,
+.field-name-field-start-working-date5 .fieldset-wrapper {
+    padding-left:0px;
+}
+
+.profile-form-wrapper fieldset .fieldset-legend {
+    padding-left: 0px!important;
+}
+
+.profile-form-wrapper #edit-field-birthday-und-0-value,
+.profile-form-wrapper #edit-field-start-working-date-und-0-value,
+.profile-form-wrapper #edit-field-start-working-date2-und-0-value,
+.profile-form-wrapper #edit-field-start-working-date3-und-0-value,
+.profile-form-wrapper #edit-field-start-working-date4-und-0-value,
+.profile-form-wrapper #edit-field-start-working-date5-und-0-value {
+    padding-left:0px;
+}
+
+.save-botton {
+    width:960px;
+    text-align: left;
+    margin:0 auto;
+}
+
+.description {
+    font-size:11px!important;
+    color:gray!important;
+}
+
+#edit-delete {
+    display:none;
+}
+
+#edit-field-working-status .form-type-radio {
+    position: relative;
+    float:left;
+    width:110px;
+}
+
+
+

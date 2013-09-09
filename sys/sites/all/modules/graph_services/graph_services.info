@@ -1,0 +1,5 @@
+name = Graph Services
+description = Graph Generator
+package = SSKRU
+core = 7.x
+files[] = graph_services.module

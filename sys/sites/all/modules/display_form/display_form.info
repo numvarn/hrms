@@ -1,0 +1,5 @@
+name = Display Form
+description = All form theming manager
+package = HRMS
+core = 7.x
+files[] = display_form.module

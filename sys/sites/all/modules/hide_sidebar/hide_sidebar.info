@@ -1,0 +1,5 @@
+name = Hide Sidebar
+description = hide sidebar for some page
+package = Phisan Shukkhi
+core = 7.x
+files[] = hide_sidebar.module

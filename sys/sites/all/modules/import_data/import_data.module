@@ -1,0 +1,253 @@
+<?php
+/**
+ * @file import_data.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function import_data_menu() {
+    // This is the minimum information you can provide for a menu item.
+    $items['import/persons'] = array(
+        'title' => 'Import data',
+        'page callback' => 'import_data_add_person',
+        'access arguments' => array('create presonal_profile content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function import_data_add_person() {
+    $output = '';
+    $file = '/Users/numvarn/Desktop/data.csv';
+
+    $handle = fopen($file, "r");
+
+    $field = array();
+
+    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        $num = count($data);
+
+        for ($c=0; $c < $num; $c++) {
+            $field[$c] = trim($data[$c]);
+        }
+
+        /*Add data to node*/
+        import_data_profile_adds($field);
+        // break;
+
+    }
+
+    fclose($handle);
+
+    return $output;
+}
+
+function import_data_profile_adds($field) {
+    global $user;
+    $node = new stdClass();
+    $node->type  = 'personal_profile';
+    $node->title = $field[4]." ".$field[5];
+
+    $node->language   = LANGUAGE_NONE;
+    $node->uid        = $user->uid;
+    $node->created    = time();
+    $node->changed    = $node->created;
+    $node->status     = 1;
+    $node->promote    = 0;
+    $node->sticky     = 0;
+    $node->format     = 0;
+    $node->revision   = 1;
+    $node->log        = t('Node saved: '.$node->title);
+
+    /*get name prefix*/
+    if ($field[3] == "003") {
+        $name_prefix_name = "นาย";
+    }
+    else if ($field[3] == "004") {
+        $name_prefix_name = "นางสาว";
+    }
+    else if ($field[3] == "005") {
+        $name_prefix_name = "นาง";
+    }else {
+        $name_prefix_name = "";
+    }
+
+    /*get gender*/
+    $gender_name = ($field[8] == 1) ? "ชาย" : "หญิง" ;
+
+    /*get birthday*/
+    $date1 = explode("/", $field[9]);
+    $year = intval($date1[2]) - 543;
+
+    if ((date("Y") - $year) <= 60) {
+        $birthday = mktime(0, 0, 0, intval($date1[1]), intval($date1[0]), $year);
+    }
+    else {
+        $birthday = time();
+    }
+
+    /*get start working date*/
+    $date2 = explode("/", $field[30]);
+    $year = intval($date2[2]) - 543;
+    if ((date("Y") - $year) <= 60) {
+        $start_working_date = mktime(0, 0, 0, intval($date2[1]), intval($date2[0]), $year);
+    }
+    else {
+        $start_working_date = time();
+    }
+
+
+    /*col 2*/
+    $node->field_citizen_id['und'][0]['value'] = $field[2];
+
+    /*col 3*/
+    if ($name_prefix_name != "") {
+        $node->field_name_prefix['und'][0]['tid'] = custom_taxonomy_get_by_name($name_prefix_name, 12);
+    }
+
+    /*col 4*/
+    $node->field_name_th['und'][0]['value'] = $field[4];
+
+    /*col 5*/
+    $node->field_lastname_th['und'][0]['value'] = $field[5];
+
+    /*col 6*/
+    if ($field[6] != "") {
+        $node->field_officer_type['und'][0]['tid'] = custom_taxonomy_get_by_name($field[6], 2);
+    }
+
+    /*col 8*/
+    $node->field_gender['und'][0]['tid'] = custom_taxonomy_get_by_name($gender_name, 3);
+
+    /*col 9*/
+    $node->field_birthday['und'][0]['value'] = $birthday;
+
+    /*col 10*/
+    $node->field_home_address['und'][0]['value'] = $field[10];
+
+    /*col 11*/
+    $node->field_home_address_moo['und'][0]['value'] = $field[11];
+
+    /*col 12*/
+    $node->field_home_address_road['und'][0]['value'] = $field[12];
+
+    /*col 13*/
+    if ($field[13] != "") {
+        $node->field_home_address_tambon['und'][0]['tid'] = custom_taxonomy_get_by_name($field[13], 4);
+    }
+
+    /*col 15*/
+    if ($field[15] != "") {
+        $node->field_home_address_aumpur['und'][0]['tid'] = custom_taxonomy_get_by_name($field[15], 5);
+    }
+
+    /*col 18*/
+    if ($field[18] != "") {
+        $node->field_home_address_province['und'][0]['tid'] = custom_taxonomy_get_by_name($field[18], 6);
+    }
+
+    /*col 19*/
+    $node->field_person_phone['und'][0]['value'] = $field[19];
+
+    /*col 20*/
+    if ($field[20] != "") {
+        $node->field_home_address_zipcode['und'][0]['tid'] = custom_taxonomy_get_by_name($field[20], 7);
+    }
+
+    /*col 21*/
+    // $node->field_nationality['und'][0]['tid'] = custom_taxonomy_get_by_name($field[21], 8);
+
+    /*col 28*/
+    if ($field[28] != "") {
+        $node->field_work_position['und'][0]['tid'] = custom_taxonomy_get_by_name($field[28], 9);
+
+        /*faculty*/
+        if ($node->field_work_position['und'][0]['tid'] == 24) {
+            $node->field_faculty['und'][0]['tid'] = 3;
+        }
+    }
+
+    /*col 33*/
+    // $node->field_start_working_date['und'][0]['value'] = $start_working_date;
+
+    /*Working Status*/
+    $node->field_working_status['und'][0]['tid'] = 479;
+
+    /**
+     * Create User
+     */
+    if ($field[28] == "อาจารย์") {
+        $roles = 5;
+    }
+    else {
+        $roles = 6;
+    }
+
+    $new_uid = import_data_create_account($node->field_citizen_id['und'][0]['value'], $roles);
+
+    if ($new_uid) {
+        $node->uid = $new_uid;
+        node_save($node);
+    }
+}
+
+/**
+ * function
+ */
+function import_data_create_account($citizen_id, $type_role){
+    /*get lastest uid*/
+    $lastest_uid = db_select('users', 'u')
+                    ->fields('u', array('uid'))
+                    ->range(0, 1)
+                    ->orderBy('uid', 'DESC')
+                    ->execute()
+                    ->fetchColumn();
+    $current_uid = intval($lastest_uid) + 1;
+
+    /*check duplicate account name*/
+    $check_account = 0;
+    $check_account = db_select('users', 'u')
+                        ->fields('u', array('uid'))
+                        ->condition('name', $citizen_id, '=')
+                        ->execute()
+                        ->fetchColumn();
+
+    /*if account dose not exist*/
+    if (!$check_account && $citizen_id != "") {
+        /*set email*/
+        $mail = "officer-".$current_uid."@sskru.ac.th";
+
+        if ($type_role == 5) {
+            $roles = array(5 => 'teacher');
+        }
+        else {
+            $roles = array(6 => 'officer');
+        }
+
+        /**
+         * Set User Value
+         */
+        $active = 1;
+
+        $account = array(
+                    'name' => $citizen_id,
+                    'pass' => $citizen_id,
+                    'mail' => $mail,
+                    'init' => $mail,
+                    'status' => $active,
+                    'roles' => $roles,
+            );
+
+        $new_user = user_save(NULL, $account, $category = 'account');
+
+        return $new_user->uid;
+    }
+    else {
+        return 0;
+    }
+}
+
+

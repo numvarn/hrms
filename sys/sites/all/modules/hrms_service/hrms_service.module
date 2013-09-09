@@ -1,0 +1,217 @@
+<?php
+/**
+ * @file hrms_service.module
+ * TODO: Enter file description here.
+ */
+require "lib/RESTClient.inc.php";
+
+/**
+ * Implements hook_menu().
+ */
+function hrms_service_menu() {
+    // This is the minimum information you can provide for a menu item.
+    $items['get/user/all'] = array(
+        'title' => 'Get All User',
+        'page callback' => 'hrms_service_get_person',
+        'access callback' => 'hrms_service_get_person_access',
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['get/edoc/all'] = array(
+        'title' => 'Get Electronic Document',
+        'page callback' => 'hrms_service_get_edoc',
+        'access callback' => 'hrms_service_get_person_access',
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['get/researcher'] = array(
+        'title' => 'Get Researcher',
+        'page callback' => 'hrms_service_get_researcher',
+        'access callback' => 'hrms_service_get_person_access',
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function hrms_service_cron() {
+    hrms_service_get_edoc();
+}
+
+function hrms_service_get_person_access() {
+    $access = true;
+    return $access;
+}
+
+function hrms_service_get_researcher() {
+    $output = '';
+    $params = hrms_service_get_param(request_uri());
+
+    $list[] = explode(',', $params['researchers']);
+
+    foreach ($list as $key => $values) {
+        foreach ($values as $key => $nid) {
+            $output .= drupal_render(node_view(node_load($nid), 'teaser'));
+        }
+    }
+
+    echo $output;
+}
+
+function hrms_service_get_edoc() {
+    $output = '';
+
+    /*get start edoc id*/
+    $start_id = db_select('field_data_field_edoc_id', 'e')
+                ->fields('e', array('field_edoc_id_value'))
+                ->range(0, 1)
+                ->orderBy('e.field_edoc_id_value', 'DESC')
+                ->execute()
+                ->fetchColumn();
+
+
+    $start_id = intval($start_id);
+
+    /*Set endpoint*/
+    $endpoint  = 'http://www.eoffice.sskru.ac.th/edocuments/services/getbook.php?';
+    $endpoint .= 'start_id='.$start_id;
+
+    /*Get json from destinaiton*/
+    $result = file_get_contents($endpoint);
+
+    /*convert to array*/
+    $edocs = drupal_json_decode($result);
+
+    /*
+     * import to database
+     */
+    foreach ($edocs as $key => $edoc) {
+        $nid = 0;
+        $nid = db_select('field_data_field_edoc_id', 'e')
+                ->fields('e', array('entity_id'))
+                ->condition('e.field_edoc_id_value', $edoc['book_id'], '=')
+                ->execute()
+                ->fetchColumn();
+
+        if ($nid == 0) {
+            $node = new stdClass();
+            $node->type  = 'edocument';
+            $node->title = $edoc['book_code'];
+
+            $node->language   = LANGUAGE_NONE;
+            $node->uid        = 1;
+            $node->created    = time();
+            $node->changed    = $node->created;
+            $node->status     = 1;
+            $node->promote    = 0;
+            $node->sticky     = 0;
+            $node->format     = 0;
+            $node->revision   = 1;
+            $node->log        = t('Node saved: '.$node->title);
+        }
+        else {
+            $node = node_load($nid);
+        }
+
+        /*get date*/
+        list($year, $month, $day) = explode('-', $edoc['book_date']);
+        $book_date = mktime(0, 0, 0, $month, $day, $year);
+
+        $node->field_edoc_id['und'][0]['value'] = $edoc['book_id'];
+        $node->field_edoc_type['und'][0]['tid'] = custom_taxonomy_get_by_name(trim($edoc['book_type']), 23);
+        $node->field_edoc_code['und'][0]['value'] = $edoc['book_code'];
+        $node->field_edoc_date['und'][0]['value'] = $book_date;
+        $node->field_edoc_title['und'][0]['value'] = mb_substr($edoc['book_title'], 0, 100);
+
+        if ($edoc['book_from'] != "") {
+            $edoc['book_from'] = mb_substr($edoc['book_from'], 0, 100);
+            $node->field_edoc_from['und'][0]['tid'] = custom_taxonomy_get_by_name(trim($edoc['book_from']), 24);
+        }
+
+        if ($edoc['book_to'] != "") {
+            $edoc['book_to'] = mb_substr($edoc['book_to'], 0, 100);
+            $node->field_edoc_to['und'][0]['tid'] = custom_taxonomy_get_by_name(trim($edoc['book_to']), 25);
+        }
+
+        if ($edoc['book_commander'] != "") {
+            $edoc['book_commander'] = mb_substr($edoc['book_commander'], 0, 100);
+            $node->field_edoc_commander['und'][0]['tid'] = custom_taxonomy_get_by_name(trim($edoc['book_commander']), 26);
+        }
+
+        if ($edoc['book_receive_office'] != "") {
+            $edoc['book_receive_office'] = mb_substr($edoc['book_receive_office'], 0, 100);
+            $node->field_edoc_office['und'][0]['tid'] = custom_taxonomy_get_by_name(trim($edoc['book_receive_office']), 27);
+        }
+
+        node_save($node);
+        unset($node);
+    }
+
+    return $output;
+}
+
+function hrms_service_get_person() {
+    $params = hrms_service_get_param(request_uri());
+    $persons = array();
+    if (isset($params['all']) && $params['all'] == "true") {
+        $result = db_select('node', 'n')
+                    ->fields('n', array('nid'))
+                    ->condition('n.type', 'personal_profile', '=')
+                    ->orderBy('n.nid', 'ASC')
+                    ->execute();
+
+        while ($nid = $result->fetchColumn()) {
+            $profile = node_load($nid);
+            $name_en = "";
+            $lastname_en = "";
+
+            if (isset($profile->field_name_en['und'])) {
+                $name_en = trim($profile->field_name_en['und'][0]['value']);
+            }
+            if (isset($profile->field_name_en['und'])) {
+                $lastname_en = trim($profile->field_lastname_en['und'][0]['value']);
+            }
+
+            $account = db_select('users', 'u')
+                            ->fields('u', array('name', 'pass'))
+                            ->condition('u.uid', $profile->uid, '=')
+                            ->execute()
+                            ->fetchObject();
+
+            /*faculty*/
+            $faculty = taxonomy_term_load($profile->field_faculty['und'][0]['tid'])->name;
+            $department = taxonomy_term_load($profile->field_faculty['und'][1]['tid'])->name;
+
+            $persons[$nid] = array(
+                    'profile_id' => $nid,
+                    'firstname_th' => trim($profile->field_name_th['und'][0]['value']),
+                    'lastname_th'  => trim($profile->field_lastname_th['und'][0]['value']),
+                    'firstname_en' => $name_en,
+                    'lastname_en'  => $lastname_en,
+                    'username'  => $account->name,
+                    'password'  => $account->pass,
+                    'position' => taxonomy_term_load($profile->field_work_position['und'][0]['tid'])->name,
+                    'faculty' => $faculty,
+                    'department' => $department,
+                );
+        }
+
+        drupal_json_output($persons);
+    }
+}
+
+function hrms_service_get_param($uri) {
+    list($path1, $path2) = explode("?", $uri);
+    if ($path2 != "") {
+        $params_str = explode("&", $path2);
+        $params = array();
+        foreach ($params_str as $key => $value) {
+            list($param_name, $param_value) = explode("=", $value);
+            $params[$param_name] = $param_value;
+        }
+        return $params;
+    } else {
+        echo "Have no any params";
+        die();
+    }
+}

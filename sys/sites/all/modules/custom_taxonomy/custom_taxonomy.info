@@ -1,0 +1,5 @@
+name = Custom Taxonomy
+description = custom taxonomy manager
+package = Phisan Shukkhi
+core = 7.x
+files[] = custom_taxonomy.module

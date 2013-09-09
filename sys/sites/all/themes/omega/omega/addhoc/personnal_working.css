@@ -1,0 +1,47 @@
+.personnal-working-wrapper {
+    width:800px;
+    margin: 0 auto;
+    padding:20px;
+
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+    padding: 20px 1px 10px 20px;
+
+    margin-bottom: 20px;
+}
+
+.form-wrapper {
+    border:0px none;
+}
+
+.personnal-working-wrapper .grid-1 {
+    width:400px;
+}
+
+.personnal-working-wrapper .grid-2 {
+    width:300px;
+    border-left:1px solid #ccc;
+    padding-left:10px;
+}
+
+#edit-field-edocument-ref-und-0-nid {
+    width:800px;
+}
+
+#field-seminar-name-add-more-wrapper,
+#field-seminar-place-add-more-wrapper {
+    width:780px;
+}
+
+#edit-field-award-money-und-0-value,
+#edit-field-award-organizer-und-0-value,
+#edit-field-award-name-und-0-value {
+    width:98%;
+}
+
+#edit-field-award-level {
+    padding-left: 20px;
+}
+
+

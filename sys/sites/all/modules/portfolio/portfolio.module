@@ -1,0 +1,2333 @@
+<?php
+/**
+ * @file portfolio.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function portfolio_menu() {
+    // This is the minimum information you can provide for a menu item.
+    $items['portfolio/me'] = array(
+        'title' => t('แฟ้มสะสมผลงานออนไลน์'),
+        'page callback' => 'portfolio_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['portfolio/me/print'] = array(
+        'title' => t('พิมพ์แบบประเมิน'),
+        'page callback' => 'portfolio_print_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['portfolio/me/routine'] = array(
+        'title' => t('ภาระงานอื่นที่ได้รับมอบหมาย'),
+        'page callback' => 'portfolio_routine_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['portfolio/me/addons-work'] = array(
+        'title' => t('ภาระงานหลักที่ปฏิบัติ'),
+        'page callback' => 'portfolio_addons_work_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['portfolio/me/etc-work'] = array(
+        'title' => t('ภาระงานอื่นๆ (นอกเหนือจากข้อ 2.1 - 2.4)'),
+        'page callback' => 'portfolio_etc_work_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['portfolio/me/work-problem'] = array(
+        'title' => t('สิ่งที่เป็นอุปสรรคต่อการทำงาน'),
+        'page callback' => 'portfolio_problem_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['portfolio/me/edoc-add'] = array(
+        'title' => t('เพิ่มเอกสารคำสั่ง'),
+        'page callback' => 'portfolio_add_edoc_page',
+        'access callback' => 'portfolio_page_access',
+        'file' => 'add_edoc_page.inc',
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['portfolio/me/edoc-select/%node'] = array(
+        'title' => t('เพิ่มเอกสารคำสั่ง'),
+        'page callback' => 'portfolio_edoc_add',
+        'access callback' => 'portfolio_page_access',
+        'page arguments' => array(3),
+        'file' => 'add_edoc_page.inc',
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['portfolio/me/edoc-delete/%node'] = array(
+        'title' => t('ลบเอกสารคำสั่ง'),
+        'page callback' => 'portfolio_edoc_delete',
+        'access callback' => 'portfolio_page_access',
+        'page arguments' => array(3),
+        'file' => 'add_edoc_page.inc',
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['portfolio/me/assessment-form'] = array(
+        'title' => t('แบบประเมินผลการปฏิบัติงาน'),
+        'page callback' => 'portfolio_assessment_page',
+        'access callback' => 'portfolio_page_access',
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['manager/%node/portfolio'] = array(
+        'title' => t('แสดงแฟ้มสะสมผลงานออนไลน์'),
+        'page callback' => 'portfolio_person',
+        'access arguments' => array('create personal_profile content'),
+        'page arguments' => array(1),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function portfolio_page_access() {
+    global $user;
+    $access = false;
+    if ($user->uid != 0 && $user->uid != 1 && $user->uid != 2) {
+        $access = true;
+    }
+    return $access;
+}
+
+/**/
+function portfolio_person($profile) {
+    drupal_add_css(drupal_get_path('theme', 'omega').'/custom/hide-sidebar.css');
+    $output = '';
+    $output .= portfolio_page($profile->nid);
+    return $output;
+}
+
+/**
+ * Portfolio Display Assessment Page
+ */
+function portfolio_assessment_page($profile_nid=NULL) {
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    $output = '';
+    $output .= '
+        <div>
+            '.views_embed_view('assessment_form_page', 'default', $profile_nid).'
+        </div';
+    return $output;
+}
+
+function portfolio_etc_work_new() {
+    $profile_nid = portfolio_get_profile_nid();
+    $output = '';
+    $output .= '
+        <div class="empty-result">
+            '.l('Create new Etc Work', 'node/add/etc-work-assessment/'.$profile_nid, array("query"=>array("destination"=>"portfolio/me/etc-work"))).'
+        </div>
+    ';
+    return $output;
+}
+
+function portfolio_problem_new() {
+    $profile_nid = portfolio_get_profile_nid();
+    $output = '';
+    $output .= '
+        <div class="empty-result">
+            '.l('Create new Assessment Form', 'node/add/work-problem/'.$profile_nid, array("query"=>array("destination"=>"portfolio/me/work-problem"))).'
+        </div>
+    ';
+    return $output;
+}
+
+function portfolio_assessment_new() {
+    $profile_nid = portfolio_get_profile_nid();
+    $output = '';
+    $output .= '
+        <div class="empty-result">
+            '.l('Create new Assessment Form', 'node/add/self-assessment/'.$profile_nid, array("query"=>array("destination"=>"portfolio/me/assessment-form"))).'
+        </div>
+    ';
+    return $output;
+}
+
+function portfolio_addons_assessment_new() {
+    $profile_nid = portfolio_get_profile_nid();
+    $output = '';
+    $output .= '
+        <div class="empty-result">
+            '.l('Create new Addons Work Assessment', 'node/add/addons-work-assessment/'.$profile_nid, array("query"=>array("destination"=>"portfolio/me/addons-work"))).'
+        </div>
+    ';
+    return $output;
+}
+
+function portfolio_routine_assessment_new() {
+    $profile_nid = portfolio_get_profile_nid();
+    $output = '';
+    $output .= '
+        <div class="empty-result">
+            '.l('Create new Routine Assessment', 'node/add/routine-assessment/'.$profile_nid, array("query"=>array("destination"=>"portfolio/me/routine"))).'
+        </div>
+    ';
+    return $output;
+}
+
+/**
+ * Portfolio Display Page
+ */
+function portfolio_page($profile_nid=NULL) {
+    $output = '';
+
+    //Add Smooth Scroll JS
+    drupal_add_js(drupal_get_path('module', 'portfolio')."/scroll.js");
+
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    /**
+     * Output Education Profile
+     */
+    $output_ed_profile = '';
+    if (portfolio_check_content('educational_background', $profile_nid)) {
+        $output_ed_profile .= '
+            <div class="portfolio-me-sec-2">
+                <div class="sub-title">ประวัติการศึกษา</div>
+                '.views_embed_view('degree_ref_content_list', 'default', $profile_nid).'
+            </div>';
+    }
+
+    /**
+     * Output Working Profile
+     */
+    $output_working_profile = '';
+    if (portfolio_check_content('personnal_working_profile', $profile_nid)) {
+        $output_working_profile = '
+            <div id="working-profile"></div>
+            <div class="working-profile">
+                <div class="sub-title">ประวัติการทำงานภายนอกสถาบัน</div>
+                '.views_embed_view('working_profile_content', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'personnal-working-profile').'
+            </div>';
+    }
+
+    /**
+     * Output Insignia
+     */
+    $output_insignia = "";
+    if (portfolio_check_content('insignia', $profile_nid)) {
+        $output_insignia = '
+            <div class="insignia-profile">
+                <div class="sub-title">ประวัติการได้รับเครื่องราชอิสริยาภรณ์</div>
+                '.views_embed_view('insignia_profile_list', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Academic Position Profile
+     */
+    $output_academic_position = '';
+    if (portfolio_check_content('academic_position_profile', $profile_nid)) {
+        $output_academic_position = '
+            <div class="academic-position-profile">
+                <div class="sub-title">การดำรงตำแหน่งทางวิชาการ / สูงขึ้น</div>
+                '.views_embed_view('academic_position_profile', 'default', $profile_nid).'
+            </div>
+        ';
+    }else {
+        $output_academic_position = portfolio_academic_postion_empty();
+    }
+
+    /**
+     * Output Inner SSKRU Working Profile
+     */
+    $output_academic_position_inner = '';
+    if (portfolio_check_content('personnal_working_profile_inner', $profile_nid)) {
+        $output_academic_position_inner = '
+            <div id="working-inner-profile"></div>
+            <div class="academic-position-profile">
+                <div class="sub-title">ประวัติการทำงานภายในสถาบัน</div>
+                '.views_embed_view('clone_of_working_profile_inner_content', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'personnal-working-profile-inner').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Seminar Profile Inner SSKRU
+     */
+    $output_seminar_inner = '';
+    if (portfolio_check_content('seminar_profile_inner', $profile_nid)) {
+        $output_seminar_inner = '
+            <div id="seminar-inner-profile"></div>
+            <div class="seminar-inner-profile">
+                <div class="sub-title">ประชุม/อบรม/สัมนาภายในสถาบัน</div>
+                '.views_embed_view('seminar_profile_inner_content', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'seminar-profile-inner').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Seminar Profile Outter SSKRU
+     */
+    $output_seminar_outter = '';
+    if (portfolio_check_content('seminar_profile_outter', $profile_nid)) {
+        $output_seminar_outter = '
+            <div id="seminar-outter-profile">
+            <div class="seminar-inner-profile">
+                <div class="sub-title">ประชุม/อบรม/สัมนาภายนอกสถาบัน</div>
+                '.views_embed_view('seminar_profile_outter_content', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'seminar-profile-outter').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Award Profile
+     */
+    $output_award_profile = '';
+    if (portfolio_check_content('award_profile', $profile_nid)) {
+        $output_award_profile = '
+            <div id="award-profile">
+            <div class="award-profile">
+                <div class="sub-title">ประวัติการได้รับรางวัล</div>
+                '.views_embed_view('award_profile_content', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'award-profile').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Analysis Self
+     */
+    $output_analysis_self = '';
+    if (portfolio_check_content('analysis_self', $profile_nid)) {
+        $output_analysis_self = '
+            <div id="analysis-self"></div>
+            <div class="analysis-self-me">
+                <div class="sub-title">ประเมินตนเอง</div>
+                '.views_embed_view('analysis_self_dispaly', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Analysis Self to Work
+     */
+    $output_analysis_self_to_work = '';
+    if (portfolio_check_content('analysis_self_to_work', $profile_nid)) {
+        $output_analysis_self_to_work = '
+            <div id="analysis-self-to-work"></div>
+            <div class="analysis-self-me">
+                <div class="sub-title">การวิเคราะห์ความเป็นไปได้ในประโยชน์ของงานต่อตนเอง</div>
+                '.views_embed_view('analysis_self_to_work_dispaly', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Analysis Self to University
+     */
+    $output_analysis_self_to_university = '';
+    if (portfolio_check_content('analysis_self_to_university', $profile_nid)) {
+        $output_analysis_self_to_university = '
+            <div id="analysis-self-to-university"></div>
+            <div class="analysis-self-me">
+                <div class="sub-title">การวิเคราะห์ความเป็นไปได้ในประโยชน์ของงานต่อมหาวิทยาลัย</div>
+                '.views_embed_view('analysis_self_to_university_dispaly', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Requirement to Education
+     */
+    $output_requirement_to_education = '';
+    if (portfolio_check_content('requirement_in_education', $profile_nid)) {
+        $output_requirement_to_education = '
+            <div id="requirement-to-education"></div>
+            <div class="requirement-to-education">
+                <div class="sub-title">การวิเคราะห์ความต้องการการพัฒนาด้านวิชาการ</div>
+                '.views_embed_view('requirement_in_ed_page', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Requirement to Work
+     */
+    $output_requirement_to_work = '';
+    if (portfolio_check_content('requirement_in_work', $profile_nid)) {
+        $output_requirement_to_work = '
+            <div id="requirement-to-work"></div>
+            <div class="requirement-to-work">
+                <div class="sub-title">การวิเคราะห์ความต้องการการพัฒนาด้านหน้าที่การงาน</div>
+                '.views_embed_view('requirement_in_work_page', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Estimate
+     */
+    $output_estimate = '';
+    if (portfolio_check_content('portfolio_evaluation', $profile_nid)) {
+        $output_estimate = '
+            <div id="portfolio-evaluation"></div>
+            <div class="portfolio-evaluation">
+                <div class="sub-title">การประเมินผล</div>
+                '.views_embed_view('estimate_content', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Teaching
+     */
+    $output_profile_teaching = '';
+    if (portfolio_check_content('profile_teaching', $profile_nid)) {
+        $output_profile_teaching = '
+            <div id="portfolio-teaching"></div>
+            <div class="portfolio-teaching">
+                <div class="sub-title">งานสอน</div>
+                '.views_embed_view('profile_teaching_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-teaching').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Recipe
+     */
+    $output_recipe = '';
+    if (portfolio_check_content('profile_recipe', $profile_nid)) {
+        $output_recipe = '
+            <div id="portfolio-recipe"></div>
+            <div class="portfolio-recipe">
+                <div class="sub-title">การผลิตเอกสารประกอบการสอน / ตำรา / สื่อการสอน</div>
+                '.views_embed_view('profile_recipe_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-recipe').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Executive Profile
+     */
+    $output_exc_profile = '';
+    if (portfolio_check_content('executive_profile', $profile_nid)) {
+        $output_exc_profile = '
+            <div id="profile-executive"></div>
+            <div class="profile-research">
+                <div class="sub-title">งานด้านการบริหาร</div>
+                '.views_embed_view('executive_profile_content', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'executive-profile').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Research
+     */
+    $output_research = '';
+    if (portfolio_check_content('research', $profile_nid)) {
+        $output_research = '
+            <div id="profile-research"></div>
+            <div class="profile-research">
+                <div class="sub-title">งานวิจัย/งานสร้างสรรค์</div>
+                '.views_embed_view('profile_research_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'research').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Publication
+     */
+    $output_publication = '';
+    if (portfolio_check_content('publication', $profile_nid)) {
+        $output_publication = '
+            <div id="profile-publication"></div>
+            <div class="profile-publication">
+                <div class="sub-title">เอกสารตีพิมพ์</div>
+                '.views_embed_view('profile_publication_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'publication').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Publication
+     */
+    $output_conference = '';
+    if (portfolio_check_content('conference', $profile_nid)) {
+        $output_conference = '
+            <div id="profile-conference"></div>
+            <div class="profile-conference">
+                <div class="sub-title">การนำเสนอในงานประชุมวิชาการ</div>
+                '.views_embed_view('profile_conference_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'conference').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Publication
+     */
+    $output_article = '';
+    if (portfolio_check_content('profile_article', $profile_nid)) {
+        $output_article = '
+            <div id="profile-article"></div>
+            <div class="profile-article">
+                <div class="sub-title">การเผยแพร่งานเขียนเชิงวิชาการ</div>
+                '.views_embed_view('profile_article_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-article').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Student Union
+     */
+    $output_student = '';
+    if (portfolio_check_content('profile_student_union', $profile_nid)) {
+        $output_student = '
+            <div id="profile-student"></div>
+            <div class="profile-student">
+                <div class="sub-title">งานกิจกรรมนักศึกษา (ที่ปรึกษาชมรม / การร่วมกิจกรรมนักศึกษา)</div>
+                '.views_embed_view('student_union_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-student-union').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Culture
+     */
+    $output_culture = '';
+    if (portfolio_check_content('profile_culture', $profile_nid)) {
+        $output_culture = '
+            <div id="profile-culture"></div>
+            <div class="profile-culture">
+                <div class="sub-title">การทำนุบำรุงศิลปะและวัฒนธรรม</div>
+                '.views_embed_view('profile_culture_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-culture').'
+            </div>
+        ';
+    }
+
+     /**
+     * Output Lecture Inner
+     */
+    $output_lecturer = '';
+    if (portfolio_check_content('profile_lecturer_inner', $profile_nid)) {
+        $output_lecturer = '
+            <div id="profile-lecturer"></div>
+            <div class="profile-lecturer">
+                <div class="sub-title">การเป็นวิทยากรภายในสถาบัน</div>
+                '.views_embed_view('profile_lecturer_inner', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-lecturer-inner').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Lecture Outter
+     */
+    $output_lecturer_outter = '';
+    if (portfolio_check_content('profile_lecturer_outter', $profile_nid)) {
+        $output_lecturer_outter = '
+            <div id="profile-lecturer-outter"></div>
+            <div class="profile-lecturer">
+                <div class="sub-title">การเป็นวิทยากรภายนอกสถาบัน</div>
+                '.views_embed_view('profile_lecturer_outter', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-lecturer-outter').'
+            </div>
+        ';
+    }
+
+
+    /**
+     * Output ED Services
+     */
+    $output_ed_services = '';
+    if (portfolio_check_content('profile_ed_services', $profile_nid)) {
+        $output_ed_services = '
+            <div id="profile-serivces"></div>
+            <div class="profile-serivces">
+                <div class="sub-title">การมีส่วนร่วมในการบริการวิชาการแก่สังคม</div>
+                '.views_embed_view('profile_ed_services_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-ed-services').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Thesis Consult
+     */
+    $output_thesis = '';
+    if (portfolio_check_content('profile_thesis_consult', $profile_nid)) {
+        $output_thesis = '
+            <div id="profile-thesis"></div>
+            <div class="profile-thesis">
+                <div class="sub-title">การเป็นที่ปรึกษาวิทยานิพนธ์</div>
+                '.views_embed_view('profile_thesis_consult', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-thesis-consult').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Education Committee
+     */
+    $output_education_committee = '';
+    if (portfolio_check_content('education_committee', $profile_nid)) {
+        $output_education_committee = '
+            <div id="education-committee"></div>
+            <div class="profile-profession-committee">
+                <div class="sub-title">การเป็นกรรมการวิชาการภายนอกสถาบัน</div>
+                '.views_embed_view('education_committee_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'education-committee').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profession Committee
+     */
+    $output_profession_committee = '';
+    if (portfolio_check_content('profile_profession_committee', $profile_nid)) {
+        $output_profession_committee = '
+            <div id="profile-profession-committee"></div>
+            <div class="profile-profession-committee">
+                <div class="sub-title">การเป็นกรรมการวิชาชีพภายนอกสถาบัน</div>
+                '.views_embed_view('profession_committee_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-profession-committee').'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Profile Edocument
+     */
+    $output_profile_edoc = '';
+    if (portfolio_check_content('profile_edocument', $profile_nid)) {
+        $output_profile_edoc = '
+            <div id="profile-edocument"></div>
+            <div class="profile-edoc-list">
+                <div class="sub-title">ภาระงานอื่นๆ</div>
+                '.views_embed_view('profile_edocument_display', 'default', $profile_nid).'
+                '.portfolio_menu_footer($profile_nid, 'profile-edocument').'
+            </div>
+        ';
+    }
+
+    /**
+     * Display Template
+     */
+    $output .= '
+        <div id="top"></div>
+        <div class="portfolio-me-sec-1">
+            <div class="grid-8">
+                '.drupal_render(node_view(node_load($profile_nid), $view_mode='teaser')).'
+                '.profile_manager_display_personal_data($profile_nid, "not-print").'
+                '.$output_ed_profile.'
+                '.$output_academic_position.'
+            </div>
+            <div class="grid-4">
+                '.portfolio_menu_list($profile_nid).'
+            </div>
+            <div class="clearfix"></div>
+            '.$output_insignia.'
+            '.$output_working_profile.'
+            '.$output_academic_position_inner.'
+            '.$output_seminar_inner.'
+            '.$output_seminar_outter.'
+            '.$output_award_profile.'
+
+            '.$output_profile_teaching.'
+            '.$output_recipe.'
+            '.$output_exc_profile.'
+            '.$output_research.'
+            '.$output_publication.'
+            '.$output_conference.'
+            '.$output_article.'
+            '.$output_student.'
+            '.$output_culture.'
+            '.$output_ed_services.'
+            '.$output_lecturer.'
+            '.$output_lecturer_outter.'
+            '.$output_thesis.'
+            '.$output_education_committee.'
+            '.$output_profession_committee.'
+            '.$output_profile_edoc.'
+
+        <!-- #Comment By Phisan Sookkhee On 08-07-2013
+            '.$output_analysis_self.'
+            '.$output_analysis_self_to_work.'
+            '.$output_analysis_self_to_university.'
+
+            '.$output_requirement_to_education.'
+            '.$output_requirement_to_work.'
+            '.$output_estimate.'
+        -->
+        </div>';
+
+    /*Debug set page title agin*/
+    drupal_set_title(t('แฟ้มสะสมผลงานออนไลน์'));
+
+    return $output;
+}
+
+function portfolio_etc_work_page($profile_nid=NULL) {
+    $output = '';
+
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    $output .= '
+        <div>
+            '.views_embed_view("etc_work_page", "default", $profile_nid).'
+        </div>';
+
+    return $output;
+}
+
+function portfolio_addons_work_page($profile_nid=NULL) {
+    $output = '';
+
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    $output .= '
+        <div>
+            '.views_embed_view("addons_work_assessment", "default", $profile_nid).'
+        </div>';
+
+    return $output;
+}
+
+function portfolio_problem_page($profile_nid=NULL) {
+    $output = '';
+
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    $output .= '
+        <div>
+            '.views_embed_view("work_problem_assessment", "default", $profile_nid).'
+        </div>';
+
+    return $output;
+}
+
+function portfolio_routine_page($profile_nid=NULL) {
+    $output = '';
+
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    $output .= '
+        <div>
+            '.views_embed_view("routine_assessment_page", "default", $profile_nid).'
+        </div>';
+
+    return $output;
+}
+
+/**
+ * Page for Print
+ */
+function portfolio_print_page($profile_nid=NULL) {
+    drupal_add_css(drupal_get_path('theme', 'omega').'/custom/hide-sidebar.css');
+    drupal_add_css(drupal_get_path('module', 'portfolio').'/print-page.css');
+
+    $output = "";
+    // get profile nid
+    if ($profile_nid == NULL) {
+        $profile_nid = portfolio_get_profile_nid();
+    }
+
+    /*Load Profile Object*/
+    $profile = node_load($profile_nid);
+
+    /**
+     * Output Profile Teaching
+     */
+    $output_profile_teaching = '';
+    if (portfolio_check_content('profile_teaching', $profile_nid)) {
+        $output_profile_teaching = '
+            <div class="portfolio-teaching">
+                <div class="sub-title">ตอนที่ 1 บันทึกรายละเอียดรายบุคคล</div>
+
+                <div class="sub-title">1.1 ภาระงานสอน (ภาคปกติ)</div>
+                '.views_embed_view('profile_teaching_display', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Thesis Consult
+     */
+    $output_thesis = '';
+    if (portfolio_check_content('profile_thesis_consult', $profile_nid)) {
+        $output_thesis = '
+            <div class="profile-thesis">
+                <div class="sub-title">ก. ภาระงานอาจารย์ที่ปรึกษางานวิจัย</div>
+                '.views_embed_view('profile_thesis_consult', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /**
+     * Output Education Profile
+     */
+    $output_ed_profile = '';
+    if (portfolio_check_content('educational_background', $profile_nid)) {
+        $output_ed_profile .= '
+            <div class="portfolio-me-sec-2">
+                <br />
+                <div class="sub-title-2">1.2 ประวัติการศึกษา</div>
+                '.views_embed_view('degree_ref_content_list_print', 'default', $profile_nid).'
+            </div>';
+    }
+
+    /**
+     * Output Working Profile
+     */
+    $output_working_profile = '';
+    if (portfolio_check_content('personnal_working_profile', $profile_nid)) {
+        $output_working_profile = '
+            <div class="working-profile">
+                <br />
+                <div class="sub-title-2">1.3 ประสบการณ์การทำงาน</div>
+                '.views_embed_view('working_profile_content_print', 'default', $profile_nid).'
+            </div>';
+    }
+
+    /**
+     * Output Inner SSKRU Working Profile
+     */
+    $output_academic_position_inner = '';
+    if (portfolio_check_content('personnal_working_profile_inner', $profile_nid)) {
+        $output_academic_position_inner = '
+            <div class="academic-position-profile">
+                <br />
+                <div class="sub-title-2">1.4 ประสบการณ์การทำงานภายในสถาบัน</div>
+                '.views_embed_view('working_profile_inner_print', 'default', $profile_nid).'
+            </div>
+        ';
+    }
+
+    /*set sskru-logo path*/
+    $sskru_logo_path  = "http://".$_SERVER["SERVER_NAME"].base_path();
+    $sskru_logo_path .= drupal_get_path('module', 'portfolio')."/imgs/sskru-logo.png";
+
+    /* Check this person is teacher of persons */
+    $is_teacher = portfolio_check_is_thacher($profile_nid);
+
+    if (!$is_teacher) {
+        $officer_type = "พนักงานมหาวิทยาลัย กลุ่มพนักงานปฏิบัติการ";
+        $officer_type_shot = "สายปฏิบัติการ";
+    }else {
+        $officer_type = "พนักงานมหาวิทยาลัย กลุ่มพนักงานวิชาการ";
+        $officer_type_shot = "สายวิชาการ";
+    }
+
+    $teacher_profile = '';
+    if ($is_teacher) {
+        $teacher_profile = '
+            <div class="sub-title-2">1.5 ภาระงานอาจารย์ที่ปรึกษางานวิจัย โครงการ ปัญญหาพิเศษหรืองานอื่นที่เกี่ยวข้อง</div>
+            '.$output_thesis.'
+        ';
+    }
+
+    /**
+     * Display Template
+     */
+    $output .= '
+        <div class="print-button">
+            <input type="button" value="'.t("กดเพื่อพิมพ์แบบประเมินผลการปฏิบัติงาน").'" onclick="window.print();">
+        </div>
+        <div class="page-print-title">
+            <div>'.t("แบบประเมินผลการปฏิบัติงาน").'</div>
+            <div>'.t($officer_type_shot).'</div>
+        </div>
+        <div class="page-print-name">
+            <div>
+                <span>ชื่อ - สกุลผู้รับการประเมิน</span>
+                <span class="value">'.$profile->title.'</span>
+                <span>โปรแกรมวิชา / หน่วยงาน</span>
+                <span class="value">'
+                    .taxonomy_term_load($profile->field_faculty['und'][0]['tid'])->name.
+                '</span>
+            </div>
+            <div>
+                <span>ประเภทพนักงาน</span>
+                <span class="value">'
+                    .taxonomy_term_load($profile->field_officer_type['und'][0]['tid'])->name.
+                '</span>
+            </div>
+        </div>
+        <div class="page-1">
+            '.views_embed_view('assessment_form_page', 'default', $profile_nid).'
+            <div class="signature">
+                <div>(ลงชื่อ).................................................................................ผู้ประเมิน</div>
+                <div>(.................................................................................)</div>
+                <div>วันที่..................เดือน..................พ.ศ..................</div>
+            </div>
+            '.portfolio_annouce_1().'
+        </div>
+
+        <div class="page-2">
+            <br /><br />
+            <div class="page-2-cover">
+                <div class="logo">
+                    <img src="'.$sskru_logo_path.'" />
+                </div>
+                <div class="label">แฟ้มสะสมผลงาน (Portfolio)</div>
+                <div class="label">"'.$officer_type.'"</div>
+                <div class="label">มหาวิทยาราชภัฏศรีสะเกษ</div>
+                <div class="separater"></div>
+                <div class="name">
+                    ชื่อ...................................................................................
+                    นามสกุล...................................................................................
+                </div>
+                <div class="name">
+                    สังกัด.................................................................................................................................................................................
+                </div>
+                <div class="notice">
+                    <div>
+                        โปรดแนบสำเนาเอกสารที่เป็นผลงานในแต่ละลักษณะงานของการประเมิน
+                    </div>
+                    <div>
+                        แนบมาพร้อมแฟ้มสะสมผลงานฉบับนี้
+                    </div>
+                </div>
+            </div>
+            <br /><br />
+            <br /><br />
+            <br /><br />
+            <br /><br />
+            <br /><br />
+            <br /><br />
+            <br /><br />
+            <br /><br />
+            <br /><br />
+        </div>
+
+        <div class="portfolio-me-sec-1">
+            <br /><br />
+            <div class="sub-title">1. ข้อมูลส่วนตัว</div>
+            '.profile_manager_display_personal_data($profile_nid, "print").'
+            '.$output_ed_profile.'
+            '.$output_working_profile.'
+            '.$output_academic_position_inner.'
+            '.$output_profile_teaching.'
+            <br />
+            '.$teacher_profile.'
+        </div>
+
+        <div class="page-3">
+            <br /><br />
+            <div class="sub-title">2. ภาระงานในความรับผิดชอบ</div>
+            <div class="sub-title-2">2.1 ภาระงานหลักที่ปฏิบัติ</div>
+            '.views_embed_view('routine_work_print', 'default', $profile_nid).'
+
+            <div class="sub-title-2">2.2 ภาระงานอื่นที่ได้รับมอบหมายเป็นพิเศษ/เพิ่มเติม</div>
+            '.views_embed_view('addons_work_print', 'default', $profile_nid).'
+        </div>
+
+        <div class="page-4">
+            <br />
+            <div class="sub-title-2">2.3 งานด้านการบริหาร (เฉพาะหัวหน้างาน)</div>
+            <div class="executive-profile">
+                '.views_embed_view('executive_profile_print', 'default', $profile_nid).'
+            </div>
+            <br />
+            <div class="sub-title-2">2.4 การเพิ่มพูนความรู้และพัฒนาตนเอง (การประชุม / อบรม / สัมนา)</div>
+            <div class="sub-title-2">2.4.1 จัดโดยหน่วยงานภายนอก</div>
+            <div class="seminar">
+                '.views_embed_view('seminar_profile_outter_print', 'default', $profile_nid).'
+            </div>
+
+            <br />
+            <div class="sub-title-2">2.4.2 จัดโดยหน่วยงานของมหาวิทยาลัย</div>
+            <div class="seminar">
+                '.views_embed_view('seminar_profile_inner_print', 'default', $profile_nid).'
+            </div>
+
+            <br />
+            <div class="sub-title-2">2.5 ภาระงานอื่นๆ (นอกเหนือจาก 2.1 - 2.4)</div>
+            <div class="seminar">
+                '.views_embed_view('etc_work_print', 'default', $profile_nid).'
+            </div>
+        </div>
+
+        <div class="page-5">
+            <br />
+            <div class="sub-title">3. ข้อเสนอแนะและวิธีการแก้ไข</div>
+            '.views_embed_view('work_problem_assessment', 'default', $profile_nid).'
+        </div>
+
+        <div class="print-footer">
+            <br />
+            <div class="line-1">
+                ขอรับรองว่าข้อความข้างต้นเป็นความจริงทุกประการ
+            </div>
+            <div class="line-2">
+                <div>ลงชื่อ.............................................................ข้าราชการ / พนักงานมหาวิทยาลัย</div>
+                <div>(.......................................................................)</div>
+                <div>ว-ด-ป................................................................</div>
+            </div>
+        </div>
+
+        <div class="print-footer comment">
+            <br />
+            <div class="sub-title">
+                ความเห็นของคณบดี / หัวหน้างาน
+            </div>
+            <div>...............................................................................................................................................................................................................................</div>
+            <div>...............................................................................................................................................................................................................................</div>
+            <div>...............................................................................................................................................................................................................................</div>
+            <div>...............................................................................................................................................................................................................................</div>
+            <div>...............................................................................................................................................................................................................................</div>
+            <div>...............................................................................................................................................................................................................................</div>
+            <br /><br />
+            <div class="line-2">
+                <div>ลงชื่อ.............................................................ข้าราชการ / พนักงานมหาวิทยาลัย</div>
+                <div>(.......................................................................)</div>
+                <div>ว-ด-ป................................................................</div>
+            </div>
+        </div>';
+
+    return $output;
+}
+
+function portfolio_annouce_1() {
+    $output = '';
+    $output .= '
+        <div class="annouce">
+            <div><strong><u>คำนิยาม</u></strong></div>
+            <div><strong>ปริมาณ</strong>  หมายถึง  ข้อมูลที่แสดงถึงจำนวนงานที่รับผิดชอบตามภาระงานที่ปฏิบัติ</div>
+
+            <div><strong>คุณภาพ</strong> หมายถึง ผลงานมีความถูกต้องครบถ้วนสมบูรณ์เป็นที่ยอมรับ มีความสอดคล้องกับภาระหน้าที่ของตนเอง </div>
+
+            <div><strong>ประสิทธิภาพ</strong>  หมายถึง   กระบวนการดำเนินงานที่ประหยัดต้นทุน ประหยัดทรัพยากร และประหยัดเวลา เสร็จทันตามกำหนดเวลา</div>
+
+            <div><strong>ประสิทธิผล</strong>  หมายถึง ผลสำเร็จของงานที่เป็นไปตามที่กำหนด</div>
+
+            <div><strong>การมุ่งผลสัมฤทธิ์ (Achievement Motivation-ACH)</strong> หมายถึง ความมุ่งมั่นจะปฏิบัติหน้าที่ราชการให้ดีหรือให้เกินมาตรฐานที่มีอยู่ โดยมาตรฐานนี้อาจจะเป็นผลการปฏิบัติงานที่ผ่านมาของตนเอง หรือเกณฑ์วัดผลสัมฤทธิ์ที่ส่วนราชการกำหนดขึ้นอีกทั้งยังหมายรวมถึงการสร้างสรรค์พัฒนาผลงานหรือกระบวนการปฏิบัติงานตามเป้าหมายที่ยากและท้าทายชนิดที่อาจไม่เคยมีผู้ใดสามารถกระทำได้มาก่อน</div>
+
+            <div><strong>การบริการที่ดี (Service Mind)</strong> หมายถึง ความตั้งใจและความพยายามของข้าราชการในการให้บริการต่อประชาชน ข้าราชการ หรือหน่วยงานอื่น ๆ ที่เกี่ยวข้อง</div>
+
+            <div><strong>การสั่งสมความเชี่ยวชาญในงานอาชีพ (Expertise)</strong>  หมายถึง  ความสนใจใฝ่รู้ สั่งสม ความรู้ความสามารถของตนในการปฏิบัติหน้าที่ราชการ ด้วยการศึกษา ค้นคว้า และพัฒนาตนเองอย่างต่อเนื่อง จนสามารถประยุกต์ใช้ความรู้เชิงวิชาการและเทคโนโลยีต่าง ๆ เข้ากับการปฏิบัติราชการให้เกิดผลสัมฤทธิ์ข้อง</div>
+
+            <div><strong>การยึดมั่นในความถูกต้องชอบธรรม และจริยธรรม (Integrity)</strong> หมายถึง การดำรงตนและประพฤติปฏิบัติอย่างถูกต้องเหมาะสมทั้งตามกฎหมาย คุณธรรม จรรยาบรรณแห่งวิชาชีพ และจรรยาข้าราชการเพื่อรักษาศักดิ์ศรีแห่งความเป็นข้าราชการ</div>
+
+            <div><strong>การทำงานเป็นทีม</strong> หมายถึง ความตั้งใจที่จะทำงานร่วมกับผู้อื่น เป็นส่วนหนึ่งของทีม หน่วยงาน หรือส่วนราชการ โดยผู้ปฏิบัติมีฐานะเป็นสมาชิก ไม่จำเป็นต้องมีฐานะหัวหน้าทีม รวมทั้งความสามารถในการสร้างและรักษาสัมพันธภาพกับสมาชิกในทีม</div>
+        </div>
+    ';
+    return $output;
+}
+
+function portfolio_thesis_date_total_month($entity_id) {
+    $result = db_select('field_data_field_thesis_date', 's')
+                ->fields('s', array('field_thesis_date_value', 'field_thesis_date_value2'))
+                ->condition('s.entity_id', $entity_id, '=')
+                ->execute();
+    $data = $result->fetchObject();
+
+    $month = thai_time_get_interval($data->field_thesis_date_value, $data->field_thesis_date_value2);
+
+    return $month;
+}
+
+function portfolio_committee_date($entity_id) {
+    $result = db_select('field_data_field_committee_interval', 's')
+                ->fields('s', array('field_committee_interval_value', 'field_committee_interval_value2'))
+                ->condition('s.entity_id', $entity_id, '=')
+                ->execute();
+    $data = $result->fetchObject();
+
+    $date_str  = thai_time_format($data->field_committee_interval_value, 'd-F-Y', 1)." - ";
+    $date_str .= thai_time_format($data->field_committee_interval_value2, 'd-F-Y', 1);
+
+    return $date_str;
+}
+
+function portfolio_thesis_date($entity_id) {
+    $result = db_select('field_data_field_thesis_date', 's')
+                ->fields('s', array('field_thesis_date_value', 'field_thesis_date_value2'))
+                ->condition('s.entity_id', $entity_id, '=')
+                ->execute();
+    $data = $result->fetchObject();
+
+    $date_str  = thai_time_format($data->field_thesis_date_value, 'd-F-Y', 1)." - ";
+    $date_str .= thai_time_format($data->field_thesis_date_value2, 'd-F-Y', 1);
+
+    return $date_str;
+}
+
+function portfolio_thesis_student($entity_id) {
+    $result = db_select('field_data_field_thesis_student_name', 's')
+                ->fields('s', array('field_thesis_student_name_value'))
+                ->condition('s.entity_id', $entity_id, '=')
+                ->execute();
+    $data = $result->fetchColumn();
+    $values = unserialize($data);
+    $str = '';
+
+    $max_col = 4;
+    $current_row = 0;
+    $current_col = 0;
+
+    $items = array();
+
+    foreach ($values as $key => $value) {
+        if (is_array($value)) {
+            break;
+        }
+
+        $current_col++;
+
+        if ($current_row > 0) {
+            $str .= $value.' ';
+        }
+
+        if ($current_col >=  $max_col) {
+            $current_row++;
+            $current_col = 0;
+            if ($str != "") {
+                $items[] = $str;
+            }
+            $str = '';
+        }
+
+    }
+
+    return '<div class="student-list">
+                '.theme('item_list', array('items'=>$items)).'
+            </div>';
+}
+
+function portfolio_menu_footer($profile_nid, $type=NULL, $edit_nid=NULL) {
+    global $user;
+
+    $check_profile_nid = profile_manager_get_profile_nid($user->uid);
+
+    if ($check_profile_nid == $profile_nid) {
+        $option = array('query'=>array('destination'=>"portfolio/me"), 'fragment'=>$type);
+
+        $menu[] = '<a href="#" class="top-page">'.t("กลับด้านบน").'</a>';
+
+        if ($edit_nid != NULL) {
+            $menu[] = l(t("แก้ไขข้อมูล"), "node/".$edit_nid."/edit", $option);
+        }
+
+        if ($type == 'profile-edocument') {
+            $menu[] = l(t("เพิ่มข้อมูล"), "portfolio/me/edoc-add");
+        }
+        else {
+            $menu[] = l(t("เพิ่มข้อมูล"), "node/add/".$type."/".$profile_nid, $option);
+        }
+
+        $output = '
+            <div class="footer-table-menu clearfix">
+                '.theme('item_list', array('items'=>$menu)).'
+            </div>
+        ';
+
+        return $output;
+    }
+}
+
+function portfolio_academic_postion_empty() {
+    $output = '';
+
+    $header = array(
+            array('class'=>'', 'data'=>'ตำแหน่งทางวิชาการ '),
+            array('class'=>'', 'data'=>'หมายเลขคำสั่ง'),
+            array('class'=>'', 'data'=>'วันที่ได้รับแต่งตั้ง'),
+        );
+
+    $rows[] = array(
+            array('class'=>'views-field-field-academic-position empty', 'data'=>'-'),
+            array('class'=>'views-field-field-edocument-ref empty', 'data'=>'-'),
+            array('class'=>'views-field-php empty', 'data'=>'-'),
+        );
+
+    $output .= '
+        <div class="academic-position-profile">
+            <div class="sub-title">การดำรงตำแหน่งทางวิชาการ</div>
+            '.theme('table', array('header'=>$header, 'rows'=>$rows)).'
+        </div>
+    ';
+
+    return $output;
+}
+
+/**
+ * Check Content is Exist
+ */
+function portfolio_check_content($type, $profile_nid) {
+    $entity_id = null;
+    $result = db_select('field_data_field_profile_ref', 'p')
+                ->fields('p', array('entity_id'))
+                ->condition('p.field_profile_ref_nid', $profile_nid, '=')
+                ->condition('p.bundle', $type, '=')
+                ->range(0, 1)
+                ->execute();
+    $entity_id = $result->fetchColumn();
+
+    if ($entity_id == null) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function portfolio_get_academic_postion_date($nid) {
+    $date = db_select('field_data_field_academic_position_date', 'd')
+                    ->fields('d', array('field_academic_position_date_value'))
+                    ->condition('d.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchColumn();
+
+    return thai_time_format($date, 'd-F-Y', 1);
+}
+
+function portfolio_award_profile_date($nid) {
+    $date_stamp = db_select('field_data_field_award_receive_date', 'w')
+                    ->fields('w', array('field_award_receive_date_value'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchColumn();
+
+    return thai_time_format($date_stamp, 'd-F-Y', 1);
+}
+
+function portfolio_executive_profile_date1($nid) {
+    $date_stamp = db_select('field_data_field_executive_interval', 'w')
+                    ->fields('w', array('field_executive_interval_value'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchColumn();
+
+    return thai_time_format($date_stamp, 'd-F-Y', 1);
+}
+
+function portfolio_executive_profile_date2($nid) {
+    $date_stamp = db_select('field_data_field_executive_interval', 'w')
+                    ->fields('w', array('field_executive_interval_value', 'field_executive_interval_value2'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchObject();
+
+    if ($date_stamp->field_executive_interval_value == $date_stamp->field_executive_interval_value2) {
+        return t("ปัจจุบัน");
+    }
+    else {
+        return thai_time_format($date_stamp->field_executive_interval_value2, 'd-F-Y', 1);
+    }
+}
+
+function portfolio_working_profile_date1($nid) {
+    $date_stamp = db_select('field_data_field_person_working_date', 'w')
+                    ->fields('w', array('field_person_working_date_value'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchColumn();
+
+    return thai_time_format($date_stamp, 'd-F-Y', 1);
+}
+
+function portfolio_working_profile_date2($nid) {
+    $date_stamp = db_select('field_data_field_person_working_date', 'w')
+                    ->fields('w', array('field_person_working_date_value', 'field_person_working_date_value2'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchObject();
+
+    if ($date_stamp->field_person_working_date_value == $date_stamp->field_person_working_date_value2) {
+        return t("ปัจจุบัน");
+    }
+    else {
+        return thai_time_format($date_stamp->field_person_working_date_value2, 'd-F-Y', 1);
+    }
+}
+
+function portfolio_seminar_profile_date1($nid) {
+    $date_stamp = db_select('field_data_field_seminar_date', 'w')
+                    ->fields('w', array('field_seminar_date_value'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchColumn();
+
+    return thai_time_format($date_stamp, 'd-F-Y', 1);
+}
+
+function portfolio_seminar_profile_date2($nid) {
+    $date_stamp = db_select('field_data_field_seminar_date', 'w')
+                    ->fields('w', array('field_seminar_date_value', 'field_seminar_date_value2'))
+                    ->condition('w.entity_id', $nid, '=')
+                    ->execute()
+                    ->fetchObject();
+
+    if ($date_stamp->field_seminar_date_value == $date_stamp->field_seminar_date_value2) {
+        return t("--");
+    }
+    else {
+        return thai_time_format($date_stamp->field_seminar_date_value2, 'd-F-Y', 1);
+    }
+}
+
+/**
+ * Check Profile is Teacher
+ **/
+function portfolio_check_is_thacher($profile_nid) {
+    $check = 0;
+    $check = db_select('field_data_field_work_position', 'p')
+                ->fields('p', array('entity_id'))
+                ->condition('p.entity_id', $profile_nid, '=')
+                ->condition('p.field_work_position_tid', 24, '=')
+                ->execute()
+                ->fetchColumn();
+
+    if ($check == 0) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+function portfolio_menu_list($profile_nid) {
+    $output = '';
+
+    $option = array('query'=>array('destination'=>"portfolio/me"));
+
+    $is_teacher = portfolio_check_is_thacher($profile_nid);
+
+    /*menu 1*/
+    $menu1[] = l(t("ประวัติส่วนตัว"), "node/".$profile_nid."/edit", $option);
+    $menu1[] = l(t("ประวัติการศึกษา"), "education-level/".$profile_nid."/page");
+    $menu1[] = l(t("การดำรงตำแหน่งทางวิชาการ / สูงขึ้น"), "node/add/academic-position-profile/".$profile_nid, $option);
+    $menu1[] = l(t("ประวัติการได้รับเครื่องราชฯ"), "node/add/insignia/".$profile_nid, $option);
+
+    if (!portfolio_check_content('personnal_working_profile', $profile_nid)) {
+        $menu1[] = l(t("ประวัติการทำงาน ภายนอกสถาบัน"), "node/add/personnal-working-profile/".$profile_nid, $option);
+    }
+    else {
+        $menu1[] = '<a href="#" class="working-profile-link">'.t("ประวัติการทำงาน ภายนอกสถาบัน").'</a>';
+    }
+
+    if (!portfolio_check_content('personnal_working_profile_inner', $profile_nid)) {
+        $menu1[] = l(t("ประวัติการทำงาน ภายในสถาบัน"), "node/add/personnal-working-profile-inner/".$profile_nid, $option);
+    }else {
+        $menu1[] = '<a href="#" class="working-profile-inner-link">'.t("ประวัติการทำงาน ภายในสถาบัน").'</a>';
+    }
+
+    $menu1[] = l(t("ประวัติการลาประจำปีงบประมาณ"), "node");
+
+    if (!portfolio_check_content('seminar_profile_inner', $profile_nid)) {
+        $menu1[] = l(t("ประชุม/อบรม/สัมนาภายในสถาบัน"), "node/add/seminar-profile-inner/".$profile_nid, $option);
+    }else {
+        $menu1[] = '<a href="#" class="seminar-inner-profile-link">'.t("ประชุม/อบรม/สัมนาภายในสถาบัน").'</a>';
+    }
+
+    if (!portfolio_check_content('seminar_profile_outter', $profile_nid)) {
+        $menu1[] = l(t("ประชุม/อบรม/สัมนาภายนอกสถาบัน"), "node/add/seminar-profile-outter/".$profile_nid, $option);
+    }else {
+        $menu1[] = '<a href="#" class="seminar-outter-profile-link">'.t("ประชุม/อบรม/สัมนาภายนอกสถาบัน").'</a>';
+    }
+
+    if (!portfolio_check_content('award_profile', $profile_nid)) {
+        $menu1[] = l(t("การได้รับรางวัลระดับชาติหรือนานาชาติ"), "node/add/award-profile/".$profile_nid, $option);
+    }else {
+        $menu1[] = '<a href="#" class="award-profile-link">การได้รับรางวัลระดับชาติหรือนานาชาติ</a>';
+    }
+
+    /* Teacher Only*/
+    if ($is_teacher) {
+        if (!portfolio_check_content('profile_teaching', $profile_nid)) {
+            $menu2[] = l(t("งานสอน"), "node/add/profile-teaching/".$profile_nid, $option);
+        }else {
+            $menu2[] = '<a href="#" class="profile-teaching-link">งานสอน</a>';
+        }
+    }
+
+    /* Teacher Only*/
+    if ($is_teacher) {
+        if (!portfolio_check_content('profile_recipe', $profile_nid)) {
+            $menu2[] = l(t("การผลิตเอกสารประกอบการสอน"), "node/add/profile-recipe/".$profile_nid, $option);
+        }else {
+            $menu2[] = '<a href="#" class="profile-recipe-link">การผลิตเอกสารประกอบการสอน</a>';
+        }
+    }
+
+    if (!portfolio_check_content('executive_profile', $profile_nid)) {
+        $menu2[] = l(t("งานด้านการบริหาร"), "node/add/executive-profile/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-executive-link">งานด้านการบริหาร</a>';
+    }
+
+    if (!portfolio_check_content('research', $profile_nid)) {
+        $menu2[] = l(t("งานวิจัย/งานสร้างสรรค์"), "node/add/research/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-research-link">งานวิจัย/งานสร้างสรรค์</a>';
+    }
+
+    if (!portfolio_check_content('publication', $profile_nid)) {
+        $menu2[] = l(t("การเผยแพร่ผลงานวิจัย"), "node/add/publication/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-publication-link">การเผยแพร่ผลงานวิจัย</a>';
+    }
+
+    if (!portfolio_check_content('conference', $profile_nid)) {
+        $menu2[] = l(t("การนำเสนอในงานประชุมวิชาการ"), "node/add/conference/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-conference-link">การนำเสนอในงานประชุมวิชาการ</a>';
+    }
+
+    if (!portfolio_check_content('profile_article', $profile_nid)) {
+        $menu2[] = l(t("การเผยแพร่งานเขียนเชิงวิชาการ"), "node/add/profile-article/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-article-link">การเผยแพร่งานเขียนเชิงวิชาการ</a>';
+    }
+
+    if (!portfolio_check_content('profile_student_union', $profile_nid)) {
+        $menu2[] = l(t("งานกิจกรรมนักศึกษา"), "node/add/profile-student-union/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-student-link">งานกิจกรรมนักศึกษา</a>';
+    }
+
+    if (!portfolio_check_content('profile_culture', $profile_nid)) {
+        $menu2[] = l(t("การทำนุบำรุงศิลปะและวัฒนธรรม"), "node/add/profile-culture/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-culture-link">การทำนุบำรุงศิลปะและวัฒนธรรม</a>';
+    }
+
+    if (!portfolio_check_content('profile_ed_services', $profile_nid)) {
+        $menu2[] = l(t("การมีส่วนร่วมในการบริการวิชาการแก่สังคม"), "node/add/profile-ed-services/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-services-link">การมีส่วนร่วมในการบริการวิชาการแก่สังคม</a>';
+    }
+
+
+    if (!portfolio_check_content('profile_lecturer_inner', $profile_nid)) {
+        $menu2[] = l(t("การเป็นวิทยากรภายในสถาบัน"), "node/add/profile-lecturer-inner/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-lecturer-link">การเป็นวิทยากรภายในสถาบัน</a>';
+    }
+
+    if (!portfolio_check_content('profile_lecturer_outter', $profile_nid)) {
+        $menu2[] = l(t("การเป็นวิทยากรภายนอกสถาบัน"), "node/add/profile-lecturer-outter/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-lecturer-outter-link">การเป็นวิทยากรภายนอกสถาบัน</a>';
+    }
+
+    if (!portfolio_check_content('profile_thesis_consult', $profile_nid)) {
+        $menu2[] = l(t("การเป็นที่ปรึกษาวิทยานิพนธ์"), "node/add/profile-thesis-consult/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-thesis-consult-link">การเป็นที่ปรึกษาวิทยานิพนธ์</a>';
+    }
+
+    if (!portfolio_check_content('education_committee', $profile_nid)) {
+        $menu2[] = l(t("การเป็นกรรมการวิชาการภายนอกสถาบัน"), "node/add/education-committee/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="education-committee-link">การเป็นกรรมการวิชาการภายนอกสถาบัน</a>';
+    }
+
+    if (!portfolio_check_content('profile_profession_committee', $profile_nid)) {
+        $menu2[] = l(t("การเป็นกรรมการวิชาชีพภายนอกสถาบัน"), "node/add/profile-profession-committee/".$profile_nid, $option);
+    }else {
+        $menu2[] = '<a href="#" class="profile-profession-committee-link">การเป็นกรรมการวิชาชีพภายนอกสถาบัน</a>';
+    }
+
+    if (!portfolio_check_content('profile_edocument', $profile_nid)) {
+        $menu2[] = l(t("ภาระงานอื่นๆ"), "portfolio/me/edoc-add");
+    }else {
+        $menu2[] = '<a href="#" class="profile-edocument-link">ภาระงานอื่นๆ</a>';
+    }
+
+
+    if (!portfolio_check_content('analysis_self', $profile_nid)) {
+        $menu3[] = l(t("การวิเคราะห์ตนเอง"), "node/add/analysis-self/".$profile_nid, $option);
+    }else {
+        $menu3[] = '<a href="#" class="analysis-self-link">การวิเคราะห์ตนเอง</a>';
+    }
+
+    if (!portfolio_check_content('analysis_self_to_work',$profile_nid)) {
+        $menu3[] = l(t("ความเป็นไปได้ในประโยชน์ของงานต่อตนเอง"), "node/add/analysis-self-to-work/".$profile_nid, $option);
+    }else {
+        $menu3[] = '<a href="#" class="analysis-self-to-work-link">ความเป็นไปได้ในประโยชน์ของงานต่อตนเอง</a>';
+    }
+
+    if (!portfolio_check_content('analysis_self_to_university',$profile_nid)) {
+        $menu3[] = l(t("ความเป็นไปได้ในประโยชน์ของงานต่อมหาวิทยาลัย"), "node/add/analysis-self-to-university/".$profile_nid, $option);
+    }else {
+        $menu3[] = '<a href="#" class="analysis-self-to-university-link">ความเป็นไปได้ในประโยชน์ของงานต่อมหาวิทยาลัย</a>';
+    }
+
+    if (!portfolio_check_content('requirement_in_education',$profile_nid)) {
+        $menu3[] = l(t("การวิเคราะห์ความต้องการการพัฒนาด้านวิชาการ"), "node/add/requirement-in-education/".$profile_nid, $option);
+    }else {
+        $menu3[] = '<a href="#" class="arequirement-in-education-link">การวิเคราะห์ความต้องการการพัฒนาด้านวิชาการ</a>';
+    }
+
+    if (!portfolio_check_content('requirement_in_work',$profile_nid)) {
+        $menu3[] = l(t("ความต้องการความก้าวหน้าในหน้าที่การงาน"), "node/add/requirement-in-work/".$profile_nid, $option);
+    }else {
+        $menu3[] = '<a href="#" class="arequirement-in-work-link">ความต้องการความก้าวหน้าในหน้าที่การงาน</a>';
+    }
+
+    if (!portfolio_check_content('portfolio_evaluation',$profile_nid)) {
+        $menu4[] = l(t("การประเมินผล"), "node/add/portfolio-evaluation/".$profile_nid, $option);
+    }else {
+        $menu4[] = '<a href="#" class="portfolio-evaluation-link">การประเมินผล</a>';
+    }
+
+    /*Menu 5*/
+    $menu5[] = l(t("ประเมินผลปฏิบัติงาน"), "portfolio/me/assessment-form");
+
+    if (!$is_teacher) {
+        $menu5[] = l(t("ภาระงานหลักที่ปฏิบัติ"), "portfolio/me/routine");
+        $menu5[] = l(t("ภาระงานอื่นที่ได้รับมอบหมาย"), "portfolio/me/addons-work");
+        $menu5[] = l(t("ภาระงานอื่นๆ (นอกเหนือจาก 2.1 - 2.4)"), "portfolio/me/etc-work");
+        $menu5[] = l(t("สิ่งที่เป็นอุปสรรคต่อการทำงาน"), "portfolio/me/work-problem");
+    }
+
+    $menu5[] = l(t("พิมพ์แบบประเมิน"), "portfolio/me/print");
+
+
+    $output .= '<div class="portfolio-menu">
+                    <div class="portfolio-menu-title">'.t("ข้อมูลส่วนตัว").'</div>
+                    <div class="portfolio-menu-sub">'.theme('item_list', array('items'=>$menu1)).'</div>
+
+                    <div class="portfolio-menu-title">'.t("ภาระงาน").'</div>
+                    <div class="portfolio-menu-sub">'.theme('item_list', array('items'=>$menu2)).'</div>
+
+                    <div class="portfolio-menu-title">'.t("ประเมินผลปฏิบัติงาน").'</div>
+                    <div class="portfolio-menu-sub">'.theme('item_list', array('items'=>$menu5)).'</div>
+
+                <!-- #Comment By Phisn Sookkhe on 08 - 07 - 2013
+
+                    <div class="portfolio-menu-title">'.t("การวิเคราะห์งาน").'</div>
+                    <div class="portfolio-menu-sub">'.theme('item_list', array('items'=>$menu3)).'</div>
+
+                    <div class="portfolio-menu-title">'.t("การประเมินผล").'</div>
+                    <div class="portfolio-menu-sub">'.theme('item_list', array('items'=>$menu4)).'</div>
+                -->
+                </div>';
+
+    return $output;
+}
+
+function portfolio_node_view($node) {
+    if ($node->type == "analysis_self") {
+        drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+        $node->content['templates'] = array(
+            '#value' => portfolio_display_analysis_self($node),
+        );
+    }
+
+    if ($node->type == "analysis_self_to_work") {
+        drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+        $node->content['templates'] = array(
+            '#value' => portfolio_display_analysis_self_to_work($node),
+        );
+    }
+
+    if ($node->type == "analysis_self_to_university") {
+        drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/analysis.css");
+        $node->content['templates'] = array(
+            '#value' => portfolio_display_analysis_self_to_university($node),
+        );
+    }
+
+    if ($node->type == "self_assessment") {
+        drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/assessment.css");
+        $node->content['templates'] = array(
+            '#value' => portfolio_display_self_assessment($node),
+        );
+    }
+}
+
+function portfolio_display_self_assessment($node) {
+    global $user;
+
+    drupal_add_css(drupal_get_path('theme', 'omega')."/addhoc/assessment.css");
+    $output = '';
+
+    $total_arr = array();
+
+    $rows = array();
+    $rows[] = array(
+        array("class" => "", "data" => t("ที่"), "rowspan" => 2),
+        array("class" => "", "data" => t("รายการ"), "rowspan" => 2),
+        array("class" => "value", "data" => t("น้ำหนักคะแนน"), "rowspan" => 2),
+        array("class" => "head", "data" => t("ผลการประเมิน"), "colspan" => 5),
+    );
+
+    $rows[] = array(
+        array("class" => "value", "data" => t("คุณภาพ")),
+        array("class" => "value", "data" => t("ประสิทธิภาพ")),
+        array("class" => "value", "data" => t("ประสิทธิผล")),
+        array("class" => "value", "data" => t("เต็ม")),
+        array("class" => "value", "data" => t("คะแนนที่ได้")),
+    );
+
+    $total = $node->field_quality_1['und'][0]['value'] +
+             $node->field_efficiency_1['und'][0]['value'] +
+             $node->field_effectiveness_1['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t("1")),
+        array("class" => "", "data" => t("ภาระงานหลัก")),
+        array("class" => "value", "data" => t("50%")),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_1'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_1'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_1'])),
+        array("class" => "value", "data" => "50"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $total = $node->field_quality_2['und'][0]['value'] +
+             $node->field_efficiency_2['und'][0]['value'] +
+             $node->field_effectiveness_2['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t("2")),
+        array("class" => "", "data" => t("ภาระงานอื่นๆ")),
+        array("class" => "value", "data" => t("10%")),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_2'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_2'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_2'])),
+        array("class" => "value", "data" => "10"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $total = $node->field_quality_4['und'][0]['value'] +
+             $node->field_efficiency_4['und'][0]['value'] +
+             $node->field_effectiveness_4['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t("3")),
+        array("class" => "", "data" => t("จรรยาบรรณ")),
+        array("class" => "value", "data" => t("10%")),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_4'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_4'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_4'])),
+        array("class" => "value", "data" => "10"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $rows[] = array(
+        array("class" => "", "data" => t("4")),
+        array("class" => "", "data" => t("สมรรถนะ")),
+        array("class" => "value", "data" => t("30%")),
+        array("class" => "value", "data" => ""),
+        array("class" => "value", "data" => ""),
+        array("class" => "value", "data" => ""),
+        array("class" => "value", "data" => "-"),
+        array("class" => "value", "data" => ""),
+    );
+
+    $total = $node->field_quality_3_1['und'][0]['value'] +
+             $node->field_efficiency_3_1['und'][0]['value'] +
+             $node->field_effectiveness_3_1['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.1 การมุ่งผลสัมฤทธิ์")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_3_1'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_3_1'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_3_1'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $total = $node->field_quality_3_2['und'][0]['value'] +
+             $node->field_efficiency_3_2['und'][0]['value'] +
+             $node->field_effectiveness_3_2['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.2 การบริการที่ดี")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_3_2'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_3_2'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_3_2'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $total = $node->field_quality_3_2['und'][0]['value'] +
+             $node->field_efficiency_3_2['und'][0]['value'] +
+             $node->field_effectiveness_3_2['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.3 การสั่งสมความเชี่ยวชาญในอาชีพ")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_3_3'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_3_3'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_3_3'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $total = $node->field_quality_3_3['und'][0]['value'] +
+             $node->field_efficiency_3_3['und'][0]['value'] +
+             $node->field_effectiveness_3_3['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.4 การยิดมั่นในความถูกต้องชอบธรรมและจริยธรรม")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_3_4'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_3_4'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_3_4'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $total = $node->field_quality_3_5['und'][0]['value'] +
+             $node->field_efficiency_3_5['und'][0]['value'] +
+             $node->field_effectiveness_3_5['und'][0]['value'];
+    $total_arr[] = $total;
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "", "data" => t("3.5 การทำงานเป็นทีม")),
+        array("class" => "value", "data" => "6%"),
+        array("class" => "value", "data" => drupal_render($node->content['field_quality_3_5'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_efficiency_3_5'])),
+        array("class" => "value", "data" => drupal_render($node->content['field_effectiveness_3_5'])),
+        array("class" => "value", "data" => "6"),
+        array("class" => "value", "data" => $total),
+    );
+
+    $summation = 0;
+    foreach ($total_arr as $key => $value) {
+        $summation += $value;
+    }
+
+    $rows[] = array(
+        array("class" => "", "data" => t(" ")),
+        array("class" => "head", "data" => t("รวม")),
+        array("class" => "value", "data" => "100%"),
+        array("class" => "", "data" => ""),
+        array("class" => "", "data" => ""),
+        array("class" => "", "data" => ""),
+        array("class" => "value", "data" => "100"),
+        array("class" => "value", "data" => $summation),
+    );
+
+    $edit_link = '';
+    if ($user->uid == $node->uid) {
+        $edit_link = '
+            <div class="assessment-edit-link">
+                '.l(t("แก้ไขการประเมิน"),
+                    "node/".$node->nid."/edit",
+                    array("query"=>array("destination"=>"portfolio/me/assessment-form"))).'
+            </div>
+        ';
+    }
+
+    $output .= '
+        <div class="assessment-wrapper committee display">
+            '.theme('table', array('rows' => $rows)).'
+            '.$edit_link.'
+        </div>
+    ';
+
+    return $output;
+}
+
+/**
+ * Template for Aanalysis Self to Work
+ */
+function portfolio_display_analysis_self_to_university($node) {
+    $output = '';
+    $rows = array();
+
+    $rows[] = array(
+        array('class'=>'head-title', 'data'=>t("การวิเคราะห์ความเป็นไปได้ในประโยชน์ของงานต่อมหาวิทยาลัย ในปีงบประมาณ")." ".taxonomy_term_load($node->field_budget_year['und'][0]['tid'])->name, 'colspan'=>8),
+    );
+
+    $rows[] = array(
+        array('class'=>'number head', 'data'=>t("ลำดับ"), 'rowspan'=>2),
+        array('class'=>'activity head', 'data'=>t("กิจกรรม"), 'rowspan'=>2),
+        array('class'=>'citeria head', 'data'=>t("ระดับความพึงพอใจ"), 'colspan'=>5),
+        array('class'=>'note head', 'data'=>t("หมายเหตุ"), 'rowspan'=>2),
+    );
+
+    $rows[] = array(
+        array('class'=>'choice', 'data'=>t("มากที่สุด")),
+        array('class'=>'choice', 'data'=>t("มาก")),
+        array('class'=>'choice', 'data'=>t("ปานกลาง")),
+        array('class'=>'choice', 'data'=>t("น้อย")),
+        array('class'=>'choice', 'data'=>t("น้อยที่สุด")),
+    );
+
+    /*debug*/
+    if (!isset($node->field_activity_note_1['und'])) {
+        $node->field_activity_note_1['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_2['und'])) {
+        $node->field_activity_note_2['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_3['und'])) {
+        $node->field_activity_note_3['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_4['und'])) {
+        $node->field_activity_note_4['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_5['und'])) {
+        $node->field_activity_note_5['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_6['und'])) {
+        $node->field_activity_note_6['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_7['und'])) {
+        $node->field_activity_note_7['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_8['und'])) {
+        $node->field_activity_note_8['und'][0]['value'] = '';
+    }
+
+    $choices = portfolio_display_choice($node->field_activity_1['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'1'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_1']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_1['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_2['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'2'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_2']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_2['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_3['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'3'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_3']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_3['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_4['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'4'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_4']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_4['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_5['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'5'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_5']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_5['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_6['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'6'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_6']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_6['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_7['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'7'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_7']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_7['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_8['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'8'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_8']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note display', 'data'=>$node->field_activity_note_8['und'][0]['value']),
+    );
+
+    $output .= '<div class="analysis-wrapper">
+                    '.theme('table', array('rows'=>$rows)).'
+                    '.portfolio_menu_footer($node->field_profile_ref['und'][0]['nid'], 'analysis-self-to-university', $node->nid).'
+                </div>';
+
+    return $output;
+}
+
+/**
+ * Template for Aanalysis Self to Work
+ */
+function portfolio_display_analysis_self_to_work($node) {
+    $output = '';
+    $rows = array();
+
+    $rows[] = array(
+        array('class'=>'head-title', 'data'=>t("การวิเคราะห์ความเป็นไปได้ในประโยชน์ของงานต่อตนเอง ในปีงบประมาณ")." ".taxonomy_term_load($node->field_budget_year['und'][0]['tid'])->name, 'colspan'=>8),
+    );
+
+    $rows[] = array(
+        array('class'=>'number head', 'data'=>t("ลำดับ"), 'rowspan'=>2),
+        array('class'=>'activity head', 'data'=>t("กิจกรรม"), 'rowspan'=>2),
+        array('class'=>'citeria head', 'data'=>t("ระดับความพึงพอใจ"), 'colspan'=>5),
+        array('class'=>'note head', 'data'=>t("หมายเหตุ"), 'rowspan'=>2),
+    );
+
+    $rows[] = array(
+        array('class'=>'choice', 'data'=>t("มากที่สุด")),
+        array('class'=>'choice', 'data'=>t("มาก")),
+        array('class'=>'choice', 'data'=>t("ปานกลาง")),
+        array('class'=>'choice', 'data'=>t("น้อย")),
+        array('class'=>'choice', 'data'=>t("น้อยที่สุด")),
+    );
+
+    /*debug*/
+    if (!isset($node->field_activity_note_1['und'])) {
+        $node->field_activity_note_1['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_2['und'])) {
+        $node->field_activity_note_2['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_3['und'])) {
+        $node->field_activity_note_3['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_4['und'])) {
+        $node->field_activity_note_4['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_5['und'])) {
+        $node->field_activity_note_5['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_6['und'])) {
+        $node->field_activity_note_6['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_7['und'])) {
+        $node->field_activity_note_7['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_8['und'])) {
+        $node->field_activity_note_8['und'][0]['value'] = '';
+    }
+
+    $choices = portfolio_display_choice($node->field_activity_1['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'1'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_1']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_1['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_2['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'2'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_2']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_2['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_3['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'3'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_3']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_3['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_4['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'4'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_4']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_4['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_5['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'5'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_5']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_5['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_6['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'6'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_6']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_6['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_7['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'7'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_7']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_7['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_8['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'8'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_8']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note display', 'data'=>$node->field_activity_note_8['und'][0]['value']),
+    );
+
+    $output .= '<div class="analysis-wrapper">
+                    '.theme('table', array('rows'=>$rows)).'
+                    '.portfolio_menu_footer($node->field_profile_ref['und'][0]['nid'], 'analysis-self-to-work', $node->nid).'
+                </div>';
+
+    return $output;
+}
+
+/**
+ * Template for Aanalysis Self
+ */
+function portfolio_display_analysis_self($node) {
+    $output = '';
+    $rows = array();
+
+    $rows[] = array(
+        array('class'=>'head-title', 'data'=>t("ประเมินตนเองในปีงบประมาณ")." ".taxonomy_term_load($node->field_budget_year['und'][0]['tid'])->name, 'colspan'=>8),
+    );
+
+    $rows[] = array(
+        array('class'=>'number head', 'data'=>t("ลำดับ"), 'rowspan'=>2),
+        array('class'=>'activity head', 'data'=>t("กิจกรรม"), 'rowspan'=>2),
+        array('class'=>'citeria head', 'data'=>t("ระดับความพึงพอใจ"), 'colspan'=>5),
+        array('class'=>'note head', 'data'=>t("หมายเหตุ"), 'rowspan'=>2),
+    );
+
+    $rows[] = array(
+        array('class'=>'choice', 'data'=>t("มากที่สุด")),
+        array('class'=>'choice', 'data'=>t("มาก")),
+        array('class'=>'choice', 'data'=>t("ปานกลาง")),
+        array('class'=>'choice', 'data'=>t("น้อย")),
+        array('class'=>'choice', 'data'=>t("น้อยที่สุด")),
+    );
+
+    /*debug*/
+    if (!isset($node->field_activity_note_1['und'])) {
+        $node->field_activity_note_1['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_2['und'])) {
+        $node->field_activity_note_2['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_3['und'])) {
+        $node->field_activity_note_3['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_4['und'])) {
+        $node->field_activity_note_4['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_5['und'])) {
+        $node->field_activity_note_5['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_6['und'])) {
+        $node->field_activity_note_6['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_7['und'])) {
+        $node->field_activity_note_7['und'][0]['value'] = '';
+    }
+    if (!isset($node->field_activity_note_8['und'])) {
+        $node->field_activity_note_8['und'][0]['value'] = '';
+    }
+
+    $choices = portfolio_display_choice($node->field_activity_1['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'1'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_1']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_1['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_2['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'2'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_2']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_2['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_3['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'3'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_3']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_3['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_4['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'4'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_4']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_4['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_5['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'5'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_5']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_5['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_6['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'6'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_6']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_6['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_7['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'7'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_7']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note', 'data'=>$node->field_activity_note_7['und'][0]['value']),
+    );
+
+    $choices = portfolio_display_choice($node->field_activity_8['und'][0]['value']);
+    $rows[] = array(
+        array('class'=>'number', 'data'=>'8'),
+        array('class'=>'activity', 'data'=>$node->content['field_activity_8']['#title']),
+        array('class'=>'choices', 'data'=>$choices[4]),
+        array('class'=>'choices', 'data'=>$choices[3]),
+        array('class'=>'choices', 'data'=>$choices[2]),
+        array('class'=>'choices', 'data'=>$choices[1]),
+        array('class'=>'choices', 'data'=>$choices[0]),
+        array('class'=>'note display', 'data'=>$node->field_activity_note_8['und'][0]['value']),
+    );
+
+    $output .= '<div class="analysis-wrapper">
+                    '.theme('table', array('rows'=>$rows)).'
+                    '.portfolio_menu_footer($node->field_profile_ref['und'][0]['nid'], 'analysis-self', $node->nid).'
+                </div>';
+
+    return $output;
+}
+
+function portfolio_executive_empty_result() {
+    $output = '';
+    $header = array(
+        array('class' => '', 'data' => 'ตำแหน่ง'),
+        array('class' => '', 'data' => 'คำสั่ง'),
+        array('class' => '', 'data' => 'วันที่เร่ิมต้น'),
+        array('class' => '', 'data' => 'วันที่สิ้นสุด'),
+        array('class' => '', 'data' => 'ภาระงานที่ปฏิบัติ'),
+    );
+    $rows = array();
+
+    for ($i=0; $i < 2; $i++) {
+        $rows[] = array(
+            array('class' => '', 'data' => '&nbsp;'),
+            array('class' => '', 'data' => '&nbsp;'),
+            array('class' => '', 'data' => '&nbsp;'),
+            array('class' => '', 'data' => '&nbsp;'),
+            array('class' => '', 'data' => '&nbsp;'),
+        );
+    }
+
+    $output .= '
+        <div class="executive-empty-table">
+            '.theme('table', array('rows'=>$rows, 'header'=>$header)).'
+        </div>
+    ';
+
+    return $output;
+}
+
+function portfolio_get_edoc_title($entity_id) {
+    $nid = db_select('field_data_field_edocument_ref', 'e')
+                ->fields('e', array('field_edocument_ref_nid'))
+                ->condition('e.entity_id', $entity_id, '=')
+                ->execute()
+                ->fetchColumn();
+
+    $result = db_select('field_data_field_edoc_title', 'n')
+                ->fields('n', array('field_edoc_title_value'))
+                ->condition('n.entity_id', $nid, '=')
+                ->execute();
+
+    $title = $result->fetchColumn();
+
+    return $title;
+}
+
+function portfolio_edoc_add_link($nid) {
+    return l('เพิ่ม', 'portfolio/me/edoc-select/'.$nid);
+}
+
+function portfolio_edoc_delete_link($nid) {
+    return l('ลบออก', 'portfolio/me/edoc-delete/'.$nid);
+}
+
+function portfolio_get_thai_date($date_stamp) {
+    return thai_time_format($date_stamp, 'd-F-Y', 1);
+}
+
+function portfolio_display_choice($result_value) {
+    $choices = array(
+            0 => '',
+            1 => '',
+            2 => '',
+            3 => '',
+            4 => ''
+        );
+    $choices[$result_value] = "&#10004;";
+    return $choices;
+}
+
+function portfolio_get_page_link($nid) {
+    return l('แสดง', 'manager/'.$nid.'/portfolio');
+}
+
+function portfolio_get_profile_nid() {
+    global $user;
+    $nid = db_select('node', 'n')
+            ->fields('n', array('nid'))
+            ->condition('n.uid', $user->uid, '=')
+            ->condition('n.type', 'personal_profile', '=')
+            ->execute()
+            ->fetchColumn();
+    return $nid;
+}

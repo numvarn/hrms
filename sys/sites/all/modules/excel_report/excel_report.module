@@ -1,0 +1,471 @@
+<?php
+/**
+ * undocumented function
+ *
+ * @return void
+ * @author Phisan Shukkhi
+ **/
+
+/**
+ * Hook_menu
+ **/
+function excel_report_menu() {
+	$items['report/excel/persons'] = array(
+		'title' => t("Persons"),
+		'page callback' => 'excel_report_person',
+		'access arguments' => array('create personal_profile content'),
+		'type' => MENU_CALLBACK,
+		'file' => 'persons.page.inc');
+
+	$items['export/personal-profile'] = array(
+        'title' => 'export personal profile',
+        'page callback' => 'excel_report_data',
+        'access callback' => 'excel_report_report_data_access',
+        'type' => MENU_CALLBACK,
+    );
+
+	return $items;
+}
+
+/**
+ * Convert String
+ **/
+function excel_report_conv($str) {
+	return iconv('UTF-8', 'TIS-620', $str);
+}
+
+/**
+ * edit by Suchat Srichuen
+ **/
+
+function excel_report_cron() {
+    excel_report_data();
+}
+
+function excel_report_report_data_access() {
+	$access = false;
+        if (true) {
+            $access = true;
+        }
+    return $access;
+}
+
+function excel_report_data() {
+    include 'code.php';
+    $service_base_url = 'http://www.opdc.sskru.ac.th/sys/';
+
+    $services_get_district_url = $service_base_url."services/send/district";
+
+    // Get District from services on OPDC
+    $json_files = file_get_contents($services_get_district_url);
+    $ref_district = drupal_json_decode($json_files);
+
+
+	$output = '';
+
+	// // Read file
+	// $file = fopen("/Users/numvarn/Desktop/personal_profile_file.csv","w");
+
+	// 	/*Write headder file*/
+ //        $headder = array(
+ //            "1"  => "YEAR",
+ //            "2"  => "UNIV_ID",
+ //            "3"  => "CITIZEN_ID",
+ //            "4"  => "PREFIX_NAME_ID",
+ //            "5"  => "STF_FNAME",
+ //            "6"  => "STF_LNAME",
+ //            "7"  => "GENDER_ID",
+ //            "8"  => "BIRTHDAY",
+ //            "9"  => "HOMEADD",
+ //            "10" => "MOO",
+ //            "11" => "STREET",
+ //            "12" => "SUB_DISTRICT_ID",
+ //            "13" => "DISTRICT_ID",
+ //            "14" => "PROVINCE_ID",
+ //            "15" => "TELEPHONE",
+ //            "16" => "ZIPCODE",
+ //            "17" => "NATION_ID",
+ //            "18" => "STAFFTYPE_ID",
+ //            "19" => "TIME_CONTACT_ID",
+ //            "20" => "BUDGET_ID",
+ //            "21" => "SUBSTAFFTYPE_ID",
+ //            "22" => "ADMIN_POSITION_ID",
+ //            "23" => "POSITION_ID",
+ //            "24" => "POSITION_WORK",
+ //            "25" => "DEPARTMENT_ID",
+ //            "26" => "DATE_INWORK",
+ //            "27" => "STAFF_LEV_ID",
+ //            "28" => "SPECIAL_NAME",
+ //            "29" => "TEACH_ISCED_ID",
+ //            "30" => "GRAD_LEV_ID",
+ //            "31" => "GRAD_CURR",
+ //            "32" => "GRAD_ISCED_ID",
+ //            "33" => "GRAD_PROG_ID",
+ //            "34" => "GRAD_UNIV",
+ //            "35" => "GRAD_COUNTRY_ID",
+
+ //        );
+
+ //        for ($i=0; $i < 1; $i++) {
+ //            fputcsv($file, $headder);
+ //        }
+
+ //        /*Get Student Profile Data*/
+ //        $query = db_select('node', 'n');
+ //        $result = $query
+ //                    ->fields('n', array('nid'))
+ //                    ->condition('n.type', 'personal_profile', '=')
+ //                    ->execute();
+
+ //        $data = array();
+ //        $order = 1;
+
+ //        while ($nid = $result->fetchColumn()) {
+ //            $node = node_load($nid);
+
+ //            //1
+ //            $YEAR = 2556;
+
+ //            //2
+ //            $UNIV_ID = 16300;
+
+ //            //3
+ //            $CITIZEN_ID = '';
+ //            if (isset($node->field_citizen_id['und'])) {
+ //                $CITIZEN_ID = $node->field_citizen_id['und'][0]['value'];
+ //            }
+
+ //            //4
+ //            $PREFIX_NAME_ID = '';
+ //            $t_PREFIX_NAME_ID = '';
+ //            if (isset($node->field_name_prefix['und'])) {
+ //                $t_PREFIX_NAME_ID = taxonomy_term_load($node->field_name_prefix['und'][0]['tid']);
+
+ //                $PREFIX_NAME_ID = array_search($t_PREFIX_NAME_ID->name, $ref_prefix_name);
+ //            }
+
+ //            //5
+ //            $STF_FNAME = '';
+ //            if (isset($node->field_name_th['und'])) {
+ //                $STF_FNAME = $node->field_name_th['und'][0]['value'];
+ //            }
+
+	// 		//6
+ //            $STF_LNAME = '';
+ //            if (isset($node->field_lastname_th['und'])) {
+ //                $STF_LNAME = $node->field_lastname_th['und'][0]['value'];
+ //            }
+
+ //            //7
+ //            $GENDER_ID = '';
+ //            $t_GENDER_ID = '';
+ //            if (isset($node->field_gender['und'])) {
+ //                $t_GENDER_ID = taxonomy_term_load($node->field_gender['und'][0]['tid']);
+
+ //                $GENDER_ID = array_search($t_GENDER_ID->name, $ref_gender);
+ //            }
+
+
+ //            /**
+ //             * Modules get ID in content type
+ //             **/
+
+ //            /*
+ //            $t_GENDER_ID = '';
+ //            if (isset($node->field_gender['und'])) {
+ //                $t_GENDER_ID = taxonomy_term_load($node->field_gender['und'][0]['tid']);
+
+ //                $query_GENDER = db_select('node', 'a');
+ //                $result_GENDER = $query_GENDER
+ //                            ->fields('a', array('nid'))
+ //                            ->condition('a.type', 'ref_gender', '=')
+ //                            ->execute();
+
+ //                $GENDER_NAME = '';
+ //                while ($nid_GENDER = $result_GENDER->fetchColumn()) {
+ //                    $node_GENDER = node_load($nid_GENDER);
+
+ //                    $GENDER_NAME = taxonomy_term_load($node_GENDER->field_gender_name['und'][0]['tid'])->name;
+
+ //                    if ($t_GENDER_ID->name == $GENDER_NAME) {
+ //                        $GENDER_ID = $node_GENDER->field_gender_tid['und'][0]['value'];
+ //                        break;
+ //                    }
+
+ //                }
+
+ //            }
+ //            */
+
+ //            //8
+ //            $BIRTHDAY = '';
+ //            if (isset($node->field_birthday['und'])) {
+ //                $BIRTHDAY = format_date($node->field_birthday['und'][0]['value'], 'custom', 'd/m/Y');
+ //            }
+
+ //            //9
+ //            $HOMEADD = '';
+ //            if (isset($node->field_home_address['und'])) {
+ //                $HOMEADD = $node->field_home_address['und'][0]['value'];
+ //            }
+
+ //            //10
+ //            $MOO = '';
+ //            if (isset($node->field_home_address_moo['und'])) {
+ //                $MOO = $node->field_home_address_moo['und'][0]['value'];
+ //            }
+
+ //            //11
+ //            $STREET = '';
+ //            if (isset($node->field_home_address_road['und'])) {
+ //                $STREET = $node->field_home_address_road['und'][0]['value'];
+ //            }
+
+ //            //12
+ //            $SUB_DISTRICT_ID = '';
+ //            $t_SUB_DISTRICT_ID = '';
+ //            if (isset($node->field_home_address_tambon['und'])) {
+ //                $t_SUB_DISTRICT_ID = taxonomy_term_load($node->field_home_address_tambon['und'][0]['tid']);
+
+ //                $SUB_DISTRICT_ID = $t_SUB_DISTRICT_ID->name;
+ //            }
+
+ //            //13
+ //            $DISTRICT_ID = '';
+ //            $t_DISTRICT_ID = '';
+ //            if (isset($node->field_home_address_province['und'])) {
+ //                $t_DISTRICT_ID = taxonomy_term_load($node->field_home_address_aumpur['und'][0]['tid']);
+
+ //                $DISTRICT_ID = $t_DISTRICT_ID->name;
+ //            }
+
+ //            //14
+ //            $PROVINCE_ID = '';
+ //            $t_PROVINCE_ID = '';
+ //            if (isset($node->field_home_address_province['und'])) {
+ //                $t_PROVINCE_ID = taxonomy_term_load($node->field_home_address_province['und'][0]['tid']);
+
+ //                $PROVINCE_ID = array_search($t_PROVINCE_ID->name, $ref_province_name);
+ //            }
+
+ //            //15
+ //            $TELEPHONE = '';
+ //            if (isset($node->field_person_phone['und'])) {
+ //                $TELEPHONE = $node->field_person_phone['und'][0]['value'];
+ //            }
+
+ //            //16
+ //            $ZIPCODE = '';
+ //            $t_ZIPCODE = '';
+ //            if (isset($node->field_home_address_zipcode['und'])) {
+ //                $t_ZIPCODE = taxonomy_term_load($node->field_home_address_zipcode['und'][0]['tid']);
+ //                $ZIPCODE = $t_ZIPCODE->name;
+ //            }
+
+ //            //17
+ //            $NATION_ID = '';
+ //            $t_NATION_ID = '';
+ //            if (isset($node->field_nationality['und'])) {
+ //                $t_NATION_ID = taxonomy_term_load($node->field_nationality['und'][0]['tid']);
+
+ //                $NATION_ID = array_search($t_NATION_ID->name, $ref_nation);
+ //            }
+
+ //            //18
+ //            $STAFFTYPE_ID = '';
+ //            $t_STAFFTYPE_ID = '';
+ //            if (isset($node->field_officer_type['und'])) {
+ //                $t_STAFFTYPE_ID = $node->field_officer_type['und'][0]['tid'];
+
+ //               if ($t_STAFFTYPE_ID == 18) {
+ //                    $STAFFTYPE_ID = 1; //$ref_stafftype[1];
+ //                }
+ //                else if ($t_STAFFTYPE_ID == 55) {
+ //                    $STAFFTYPE_ID = 2; //$ref_stafftype[2];
+ //                }
+ //                else if ($t_STAFFTYPE_ID == 72) {
+ //                    $STAFFTYPE_ID = 3; //$ref_stafftype[3];
+ //                }
+ //                else if ($t_STAFFTYPE_ID == 50) {
+ //                    $STAFFTYPE_ID = 4; //$ref_stafftype[4];
+ //                }
+ //                else if ($t_STAFFTYPE_ID == 414) {
+ //                    $STAFFTYPE_ID = 5; //$ref_stafftype[5];
+ //                }
+ //            }
+
+ //            //19
+ //            $TIME_CONTACT_ID = '';
+ //            if (isset($node->field_start_working_date_first['und'])) {
+ //                $start_stamp = $node->field_start_working_date_first['und'][0]['value'];
+ //                $end_stamp = time();
+
+ //                $count_day = thai_time_get_interval_day($start_stamp, $end_stamp);
+
+ //                if ($count_day <= 365) {
+ //                    $TIME_CONTACT_ID = 1;
+ //                }
+ //                else if ($count_day > 365 && $count_day <= 3650) {
+ //                    $TIME_CONTACT_ID = 2;
+ //                }
+ //                else if ($count_day > 3650) {
+ //                    $TIME_CONTACT_ID = 3;
+ //                }
+
+ //            }
+
+ //            //20
+ //            $BUDGET_ID = '';
+
+ //            //21
+ //            $SUBSTAFFTYPE_ID = '';
+
+ //            //22
+ //            $ADMIN_POSITION_ID = '';
+ //            $t_ADMIN_POSITION_ID = '';
+ //            if (isset($node->field_administration_positoin['und'])) {
+ //                $t_ADMIN_POSITION_ID = taxonomy_term_load($node->field_administration_positoin['und'][0]['tid']);
+
+ //                $ADMIN_POSITION_ID = array_search($t_ADMIN_POSITION_ID->name, $ref_admin);
+
+ //            }
+ //            else {
+ //                $ADMIN_POSITION_ID = '00';
+ //            }
+
+ //            //24
+ //            $POSITION_WORK = '';
+ //            $t_POSITION_WORK = '';
+ //            if (isset($node->field_work_position['und'])) {
+ //                $t_POSITION_WORK = taxonomy_term_load($node->field_work_position['und'][0]['tid']);
+
+ //                $POSITION_WORK = $t_POSITION_WORK->name;
+ //            }
+
+ //            //23
+ //            $POSITION_ID = '';
+ //            $ed_postion = '';
+ //            if (isset($person->field_education_position['und'])) {
+ //                $ed_postion = taxonomy_term_load($person->field_education_position['und']['0']['tid'])->name;
+ //            }
+
+ //            // double check
+ //            if ($POSITION_WORK == "อาจารย์" && $ed_postion == '') {
+ //               $ed_postion = 'อาจารย์';
+ //            }
+
+ //            if ($ed_postion == '') {
+ //               $ed_postion = 'ไม่มีตำแหน่งทางวิชาการ';
+ //            }
+
+ //            $POSITION_ID = array_search($ed_postion, $ref_position);
+
+
+
+ //            //25
+ //            $DEPARTMENT_ID = '';
+ //            $t_DEPARTMENT_ID = '';
+ //            if (isset($node->field_faculty['und'])) {
+ //                $t_DEPARTMENT_ID = taxonomy_term_load($node->field_faculty['und'][0]['tid']);
+ //                $t_DEPARTMENT_ID = $t_DEPARTMENT_ID->name;
+ //            }
+ //            else {
+ //                $t_DEPARTMENT_ID = 'สำนักงานอธิการบดี';
+ //            }
+
+ //            $DEPARTMENT_ID = array_search($t_DEPARTMENT_ID, $ref_fac_name);
+
+ //            //26
+ //            $DATE_INWORK = '';
+ //            if (isset($node->field_start_working_date_first['und'])) {
+ //                $DATE_INWORK = format_date($node->field_start_working_date_first['und'][0]['value'], 'custom', 'd/m/Y');
+ //            }
+
+ //            //27
+ //            $STAFF_LEV_ID = '';
+
+ //            //28
+ //            $SPECIAL_NAME = '';
+
+ //            //29
+ //            $TEACH_ISCED_ID = '';
+
+ //            //30
+ //            $GRAD_LEV_ID = '';
+ //            $t_GRAD_LEV_ID = '';
+ //            if (isset($node->field_education_level['und'])) {
+ //                $t_GRAD_LEV_ID = taxonomy_term_load($node->field_education_level['und'][0]['tid']);
+
+ //                $GRAD_LEV_ID = array_search($t_GRAD_LEV_ID->name, $lev_name);
+ //            }
+
+ //            //31
+ //            $GRAD_CURR = '';
+
+ //            //32
+ //            $GRAD_ISCED_ID = '';
+
+ //            //33
+ //            $GRAD_PROG_ID = '';
+
+ //            //34
+ //            $GRAD_UNIV = '';
+
+	// 		//35
+	// 		$GRAD_COUNTRY_ID = 'TH';
+
+	// 		$data = array(
+ //            	"1"  => $YEAR,
+	//             "2"  => $UNIV_ID,
+	//             "3"  => $CITIZEN_ID,
+	//             "4"  => $PREFIX_NAME_ID,
+	//             "5"  => $STF_FNAME,
+	//             "6"  => $STF_LNAME,
+	//             "7"  => $GENDER_ID,
+	//             "8"  => $BIRTHDAY,
+	//             "9"  => $HOMEADD,
+	//             "10" => $MOO,
+	//             "11" => $STREET,
+	//             "12" => $SUB_DISTRICT_ID,
+	//             "13" => $DISTRICT_ID,
+	//             "14" => $PROVINCE_ID,
+	//             "15" => $TELEPHONE,
+	//             "16" => $ZIPCODE,
+	//             "17" => $NATION_ID,
+	//             "18" => $STAFFTYPE_ID,
+	//             "19" => $TIME_CONTACT_ID,
+	//             "20" => $BUDGET_ID,
+	//             "21" => $SUBSTAFFTYPE_ID,
+	//             "22" => $ADMIN_POSITION_ID,
+	//             "23" => $POSITION_ID,
+	//             "24" => $POSITION_WORK,
+	//             "25" => $DEPARTMENT_ID,
+	//             "26" => $DATE_INWORK,
+	//             "27" => $STAFF_LEV_ID,
+	//             "28" => $SPECIAL_NAME,
+	//             "29" => $TEACH_ISCED_ID,
+	//             "30" => $GRAD_LEV_ID,
+	//             "31" => $GRAD_CURR,
+	//             "32" => $GRAD_ISCED_ID,
+	//             "33" => $GRAD_PROG_ID,
+	//             "34" => $GRAD_UNIV,
+	//             "35" => $GRAD_COUNTRY_ID,
+
+ //            );
+
+
+ //            for ($a=0; $a < 1; $a++) {
+ //            	fputcsv($file, $data);
+ //           	}
+
+ //            $order++;
+ //            // if ($order > 3) {
+ //            // 	break;
+ //            // }
+ //        }
+
+ //    // Close file
+ //    fclose($file);
+
+	return $output;
+}

@@ -1,0 +1,11 @@
+.teacher-list-header {
+    font-weight: bold;
+    text-align: center;
+}
+.statistic-program tr .a {
+	text-align: center;
+}
+
+#block-user-login {
+	display:none;
+}

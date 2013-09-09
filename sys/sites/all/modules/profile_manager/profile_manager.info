@@ -1,0 +1,5 @@
+name = Personal Profile Manger
+description = profile management module
+package = HRMS
+core = 7.x
+files[] = profile_manager.module

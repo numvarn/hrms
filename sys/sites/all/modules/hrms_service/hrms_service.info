@@ -1,0 +1,5 @@
+name = HRMS Services
+description = Service manager
+package = SSKRU
+core = 7.x
+files[] = hrms_service.module

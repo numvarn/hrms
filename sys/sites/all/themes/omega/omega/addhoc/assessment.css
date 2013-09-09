@@ -1,0 +1,37 @@
+.assessment-wrapper {
+    width:900px;
+    margin: 0 auto;
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 1px solid #F0F0F0 !important;
+    border-radius: 5px 5px 5px 5px;
+    padding: 10px 20px 15px !important;
+}
+
+.assessment-wrapper td {
+    border:1px solid #ccc;
+}
+
+.assessment-wrapper td.value {
+    width: 70px;
+    text-align: center;
+}
+
+.assessment-wrapper td.value label {
+    display:none;
+}
+
+.assessment-wrapper td.head {
+    text-align: center;
+}
+
+.hidden {
+    display:none;
+}
+
+.field .field-label {
+    display:none;
+}
+
+.node-title {
+    display: none;
+}

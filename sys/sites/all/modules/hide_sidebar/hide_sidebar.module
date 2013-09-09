@@ -1,0 +1,39 @@
+<?php
+function hide_sidebar_help($path, $arg) {
+	switch ($path) {
+		case 'manager/persons':
+		case 'manager/persons/type1':
+		case 'manager/persons/type2':
+		case 'manager/persons/type3':
+		case 'manager/persons/type4':
+		case 'manager/persons/type5':
+		case 'manager/persons/type6':
+		case 'manager/persons/learn':
+		case 'manager/education':
+		case 'info/persons/position-type':
+		case 'info/persons/education-level':
+		case 'info/persons/teacher-program':
+		case 'edocument/all':
+		case 'portfolio/me':
+		case 'portfolio/me/edoc-add':
+		case 'info/persons/education-positon':
+		case 'manager/woking-peroid':
+		case 'manager/working-interval':
+		case 'manager/working-interval/type2':
+		case 'manager/working-interval/type3':
+		case 'manager/working-interval/type4':
+		case 'manager/working-interval/type5':
+		case 'manager/portfolio':
+		case 'info/persons/teacher-regular':
+		case 'manager/portfolio-view':
+		case 'seminar-monitoring/outter':
+		case 'seminar-monitoring/inner':
+		case 'info/persons/teacher-list-1':
+		case 'info/persons/teacher-list-2':
+		case 'info/persons/teacher-list-3':
+		case 'info/persons/teacher-list-4':
+		case 'portfolio/me/assessment-form':
+			drupal_add_css(drupal_get_path('theme', 'omega').'/custom/hide-sidebar.css');
+			break;
+	}
+}

@@ -1,0 +1,5 @@
+name = Portfolio Online
+description = portfolio online by Phsian Sookhee
+package = SSKRU
+core = 7.x
+files[] = portfolio.module

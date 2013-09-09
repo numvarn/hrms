@@ -1,0 +1,28 @@
+<?php
+/**
+ * function
+ */
+function custom_taxonomy_create($name, $vid){
+	$term = new stdClass();
+	$term->name = $name;
+	$term->vid = $vid;
+	taxonomy_term_save($term);
+	return $term->tid;
+}
+
+/**
+ * function
+ */
+function custom_taxonomy_get_by_name($name, $vid){
+	$result = db_query("SELECT tid FROM {taxonomy_term_data} WHERE name=:name AND vid=:vid", array(':name'=>$name, ':vid'=>$vid));
+	$term_tid = $result->fetchField();
+	
+	if ($term_tid) {
+		$tid = $term_tid;
+	}
+	else {
+		$tid = custom_taxonomy_create($name, $vid);
+	}
+
+	return $tid;
+}

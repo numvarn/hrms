@@ -1,0 +1,1594 @@
+body {
+    background: none repeat scroll 0 0 #FFF;
+    color: #1D2326;
+    font-family: Arial,Verdana,sans-serif;
+    font-size: 12px;
+}
+
+#section-header {
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.3);
+    background-image: url("../images/bg_gold.png");
+}
+
+#zone-content {
+    /*box-shadow: 0 5px 18px rgba(0, 0, 0, 0.3);*/
+    /*background-color: #FFF;*/
+}
+
+#zone-footer-wrapper {
+    background: none repeat scroll 0 0 #F7F6F5;
+}
+
+.calendar-calendar table.mini th {
+    padding: 0px!important;
+    background-color: transparent!important;
+    border:0px none;
+    border-bottom: 2px solid #eee;
+}
+
+.calendar-calendar table.mini td {
+    background-color: #FCFCFC;
+}
+
+.calendar-calendar table.mini .calendar-empty {
+    display: none;
+}
+
+.view .date-nav-wrapper .date-prev,
+.view .date-nav-wrapper .date-next {
+    background-color: transparent!important;
+    border:0px none;
+}
+
+.view-activity-calendar .item-list .pager {
+    margin-top: -60px;
+    border: 0px none;
+}
+
+.view-activity-calendar .pager li a {
+    background: none;
+}
+
+#forum table {
+    border:0px none;
+}
+
+#forum th {
+    border:0px none;
+    border-bottom: 2px solid #eee;
+    background-color: #fff!important;
+}
+
+#forum td.last-reply {
+    width:100px;
+    border-right:1px solid #eee;
+}
+
+#forum td.title a {
+    font-size: 14px;
+}
+
+#forum td.replies {
+    width:40px;
+    border-left:1px solid #eee;
+    border-right:1px solid #eee;
+}
+
+#forum td.icon {
+    width:30px;
+    border-left:1px solid #eee;
+}
+
+ul.action-links li {
+    margin-left:30px;
+}
+
+.partner-link {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px dotted #eee;
+}
+
+.partner-link .grid-2 {
+    width: 70px!important;
+}
+
+.partner-link .grid-6 {
+    width: 470px!important;
+}
+
+.partner-link .grid-6 .title {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.fb-wrapper {
+    margin: 20px 0 0 0;
+}
+
+.views-slideshow-controls-bottom {
+    padding-top: 5px;
+    border-bottom: 1px dotted #eee;
+    /*position: relative;*/
+    margin-top:-5px;
+    z-index: 110;
+}
+
+#views_slideshow_controls_text_front_banner-default {
+    float:left;
+    width:560px;
+    text-align: right;
+}
+
+.views-slideshow-cycle-main-frame-row {
+    height: 330px!important;
+}
+
+#views_slideshow_slide_counter_front_banner-default {
+    float:left;
+    width:50px;
+    text-align: right;
+}
+
+#views_slideshow_cycle_main_front_banner-default .views-field-php {
+    background: url("../images/slide-bg.png") repeat scroll 0 0 transparent;
+    color: #FFFFFF;
+    font-family: supermarketRegular,Verdana,Arial,Helvetica,sans-serif;
+    font-size: 24px;
+    letter-spacing: 0;
+    padding: 12px 10px 5px;
+    text-shadow: 0 1px 0 #000000;
+    width: 590px;
+
+    margin-top:20px;
+    position: relative;
+    z-index: 100;
+}
+#views_slideshow_cycle_main_front_banner-default .views-field-php a {
+    color: #FFF!important;
+    padding: 10px 0px 10px 10px;
+}
+
+#views_slideshow_cycle_main_front_banner-default .views-field-field-banner-image {
+    position: relative;
+    margin-top: -41px;
+    z-index: 1;
+}
+
+.activity-photo-content li.views-fluid-grid-item {
+    border:0px none;
+    background: transparent;
+    margin-right: 20px;
+    margin-left:10px;
+}
+
+.activity-photo-content li.views-fluid-grid-item img {
+    border:1px solid #ccc;
+    background-color: #f1f1f1;
+    padding: 5px;
+}
+
+.activity-photo-content .pager {
+    margin-top:20px!important;
+}
+
+.disqus-comment {
+    margin-top:40px;
+    padding-top:20px;
+    border-top:1px solid #eee;
+}
+
+.field-name-field-photo .field-item img {
+    border:1px solid #ccc;
+    background-color: #f1f1f1;
+    padding: 5px;
+}
+
+.activity-teaser {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+    padding-bottom: 20px;
+    margin-top:20px;
+}
+
+.activity-teaser .photo img {
+    border:1px solid #ccc;
+    background-color: #fff;
+    padding: 5px;
+}
+
+.activity-teaser .title {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 0px 0px 10px 0px;
+    padding-bottom: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.activity-teaser .date {
+    color:gray;
+    margin-top: 10px;
+}
+
+.activity-teaser .grid-5 {
+    margin-right:0px!important;
+    margin-left:0px!important;
+}
+
+.header1 {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 20px 0;
+    padding-bottom: 0;
+    padding-left: 18px;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+
+    background-color: #F1F1F1;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    padding: 5px 1px 1px 10px;
+}
+
+.header2 {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 20px 0;
+    padding-bottom: 0;
+    padding-left: 10px;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.content-body {
+    padding:0px 10px;
+}
+
+.person-photo img {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+}
+
+.person-profile .name-th,
+.person-profile .name-en {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 0px 0px 10px 0px;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.grid-3.person-photo {
+    margin:0px;
+    padding-left: 10px;
+}
+
+.grid-5.person-profile {
+    margin:0px 0px!important;
+    width:360px;
+}
+
+.person-profile .education {
+    margin-bottom: 10px;
+}
+
+.person-wrapper {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+
+#home-page .view-article-front table,
+#home-page .view-news-front table {
+    border:0px none;
+}
+
+#home-page .view-article-front th,
+#home-page .view-news-front th {
+    background-color: transparent!important;
+    border: 0px none;
+    border-bottom: 2px solid #eee;
+}
+
+#home-page .view-article-front td.views-field-created,
+#home-page .view-news-front td.views-field-created {
+    width:200px;
+}
+
+#home-page tr.even td {
+    background: none repeat scroll 0 0 #fff;
+}
+
+#home-page tr.even, #home-page tr.odd {
+    border-bottom: 1px solid #EEEEEE;
+}
+
+#home-page h2 {
+    border-left: thick solid #2877BA;
+    padding-left: 10px;
+}
+
+.view-article-list h2.node-title,
+.view-news-list h2.node-title {
+    background-color: #F1F1F1;
+    border: 1px solid #CCCCCC;
+    border-radius: 5px 5px 5px 5px;
+    padding: 10px 1px 1px 10px!important;
+}
+
+.view-article-list nav.links.node-links,
+.view-news-list nav.links.node-links {
+    float:right;
+    /*text-align: right!important;*/
+}
+
+#region-footer-first h2.block-title {
+    display: none;
+}
+
+#region-footer-first .footer-menu-title {
+    color: #A2A2A2;
+    font-family: supermarketRegular,Verdana,Arial,Helvetica,sans-serif;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 20px 0 10px;
+    padding-bottom: 0;
+    padding-left: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+#region-footer-first li {
+    list-style-type: none;
+    margin-left: 10px;
+}
+
+#region-footer-first li a {
+    text-decoration: none;
+    color:#999999!important;
+}
+
+#region-footer-first .grid-3 {
+    width:180px;
+}
+
+
+#region-footer-first .grid-4 {
+    width:320px;
+}
+
+
+#region-footer-first .grid-4 .content {
+    padding-left:10px;
+    text-align: left;
+    color:#999999!important;
+}
+
+#region-footer-second h2.block-title {
+    display:none;
+}
+
+#region-footer-second {
+    margin-top:20px;
+    padding-top:10px;
+    border-top:1px solid #eee;
+    color:#999999!important;
+}
+
+.field-name-field-tags a {
+    margin-right:5px;
+}
+
+.node .field-name-field-tags {
+    margin-bottom: 10px;
+}
+
+/*HRMS Project*/
+.grid-5.prfile-content {
+    width:350px!important;
+}
+
+.person-profile .prfile-content .name-th,
+.person-profile .prfile-content .name-en {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 0 0 10px;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.person-profile .prfile-content .name-en {
+    text-transform: capitalize;
+}
+
+.person-profile .prfile-photo img {
+    background-color: #FFFFFF;
+    border: 1px solid #CCCCCC;
+    padding: 5px;
+}
+
+.person-profile .grid-3.prfile-photo {
+    margin-right: 0px!important;
+}
+
+.person-profile .grid-5.prfile-content {
+    margin-left: 0px!important;
+}
+
+.person-profile.teaser {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.english-name {
+    color:#E8E8E8;
+}
+
+span.field-label {
+    font-weight: bold;
+}
+
+.prfile-content .faculty {
+    margin-top:10px;
+}
+
+ul.primary {
+    margin-bottom: 20px;
+}
+
+.view .views-field-counter {
+    width:20px;
+}
+
+.view .views-field-field-person-phone {
+    width:100px;
+}
+
+.view .views-field-field-work-position {
+    width:150px;
+}
+
+.view .views-field-field-education-level {
+    width:80px;
+}
+
+.view .views-field-field-education-position {
+    width:100px;
+}
+
+.view .views-field-edit-node,
+.view .views-field-delete-node {
+    width:40px;
+    text-align: center;
+}
+
+.view .views-field-field-working-status {
+    width:80px;
+}
+
+.view-profile-by-education-level .views-field-php-3 {
+    width:50px;
+    text-align: center;
+    border-left: 1px solid #eee;
+}
+
+.view-profile-by-education-level .views-field-php,
+.view-profile-by-education-level .views-field-php-1,
+.view-profile-by-education-level .views-field-php-2 {
+    width:500px;
+    border-left: 1px solid #eee;
+}
+
+.view-profile-by-education-level .views-field-field-education-level {
+    border-left: 1px solid #eee;
+}
+
+.profile-detail {
+    padding:10px;
+}
+
+.sub-title {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 20px 0px 10px 0px;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.sub-title-2 {
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 20px 0;
+    padding-bottom: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.sub-title2 {
+    border-left: thick solid #2877BA;
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 24px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 20px 0;
+    padding-bottom: 0;
+    padding-left: 10px;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.profile-wrapper {
+    width:960px;
+    margin: 0 auto;
+    border:0px solid #eee;
+    padding:10px;
+}
+
+.statistic td {
+    border:1px solid #bbb;
+}
+
+.statistic td.header {
+    font-weight: bold;
+    text-align: center;
+    background: #F4F4F4;
+}
+
+.statistic td.header.teacher,
+.statistic td.value.teacher {
+    background: #FFF8D5;
+}
+
+.statistic td.header.staff,
+.statistic td.value.staff {
+    background: #FFE6E6;
+}
+
+.statistic td.value {
+    text-align: center;
+    width:100px;
+}
+
+.statistic td.value.program {
+    text-align: left!important;
+}
+
+.statistic.ed-level td.value {
+    text-align: center;
+    width:50px;
+}
+
+.statistic.program td.number {
+    text-align: center;
+    width:20px;
+}
+
+.statistic.program td.value {
+    text-align: center;
+    width:40px;
+}
+
+.container-12 .graph .grid-1 {
+    width:450px;
+}
+
+.teacher-by-ed .graph #chart1 {
+    margin:0 auto;
+}
+
+.view-edocument td {
+    vertical-align: top;
+    padding:10px;
+}
+
+.view-edocument .views-field-title {
+    width:100px;
+    border-right: 1px solid #eee;
+}
+
+.view-edocument .views-field-field-edoc-office {
+    width:130px;
+}
+
+.view-edocument .views-field-field-edoc-title {
+    border-right: 1px solid #eee;
+}
+
+.view-edocument .views-field-field-edoc-from,
+.view-edocument .views-field-field-edoc-to {
+    border-right: 1px solid #eee;
+    width:130px;
+}
+
+.view-edocument #edit-field-edoc-from-tid,
+.view-edocument #edit-field-edoc-to-tid {
+    width:200px;
+}
+
+.view-edocument .detail {
+    color:gray;
+}
+
+.portfolio-me-sec-1 .grid-8 {
+    width:600px!important;
+}
+
+.portfolio-menu {
+    background-color: #F1F1F1;
+    border: 1px solid #EBEBEB;
+    border-radius: 5px 5px 5px 5px;
+    padding: 20px 1px 10px 20px;
+}
+
+.portfolio-menu-title {
+    color: #000000;
+    font-family: supermarketRegular,Verdana,Arial,Helvetica,sans-serif;
+    font-size: 24px;
+    letter-spacing: 0;
+    padding-bottom: 0;
+    text-shadow: 0 1px 0 #FEFEFE;
+}
+
+.portfolio-menu-sub {
+    margin-bottom: 20px;
+}
+
+.personal-profile-display span.label {
+    font-weight: bold!important;
+}
+
+.personal-profile-display .grid-1 {
+    width:200px!important;
+}
+
+.personal-profile-display .grid-2 {
+    width:280px!important;
+}
+
+.personal-profile-display .grid-3 {
+    width:500px!important;
+}
+
+.personal-profile-display .section {
+    margin-bottom: 5px;
+}
+
+.personal-profile-display .separator {
+    margin-bottom: 20px;
+}
+
+/*print */
+.personal-profile-display-print span.label {
+    font-weight: bold!important;
+}
+
+.personal-profile-display-print .grid-1 {
+    width:300px!important;
+}
+
+.personal-profile-display-print .grid-2 {
+    width:480px!important;
+}
+
+.personal-profile-display-print .grid-3 {
+    width:800px!important;
+}
+
+.personal-profile-display-print .section {
+    margin-bottom: 5px;
+}
+
+.personal-profile-display-print .separator {
+    margin-bottom: 20px;
+}
+/**/
+
+.portfolio-me-sec-1 .person-profile.teaser {
+    border-bottom: 0px none;
+}
+
+.portfolio-me-sec-1 .sub-title {
+    border-bottom: 1px solid #F1F1F1;
+    line-height: 20px;
+    margin-top:40px;
+}
+
+.working-profile,
+.insignia-profile {
+    padding:0px 0px;
+}
+
+.working-profile table,
+.view-insignia-profile-list table,
+.view-degree-ref-content-list table,
+.academic-position-profile table,
+.seminar-inner-profile table,
+.award-profile table,
+.view-profile-recipe-display table,
+.profile-research table,
+.profile-publication table,
+.profile-conference table,
+.profile-article table,
+.profile-student table,
+.profile-culture table,
+.profile-lecturer table,
+.profile-serivces table,
+.profile-thesis table,
+.profile-profession-committee table,
+.profile-edoc-list table {
+    margin-top: 20px;
+    margin-bottom: 0px;
+}
+
+.working-profile table,
+.working-profile td,
+.view-insignia-profile-list table,
+.view-insignia-profile-list td,
+.view-degree-ref-content-list table,
+.view-degree-ref-content-list td,
+.academic-position-profile table,
+.academic-position-profile td,
+.seminar-inner-profile table,
+.seminar-inner-profile td,
+.award-profile table,
+.award-profile td,
+.view-profile-teaching-display table,
+.view-profile-teaching-display td,
+.view-profile-recipe-display table,
+.view-profile-recipe-display td,
+.profile-research table,
+.profile-research td,
+.profile-publication table,
+.profile-publication td,
+.profile-conference table,
+.profile-conference td,
+.profile-article table,
+.profile-article td,
+.profile-student table,
+.profile-student td,
+.profile-culture table,
+.profile-culture td,
+.profile-lecturer table,
+.profile-lecturer td,
+.profile-serivces table,
+.profile-serivces td,
+.profile-thesis table,
+.profile-thesis td,
+.profile-profession-committee table,
+.profile-profession-committee td,
+.profile-edoc-list table,
+.profile-edoc-list td {
+    border:0px none;
+}
+
+.working-profile th,
+.view-insignia-profile-list th,
+.view-degree-ref-content-list th,
+.academic-position-profile th,
+.seminar-inner-profile th,
+.award-profile th,
+.view-profile-teaching-display th,
+.view-profile-recipe-display th,
+.profile-research th,
+.profile-publication th,
+.profile-conference th,
+.profile-article th,
+.profile-student th,
+.profile-culture th,
+.profile-lecturer th,
+.profile-serivces th,
+.profile-thesis th,
+.profile-profession-committee th,
+.profile-edoc-list th {
+    background: transparent!important;
+    border-bottom: 2px solid #eee;
+    padding: 0px 3px!important;
+}
+
+.working-profile td,
+.view-insignia-profile-list td,
+.view-degree-ref-content-list td,
+.academic-position-profile td,
+.seminar-inner-profile td,
+.award-profile td,
+.view-profile-teaching-display td,
+.view-profile-recipe-display td,
+.profile-research td,
+.profile-publication td,
+.profile-conference td,
+.profile-article td,
+.profile-student td,
+.profile-culture td,
+.profile-lecturer td,
+.profile-serivces td,
+.profile-thesis td,
+.profile-profession-committee td,
+.profile-edoc-list td {
+    border-bottom: 1px solid #eee;
+    padding: 5px 5px;
+    vertical-align: top;
+}
+
+.award-profile td.views-field-php,
+.working-profile td.views-field-php,
+.working-profile td.views-field-php-1 {
+    width:100px;
+}
+
+.working-profile td.views-field-field-person-working-company {
+    width:200px;
+}
+
+.working-profile td.views-field-field-person-working-position {
+    width:160px;
+}
+
+.award-profile .views-field-edit-node,
+.working-profile .views-field-edit-node,
+.view-insignia-profile-list .views-field-edit-node,
+.view-profile-recipe-display .views-field-edit-node {
+    width:50px;
+    text-align: center;
+}
+
+.view-degree-ref-content-list td {
+    vertical-align: top;
+    padding:5px;
+}
+
+.view-degree-ref-content-list .views-field-field-ed-level-ref {
+    width:70px;
+}
+
+.view-degree-ref-content-list .views-field-field-ed-grad-year {
+    width:50px;
+    text-align: center;
+}
+
+.view-degree-ref-content-list .views-field-field-ed-degree-name {
+    width:180px;
+}
+
+.academic-position-profile .views-field-edit-node,
+.view-profile-teaching-display .views-field-edit-node {
+    width:50px;
+    text-align: center;
+}
+
+.view-profile-teaching-display .views-field-field-subject-student,
+.view-profile-teaching-display .views-field-field-subject-unit,
+.view-profile-teaching-display .views-field-field-subject-work-per-week,
+.view-profile-teaching-display .views-field-field-subject-lab-per-week,
+.view-profile-teaching-display .views-field-field-subject-exam-analysis,
+.view-profile-teaching-display .views-field-field-subject-meet-per-week {
+    text-align: center;
+    width:80px;
+}
+
+.view-profile-teaching-display .views-field-field-budget-year,
+.view-profile-teaching-display .views-field-field-budget-year {
+    width:80px;
+}
+
+.academic-position-profile .views-field-php {
+    width:100px;
+}
+
+.academic-position-profile .views-field-field-edocument-ref {
+    width:150px;
+}
+
+td.empty {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.view-clone-of-working-profile-inner-content .views-field-php-1 {
+    width:100px;
+}
+
+.seminar-inner-profile .views-field-php,
+.seminar-inner-profile .views-field-php-1 {
+    width:100px;
+}
+
+.seminar-inner-profile td {
+    text-align:top;
+}
+
+.seminar-inner-profile .views-field-field-seminar-organizer {
+    width:265px;
+}
+
+.seminar-inner-profile .views-field-field-seminar-cost,
+.seminar-inner-profile .views-field-field-seminar-cost-receive,
+.seminar-inner-profile .views-field-field-seminar-cost-pay {
+    width:80px;
+}
+
+td div.detail {
+    color:gray;
+}
+
+#zone-content .footer-table-menu a,
+#zone-content .footer-table-menu a:visited,
+#zone-content .footer-table-menu a:link {
+    color:gray!important;
+}
+
+.footer-table-menu {
+    border-bottom: 1px solid #eee;
+}
+
+.footer-table-menu .item-list ul li {
+    display: inline!important;
+    float:right;
+}
+
+.footer-table-menu .top-page {
+    padding-right: 15px
+}
+
+.award-profile .views-field-field-award-level {
+    width:100px;
+}
+
+.analysis-self-me .head {
+    background-color: #FBFBFB;
+}
+
+.head-title {
+    background: #000;
+    text-align: center;
+    font-weight: bold;
+}
+
+.view-requirement-in-education-display li,
+.view-requirement-in-work-page li {
+    list-style: decimal outside none!important;
+}
+
+.requirement-to-education h2.node-title,
+.view-requirement-in-work-page h2.node-title {
+    display: none!important;
+}
+
+form#views-exposed-form-requirement-in-ed-page-default,
+form#views-exposed-form-requirement-in-work-page-default,
+form#views-exposed-form-estimate-content-default,
+form#views-exposed-form-profile-teaching-display-default,
+form#views-exposed-form-profile-recipe-display-default {
+    padding: 0px 10px!important;
+}
+
+form#views-exposed-form-profile-recipe-display-default #edit-field-recipe-type-tid {
+    margin-top: 6px;
+}
+
+form#views-exposed-form-requirement-in-ed-page-default #edit-field-budget-year-tid,
+form#views-exposed-form-requirement-in-work-page-default #edit-field-budget-year-tid,
+form#views-exposed-form-estimate-content-default #edit-field-budget-year-tid,
+form#views-exposed-form-profile-teaching-display-default #edit-field-budget-year-tid,
+form#views-exposed-form-profile-recipe-display-default #edit-field-budget-year-tid {
+    margin-top: 6px;
+}
+
+form#views-exposed-form-requirement-in-ed-page-default label,
+form#views-exposed-form-requirement-in-work-page-default label,
+form#views-exposed-form-estimate-content-default label,
+form#views-exposed-form-profile-teaching-display-default label,
+form#views-exposed-form-profile-recipe-display-default label {
+    display: none;
+}
+
+form#views-exposed-form-requirement-in-ed-page-default .views-submit-button,
+form#views-exposed-form-requirement-in-work-page-default .views-submit-button,
+form#views-exposed-form-estimate-content-default .views-submit-button,
+form#views-exposed-form-profile-teaching-display-default .views-submit-button,
+form#views-exposed-form-profile-recipe-display-default .views-submit-button {
+    margin-top: -14px;
+}
+
+.view-requirement-in-ed-page .content,
+.view-requirement-in-work-page .content,
+form#views-exposed-form-estimate-content-default .content {
+    margin-left: 20px;
+}
+
+.estimate-content {
+    margin-bottom: 20px;
+}
+
+.estimate-content .lable {
+    font-weight: bold;
+}
+
+.estimate-content li {
+    list-style: decimal outside none!important;
+    margin-left: 20px;
+}
+
+.portfolio-evaluation h2.node-title {
+    display: none;
+}
+
+.view-profile-teaching-display .views-field-field-budget-year,
+.view-profile-teaching-display .views-field-field-subject-code {
+    width:70px;
+    text-align: center;
+}
+
+.view-profile-recipe-display .views-field-field-recipe-work-status,
+.view-profile-recipe-display .views-field-field-recipe-date {
+    width:100px;
+}
+
+.view-profile-recipe-display .views-field-field-recipe-page-number {
+    width:70px;
+    text-align: center;
+}
+
+.view-profile-recipe-display .views-field-field-recipe-date {
+    width:90px;
+    text-align: center;
+}
+
+.profile-research .research-name {
+    font-weight: normal;
+}
+
+.profile-research .research-name,
+.profile-research .research-name-en {
+    margin-bottom: 10px;
+}
+
+.profile-research .funding,
+.profile-research .research-date {
+    color:gray;
+}
+
+.views-field-field-research-status {
+    text-align: center;
+    width:70px;
+}
+
+.views-field-field-research-positon {
+    width:80px;
+}
+
+.views-field-field-research-funding-type {
+    width:80px;
+}
+
+.views-field-field-research-money {
+    width:80px;
+}
+
+.views-field-field-research-status .edit {
+    margin-top: 30px;
+}
+
+div.publication-name {
+    margin-bottom: 10px;
+}
+
+div.publication-date {
+    margin-top:10px;
+    margin-bottom: 10px;
+    color: gray;
+}
+
+.profile-publication .views-field-edit-node {
+    width:50px;
+    text-align: center;
+}
+
+.profile-publication .views-field-field-publication-level {
+    width:80px;
+    text-align: center;
+}
+
+.views-field-field-conference-country {
+    width:80px;
+}
+
+.views-field-field-conference-present-type {
+    width:80px;
+}
+
+.views-field-field-conference-research-type {
+    width:80px;
+}
+
+.views-field-field-publication-level {
+    width:80px;
+}
+
+.profile-conference .research-name {
+    margin-bottom: 10px;
+}
+
+.profile-conference .conference-date {
+    margin-bottom: 10px;
+}
+
+.profile-article .views-field-field-article-date {
+    width:200px;
+}
+
+.profile-article .views-field-field-article-name {
+    width:400px;
+}
+
+.profile-article .views-field-edit-node,
+.profile-student .views-field-edit-node,
+.profile-culture .views-field-edit-node,
+.profile-lecturer .views-field-edit-node {
+    width:50px;
+    text-align: center;
+}
+
+.profile-student .views-field-field-student-union-date {
+    width:250px;
+}
+
+.profile-student .views-field-field-student-union-budget {
+    width:100px;
+}
+
+.profile-student .views-field-field-student-union-detail {
+    width:200px;
+}
+
+.profile-culture .views-field-field-culture-budget {
+    width:100px;
+}
+
+.profile-culture .views-field-field-activity-position {
+    width:120px;
+}
+
+.profile-culture .views-field-field-culture-detail  {
+    width:200px;
+}
+
+.profile-lecturer .views-field-field-lecture-payment {
+    width:100px;
+}
+
+.profile-lecturer .views-field-field-lecturer-interval {
+    width:100px;
+}
+
+.profile-lecturer .views-field-field-lecturer-topic {
+    width:250px;
+}
+
+.profile-serivces .views-field-edit-node {
+    width:50px;
+    text-align: center;
+}
+
+.profile-serivces .views-field-field-lecture-payment,
+.profile-serivces .views-field-field-services-budget {
+    width:70px;
+}
+
+.profile-serivces .views-field-field-activity-position {
+    width:100px;
+}
+
+.profile-serivces .views-field-field-service-interval {
+    width:150px;
+}
+
+.profile-serivces td {
+    vertical-align: top;
+}
+
+.profile-serivces .views-field-field-services-name div {
+    margin-bottom: 10px;
+}
+
+.student-list {
+    color:gray;
+}
+
+.student-list li {
+    margin-left: 0px!important;
+}
+
+.profile-thesis .views-field-edit-node {
+    width:50px;
+    text-align: center;
+}
+
+.profile-thesis .views-field-php-2 {
+    width:80px;
+    text-align: center;
+}
+
+.profile-thesis .views-field-php-1 {
+    width:120px;
+    text-align: center;
+}
+
+.profile-thesis .views-field-field-student-level {
+    width:100px;
+    text-align: center;
+}
+
+.profile-thesis .views-field-field-thesis-co-consult {
+    width:120px;
+}
+
+.profile-profession-committee .views-field-edit-node {
+    width:50px;
+}
+
+.profile-profession-committee .views-field-php {
+    width:150px;
+}
+
+.profile-profession-committee .views-field-field-committee-time {
+    width:150px;
+    text-align: center;
+}
+
+.profile-profession-committee .views-field-field-committee-cost {
+    width:100px;
+    text-align: center;
+}
+
+.profile-profession-committee .views-field-field-committee-organization {
+    width:180px;
+}
+
+.edoc-selecter td {
+    vertical-align: top
+}
+
+.profile-edoc-list {
+    margin-bottom: 40px;
+}
+
+.edoc-date {
+    color:gray;
+}
+
+.profile-edoc-list .views-field-php {
+    width:50px;
+}
+
+.profile-edoc-list .views-field-field-edoc-type {
+    width:100px;
+}
+
+.profile-edoc-list .views-field-field-edoc-from {
+    width:150px;
+}
+
+.profile-edoc-list .views-field-field-edoc-code {
+    width:100px;
+}
+
+.profile-edoc-list table {
+    margin-bottom: 20px;
+}
+
+.view-first-page-slide h2.node-title {
+    display: none;
+}
+
+.container-12 .page-container .grid-1 {
+    width:500px;
+}
+
+.container-12 .page-container .grid-2 {
+    width:400px;
+}
+
+.page-container .teaser-wrapper {
+    border: 1px solid #F8F8F8 !important;
+    border-radius: 5px 5px 5px 5px;
+    padding: 15px 25px 25px 20px !important;
+}
+
+.page-container .teaser-wrapper .sub-title {
+    margin-top:10px;
+}
+
+.page-container .teaser-wrapper {
+    background: url("../images/first-page-bg.png") repeat scroll center top transparent;
+    margin-top: 30px;
+    height:230px;
+}
+
+.page-container .teaser-wrapper .text {
+    margin-bottom:10px;
+    color:#747474;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.page-container {
+    margin-top: 20px;
+}
+
+.page-container .img-3 img {
+    margin-top: 20px;
+}
+
+.section-wrapper {
+    background: none repeat scroll 0 0 #F8F8F8;
+    border: 1px solid #F0F0F0 !important;
+    border-radius: 5px 5px 5px 5px;
+    padding: 10px 20px 15px !important;
+}
+
+.section-wrapper {
+    margin-bottom: 20px;
+}
+
+.section-wrapper .sub-title {
+    text-align: center;
+}
+
+.section-wrapper .text {
+    text-align: center;
+    color:gray;
+    font-size: 14px;
+}
+
+.social-connect {
+    margin-top:65px;
+}
+
+.section-wrapper.social-connect {
+    padding:10px 10px 10px 10px!important;
+}
+
+.connect-text {
+    color: #C6C6C6;
+    font-family: supermarketRegular;
+    letter-spacing:3px;
+    font-size: 32px;
+    font-weight: normal;
+    /*line-height: 1.3em;*/
+    /*margin: 20px 0 10px;*/
+    padding-bottom: 0;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.connect-text {
+    vertical-align: middle;
+    margin-top: 7px;
+}
+
+.social-connect .grid-1 {
+    width:70px!important;
+}
+
+.social-text {
+    color: #BABABA;
+    text-shadow: 0 1px 0 #FFFFFF;
+    line-height: 15px;
+}
+
+.social-connect .grid-6 {
+    width:415px!important;
+    margin-right: 0px!important;
+}
+
+.hrms-social-icon {
+    text-align: right;
+}
+
+.first-page-content .grid-6 {
+    width:520px!important;
+    margin-right: 10px;
+}
+
+.first-page-content .grid-5 {
+    width:360px!important;
+}
+
+#index-page .panel-separator {
+    display:none;
+}
+
+.first-page-content .menu-link li {
+    margin-left: 20px;
+}
+
+.view-news-list-front li {
+    list-style: disc outside none!important;
+    margin-left: 10px!important;
+}
+
+.menu-footer {
+    color:gray;
+}
+
+.menu-footer .sub-title {
+    color:gray;
+    font-size:24px;
+}
+
+.menu-footer .grid-6 {
+    width:520px!important;
+}
+
+.menu-footer .grid-5 {
+    width:360px!important;
+}
+
+.copy-right {
+    border-top: 1px solid #EDEDED;
+    text-shadow: 1px 2px #DDDDDD;
+    margin-top: 20px;
+}
+
+.person-education-postion .value {
+    width:150px;
+    text-align: center;
+}
+
+.view-profile-by-working-peroid .views-field-field-start-working-date,
+.view-profile-by-working-peroid .views-field-php,
+.view-profile-by-working-peroid .views-field-field-birthday {
+    width: 140px;
+}
+
+.view-profile-by-working-peroid .views-field-php {
+    text-align: center;
+}
+
+.header.teacher-head {
+    background-color: #FFEFD7!important;
+}
+
+.lable.sub {
+    padding-left: 20px;
+}
+
+.view-working-interval-type-1 .views-field-php-1,
+.view-working-interval-type-2 .views-field-php-1 {
+    text-align: center;
+}
+
+.view-working-interval-type-1 .views-field-php-1,
+.view-working-interval-type-1 .views-field-field-start-working-date3,
+.view-working-interval-type-1 .views-field-field-start-working-date2 {
+    width:220px;
+}
+
+.title-count {
+    border-left: thick solid #2877BA;
+    color: #000000;
+    font-family: supermarketRegular;
+    font-size: 28px;
+    font-weight: normal;
+    letter-spacing: 0;
+    line-height: 1.3em;
+    margin: 40px 0 20px;
+    padding-bottom: 0;
+    padding-left: 10px;
+    padding-top: 0;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.operations-table tr:hover td,
+.operations-table tr.even:hover td.active,
+.operations-table tr.odd:hover td.active {
+    background: #FFFFFF;
+}
+
+.view-outter-seminar-monitoring .views-field-php,
+.view-outter-seminar-monitoring .views-field-php-1,
+.view-outter-seminar-monitoring .views-field-field-seminar-cost-receive,
+.view-outter-seminar-monitoring .views-field-field-seminar-cost-pay,
+.view-outter-seminar-monitoring .views-field-field-profile-ref {
+    width:80px;
+    text-align: center;
+}
+
+div#edit-field-seminar-date-value2-wrapper {
+    border-right: 1px solid #eee!important;
+    margin-right: 20px!important;
+}
+
+#manager-dashboard .panel-col-first,
+#manager-dashboard .panel-col-last {
+    width:350px;
+}
+
+.view-inner-seminar-monitoring .views-field-php,
+.view-inner-seminar-monitoring .views-field-php-1,
+.view-inner-seminar-monitoring .views-field-field-seminar-cost-receive,
+.view-inner-seminar-monitoring .views-field-field-seminar-cost-pay,
+.view-inner-seminar-monitoring .views-field-field-profile-ref {
+    width:80px;
+    text-align: center;
+}
+
+.teacher-list {
+    font-weight: bold;
+    margin-bottom: 30px;
+    margin-left: 846px;
+}
+
+.sc {
+
+    margin-bottom: 50px;
+
+}
+
+.view-routine-assessment-page h2.node-title,
+.view-addons-work-assessment h2.node-title,
+.view-etc-work-page h2.node-title,
+.view-work-problem-assessment h2.node-title {
+    display: none;
+}
+
+.routine-assessment-footer {
+    text-align: right;
+    border-top: 1px solid #ccc;
+}
+
+.profile-research .views-field-php,
+.profile-research .views-field-php-1,
+.profile-research .views-field-field-appoint-doc {
+    width: 100px;
+}
+
+.profile-research .views-field-field-executive-position {
+    width:150px;
+}
+

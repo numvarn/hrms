@@ -1,0 +1,3074 @@
+  <?php
+/**
+ * @file information.module
+ * TODO: Enter file description here.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function information_menu() {
+    // This is the minimum information you can provide for a menu item.
+    $items['info/persons/position-type'] = array(
+        'title' => t('จำนวนบุคลากร จำแนกตามสายงาน และประเภทของบุคลากร'),
+        'page callback' => 'information_personal_1',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/education-level'] = array(
+        'title' => t('จำนวนบุคลากร จำแนกตามสายงาน และระดับการศึกษา'),
+        'page callback' => 'information_personal_2',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/teacher-program'] = array(
+        'title' => t('จำนวนบุคลากร จำแนกตามระดับการศึกษา / โปรแกรมวิชา'),
+        'page callback' => 'information_personal_3',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/education-positon'] = array(
+        'title' => t('จำนวนบุคลากร จำแนกตามวุฒิการศึกษาและตำแหน่งทางวิชาการ'),
+        'page callback' => 'information_personal_4',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/teacher-regular'] = array(
+        'page callback' => 'information_personal_5',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/teacher-list-1'] = array(
+        'page callback' => 'information_info_persons_teacher_list_page_1',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/teacher-list-2'] = array(
+        'page callback' => 'information_info_persons_teacher_list_page_2',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/teacher-list-3'] = array(
+        'page callback' => 'information_info_persons_teacher_list_page_3',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    $items['info/persons/teacher-list-4'] = array(
+        'page callback' => 'information_info_persons_teacher_list_page_4',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+
+function information_admin_paths_alter(&$paths){
+    $paths['info/persons/teacher-list-1'] = TRUE;
+    $paths['info/persons/teacher-list-2'] = TRUE;
+    $paths['info/persons/teacher-list-3'] = TRUE;
+    $paths['info/persons/teacher-list-4'] = TRUE;
+}
+
+function information_personal_1() {
+    $output = '';
+    $rows = array();
+    $rows[] = array(
+            array('class' => 'header', 'data'=>t("ประเภทบุคลากร"), 'rowspan'=>3),
+            array('class' => 'header', 'data'=>t("สายงาน"), 'colspan'=>4),
+            array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>3),
+        );
+
+    $rows[] = array(
+            array('class' => 'header teacher-head', 'data'=>t("สายวิชาการ"), 'colspan'=>2),
+            array('class' => 'header teacher-head', 'data'=>t("สายสนับสนุน"), 'colspan'=>2),
+        );
+
+    $rows[] = array(
+            array('class' => 'header teacher', 'data'=>t("ชาย")),
+            array('class' => 'header staff', 'data'=>t("หญิง")),
+            array('class' => 'header teacher', 'data'=>t("ชาย")),
+            array('class' => 'header staff', 'data'=>t("หญิง")),
+        );
+
+    $graph_data1 = array();
+    $graph_data2 = array();
+
+    //tid = 18
+    /*gender*/
+    $teacher_count_male[] = information_teacher_count(18, NULL, 1);
+    $teacher_count_female[] = information_teacher_count(18, NULL, 2);
+    $staff_count_male[] = information_staff_count(18, NULL, 1);
+    $staff_count_female[] = information_staff_count(18, NULL, 2);
+
+    $total[] = $teacher_count_male[0] + $teacher_count_female[0] + $staff_count_male[0] + $staff_count_female[0];
+
+    $rows[] = array(
+            array('class' => 'label', 'data'=>t("1.ข้าราชการ")),
+            array('class' => 'value', 'data'=>$teacher_count_male[0]),
+            array('class' => 'value', 'data'=>$teacher_count_female[0]),
+            array('class' => 'value', 'data'=>$staff_count_male[0]),
+            array('class' => 'value', 'data'=>$staff_count_female[0]),
+            array('class' => 'value', 'data'=>$total[0]),
+        );
+
+
+    // tid = 414
+    /*gender*/
+    $teacher_count_male[] = information_teacher_count(414, NULL, 1);
+    $teacher_count_female[] = information_teacher_count(414, NULL, 2);
+    $staff_count_male[] = information_staff_count(414, NULL, 1);
+    $staff_count_female[] = information_staff_count(414, NULL, 2);
+
+    $total[] = $teacher_count_male[1] + $teacher_count_female[1] + $staff_count_male[1] + $staff_count_female[1];
+
+    $rows[] = array(
+            array('class' => 'label', 'data'=>t("2.พนักงานราชการ")),
+            array('class' => 'value', 'data'=>$teacher_count_male[1]),
+            array('class' => 'value', 'data'=>$teacher_count_female[1]),
+            array('class' => 'value', 'data'=>$staff_count_male[1]),
+            array('class' => 'value', 'data'=>$staff_count_female[1]),
+            array('class' => 'value', 'data'=>$total[1]),
+        );
+
+    // tid = 55
+    /*gender*/
+    $teacher_count_male[] = information_teacher_count(55, NULL, 1);
+    $teacher_count_female[] = information_teacher_count(55, NULL, 2);
+    $staff_count_male[] = information_staff_count(55, NULL, 1);
+    $staff_count_female[] = information_staff_count(55, NULL, 2);
+
+    $total[] = $teacher_count_male[2] + $teacher_count_female[2] + $staff_count_male[2] + $staff_count_female[2];
+
+    $rows[] = array(
+            array('class' => 'lable', 'data'=>t("3.พนักงานมหาวิทยาลัย")),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+        );
+
+    $rows[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.1 ประเภท พนักงานประจำเต็มเวลาถาวร")),
+            array('class' => 'value', 'data'=>$teacher_count_male[2]),
+            array('class' => 'value', 'data'=>$teacher_count_female[2]),
+            array('class' => 'value', 'data'=>$staff_count_male[2]),
+            array('class' => 'value', 'data'=>$staff_count_female[2]),
+            array('class' => 'value', 'data'=>$total[2]),
+        );
+
+    // tid = 72
+    /*gender*/
+    $teacher_count_male[] = information_teacher_count(72, NULL, 1);
+    $teacher_count_female[] = information_teacher_count(72, NULL, 2);
+    $staff_count_male[] = information_staff_count(72, NULL, 1);
+    $staff_count_female[] = information_staff_count(72, NULL, 2);
+
+    $total[] = $teacher_count_male[3] + $teacher_count_female[3] + $staff_count_male[3] + $staff_count_female[3];
+
+    $rows[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.2 ประเภท พนักงานประจำเต็มเวลาตามสัญญาจ้าง")),
+            array('class' => 'value', 'data'=>$teacher_count_male[3]),
+            array('class' => 'value', 'data'=>$teacher_count_female[3]),
+            array('class' => 'value', 'data'=>$staff_count_male[3]),
+            array('class' => 'value', 'data'=>$staff_count_female[3]),
+            array('class' => 'value', 'data'=>$total[3]),
+        );
+
+    // tid = 50
+    /*gender*/
+    $teacher_count_male[] = information_teacher_count(50, NULL, 1);
+    $teacher_count_female[] = information_teacher_count(50, NULL, 2);
+    $staff_count_male[] = information_staff_count(50, NULL, 1);
+    $staff_count_female[] = information_staff_count(50, NULL, 2);
+
+    $total[] = $teacher_count_male[4] + $teacher_count_female[4] + $staff_count_male[4] + $staff_count_female[4];
+
+    $rows[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.3 ประเภท พนักงานจ้างตามภารกิจ")),
+            array('class' => 'value', 'data'=>$teacher_count_male[4]),
+            array('class' => 'value', 'data'=>$teacher_count_female[4]),
+            array('class' => 'value', 'data'=>$staff_count_male[4]),
+            array('class' => 'value', 'data'=>$staff_count_female[4]),
+            array('class' => 'value', 'data'=>$total[4]),
+        );
+
+    $teacher_total_male = 0;
+    $teacher_total_female = 0;
+    foreach ($teacher_count_male as $key => $value) {
+        $teacher_count[$key] = $teacher_count_male[$key] + $teacher_count_female[$key];
+        $teacher_total_male += $teacher_count_male[$key];
+        $teacher_total_female += $teacher_count_female[$key];
+    }
+
+    $staff_total_male = 0;
+    $staff_total_female = 0;
+    foreach ($staff_count_male as $key => $value) {
+        $staff_count[$key] = $staff_count_male[$key] + $staff_count_female[$key];
+        $staff_total_male += $staff_count_male[$key];
+        $staff_total_female += $staff_count_female[$key];
+    }
+
+    /*Sumation*/
+    $graph_data1  = '1.ข้าราชการ:'.$teacher_count[0];
+    $graph_data1 .= ',2.พนักงานราชการ:'.$teacher_count[1];
+    $graph_data1 .= ',3.1.พนักงานประจำเต็มเวลาถาวร:'.$teacher_count[2];
+    $graph_data1 .= ',3.2.พนักงานประจำเต็มเวลาตามสัญญาจ้าง:'.$teacher_count[3];
+    $graph_data1 .= ',3.3.พนักงานจ้างตามภารกิจ:'.$teacher_count[4];
+
+    $graph_data2  = '1.ข้าราชการ:'.$staff_count[0];
+    $graph_data2 .= ',2.พนักงานราชการ:'.$staff_count[1];
+    $graph_data2 .= ',3.1.พนักงานประจำเต็มเวลาถาวร:'.$staff_count[2];
+    $graph_data2 .= ',3.2.พนักงานประจำเต็มเวลาตามสัญญาจ้าง:'.$staff_count[3];
+    $graph_data2 .= ',3.3.พนักงานจ้างตามภารกิจ:'.$staff_count[4];
+
+    $total_teacher = 0;
+    foreach ($teacher_count as $key => $value) {
+         $total_teacher += $value;
+     }
+
+     $total_staff = 0;
+     foreach ($staff_count as $key => $value) {
+         $total_staff += $value;
+     }
+
+     $total_final = 0;
+     foreach ($total as $key => $value) {
+        $total_final += $value;
+     }
+
+     $rows[] = array(
+            array('class' => 'lable header', 'data'=>t("รวม"), 'rowspan'=>2),
+            array('class' => 'value header', 'data'=>$teacher_total_male),
+            array('class' => 'value header', 'data'=>$teacher_total_female),
+            array('class' => 'value header', 'data'=>$staff_total_male),
+            array('class' => 'value header', 'data'=>$staff_total_female),
+            array('class' => 'value header', 'data'=>$total_final, 'rowspan'=>2),
+        );
+
+    $rows[] = array(
+            array('class' => 'value header', 'data'=>$total_teacher, 'colspan'=>2),
+            array('class' => 'value header', 'data'=>$total_staff, 'colspan'=>2),
+        );
+
+    $output .= '<div class="statistic">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+    /*Graph*/
+    $args1 = array(
+            'label' => 'จำนวนบุคลากรสายวิชาการ',
+            'name' => 'chart1',
+            'data' => $graph_data1,
+            'width' => '450',
+            'height' => '300'
+        );
+
+    $args2 = array(
+            'label' => 'จำนวนบุคลากรสายสนับสนุน',
+            'name' => 'chart2',
+            'data' => $graph_data2,
+            'width' => '450',
+            'height' => '300'
+        );
+
+    $arg_str1 = '';
+    foreach ($args1 as $key => $value) {
+        $arg_str1 .= $key."=".$value."&";
+    }
+
+    $arg_str2 = '';
+    foreach ($args2 as $key => $value) {
+        $arg_str2 .= $key."=".$value."&";
+    }
+
+    $path1 = 'http://'.$_SERVER['SERVER_NAME'].base_path().'graph/pie?'.$arg_str1;
+    $path2 = 'http://'.$_SERVER['SERVER_NAME'].base_path().'graph/pie?'.$arg_str2;
+
+    $output .= '<div class="graph">
+                    <div class="grid-1">
+                        '.file_get_contents($path1).'
+                    </div>
+                    <div class="grid-1">
+                        '.file_get_contents($path2).'
+                    </div>
+                    <div class="clearfix"></div>
+                </div>';
+
+    return $output;
+}
+
+function information_personal_2() {
+    $output = '';
+    $under_grade_total = 0;
+    $under_grade_arr = array();
+
+    $rows = array();
+    $rows[] = array(
+            array('class' => 'header', 'data'=>t("ประเภทบุคลากร"), 'rowspan'=>2),
+            array('class' => 'header teacher', 'data'=>t("สายวิชาการ"), 'colspan'=>4),
+            array('class' => 'header staff', 'data'=>t("สายสนับสนุน"), 'colspan'=>5),
+            array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>2),
+        );
+
+    $rows[] = array(
+            array('class' => 'header', 'data'=>t("ตรี")),
+            array('class' => 'header', 'data'=>t("โท")),
+            array('class' => 'header', 'data'=>t("เอก")),
+            array('class' => 'header teacher', 'data'=>t("รวม")),
+
+            array('class' => 'header', 'data'=>t("ต่ำกว่า ตรี")),
+            array('class' => 'header', 'data'=>t("ตรี")),
+            array('class' => 'header', 'data'=>t("โท")),
+            array('class' => 'header', 'data'=>t("เอก")),
+            array('class' => 'header staff', 'data'=>t("รวม")),
+        );
+
+    //tid = 18
+    $teacher_count[0][] = information_teacher_count(18, 12);
+    $teacher_count[0][] = information_teacher_count(18, 13);
+    $teacher_count[0][] = information_teacher_count(18, 14);
+
+    $staff_count[0][] = information_staff_count(18, 12);
+    $staff_count[0][] = information_staff_count(18, 13);
+    $staff_count[0][] = information_staff_count(18, 14);
+
+    /*Lower than bc.*/
+    $staff_count[0][] = information_staff_count(18, 486);
+    $staff_count[0][] = information_staff_count(18, 487);
+    $staff_count[0][] = information_staff_count(18, 488);
+    $staff_count[0][] = information_staff_count(18, 489);
+
+    $staff_under = 0;
+    $staff_under = $staff_count[0][3]+$staff_count[0][4]+$staff_count[0][5]+$staff_count[0][6];
+    $under_grade_arr[] = $staff_under;
+    $under_grade_total += $staff_under;
+
+    $teacher_total = 0;
+    foreach ($teacher_count[0] as $key => $value) {
+        $teacher_total += $value;
+    }
+
+    $staff_total = 0;
+    foreach ($staff_count[0] as $key => $value) {
+        $staff_total += $value;
+    }
+
+    $rows[] = array(
+            array('class' => 'label', 'data'=>t("1.ข้าราชการ")),
+            array('class' => 'value', 'data'=>$teacher_count[0][0]),
+            array('class' => 'value', 'data'=>$teacher_count[0][1]),
+            array('class' => 'value', 'data'=>$teacher_count[0][2]),
+            array('class' => 'value teacher', 'data'=>$teacher_total),
+
+            array('class' => 'value', 'data'=>$staff_under),
+            array('class' => 'value', 'data'=>$staff_count[0][0]),
+            array('class' => 'value', 'data'=>$staff_count[0][1]),
+            array('class' => 'value', 'data'=>$staff_count[0][2]),
+            array('class' => 'value staff', 'data'=>$staff_total),
+
+            array('class' => 'value header', 'data'=>$teacher_total + $staff_total),
+        );
+    // tid = 414
+    $teacher_count[1][] = information_teacher_count(414, 12);
+    $teacher_count[1][] = information_teacher_count(414, 13);
+    $teacher_count[1][] = information_teacher_count(414, 14);
+
+    $staff_count[1][] = information_staff_count(414, 12);
+    $staff_count[1][] = information_staff_count(414, 13);
+    $staff_count[1][] = information_staff_count(414, 14);
+
+    /*Lower than bc.*/
+    $staff_count[1][] = information_staff_count(414, 486);
+    $staff_count[1][] = information_staff_count(414, 487);
+    $staff_count[1][] = information_staff_count(414, 488);
+    $staff_count[1][] = information_staff_count(414, 489);
+
+    $staff_under = 0;
+    $staff_under = $staff_count[1][3]+$staff_count[1][4]+$staff_count[1][5]+$staff_count[1][6];
+    $under_grade_arr[] = $staff_under;
+    $under_grade_total += $staff_under;
+
+    $teacher_total = 0;
+    foreach ($teacher_count[1] as $key => $value) {
+        $teacher_total += $value;
+    }
+
+    $staff_total = 0;
+    foreach ($staff_count[1] as $key => $value) {
+        $staff_total += $value;
+    }
+
+    $rows[] = array(
+            array('class' => 'label', 'data'=>t("2.พนักงานราชการ")),
+            array('class' => 'value', 'data'=>$teacher_count[1][0]),
+            array('class' => 'value', 'data'=>$teacher_count[1][1]),
+            array('class' => 'value', 'data'=>$teacher_count[1][2]),
+            array('class' => 'value teacher', 'data'=>$teacher_total),
+
+            array('class' => 'value', 'data'=>$staff_under),
+            array('class' => 'value', 'data'=>$staff_count[1][0]),
+            array('class' => 'value', 'data'=>$staff_count[1][1]),
+            array('class' => 'value', 'data'=>$staff_count[1][2]),
+            array('class' => 'value staff', 'data'=>$staff_total),
+
+            array('class' => 'value header', 'data'=>$teacher_total + $staff_total),
+        );
+
+    // tid = 55
+    $teacher_count[2][] = information_teacher_count(55, 12);
+    $teacher_count[2][] = information_teacher_count(55, 13);
+    $teacher_count[2][] = information_teacher_count(55, 14);
+
+    $staff_count[2][] = information_staff_count(55, 12);
+    $staff_count[2][] = information_staff_count(55, 13);
+    $staff_count[2][] = information_staff_count(55, 14);
+
+    /*Lower than bc.*/
+    $staff_count[2][] = information_staff_count(55, 486);
+    $staff_count[2][] = information_staff_count(55, 487);
+    $staff_count[2][] = information_staff_count(55, 488);
+    $staff_count[2][] = information_staff_count(55, 489);
+
+    $staff_under = 0;
+    $staff_under = $staff_count[2][3]+$staff_count[2][4]+$staff_count[2][5]+$staff_count[2][6];
+    $under_grade_arr[] = $staff_under;
+    $under_grade_total += $staff_under;
+
+    $teacher_total = 0;
+    foreach ($teacher_count[2] as $key => $value) {
+        $teacher_total += $value;
+    }
+
+    $staff_total = 0;
+    foreach ($staff_count[2] as $key => $value) {
+        $staff_total += $value;
+    }
+
+    $rows[] = array(
+            array('class' => 'lable', 'data'=>t("3.พนักงานมหาวิทยาลัย")),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>' '),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>' '),
+        );
+
+    $rows[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.1 พนักงานประจำเต็มเวลาถาวร")),
+            array('class' => 'value', 'data'=>$teacher_count[2][0]),
+            array('class' => 'value', 'data'=>$teacher_count[2][1]),
+            array('class' => 'value', 'data'=>$teacher_count[2][2]),
+            array('class' => 'value teacher', 'data'=>$teacher_total),
+
+            array('class' => 'value', 'data'=>$staff_under),
+            array('class' => 'value', 'data'=>$staff_count[2][0]),
+            array('class' => 'value', 'data'=>$staff_count[2][1]),
+            array('class' => 'value', 'data'=>$staff_count[2][2]),
+            array('class' => 'value staff', 'data'=>$staff_total),
+
+            array('class' => 'value header', 'data'=>$teacher_total + $staff_total),
+        );
+
+    // tid = 72
+    $teacher_count[3][] = information_teacher_count(72, 12);
+    $teacher_count[3][] = information_teacher_count(72, 13);
+    $teacher_count[3][] = information_teacher_count(72, 14);
+
+    $staff_count[3][] = information_staff_count(72, 12);
+    $staff_count[3][] = information_staff_count(72, 13);
+    $staff_count[3][] = information_staff_count(72, 14);
+
+    /*Lower than bc.*/
+    $staff_count[3][] = information_staff_count(72, 486);
+    $staff_count[3][] = information_staff_count(72, 487);
+    $staff_count[3][] = information_staff_count(72, 488);
+    $staff_count[3][] = information_staff_count(72, 489);
+
+    $staff_under = 0;
+    $staff_under = $staff_count[3][3]+$staff_count[3][4]+$staff_count[3][5]+$staff_count[3][6];
+    $under_grade_arr[] = $staff_under;
+    $under_grade_total += $staff_under;
+
+    $teacher_total = 0;
+    foreach ($teacher_count[3] as $key => $value) {
+        $teacher_total += $value;
+    }
+
+    $staff_total = 0;
+    foreach ($staff_count[3] as $key => $value) {
+        $staff_total += $value;
+    }
+
+    $rows[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.2 พนักงานประจำเต็มเวลาตามสัญญาจ้าง")),
+            array('class' => 'value', 'data'=>$teacher_count[3][0]),
+            array('class' => 'value', 'data'=>$teacher_count[3][1]),
+            array('class' => 'value', 'data'=>$teacher_count[3][2]),
+            array('class' => 'value teacher', 'data'=>$teacher_total),
+
+            array('class' => 'value', 'data'=>$staff_under),
+            array('class' => 'value', 'data'=>$staff_count[3][0]),
+            array('class' => 'value', 'data'=>$staff_count[3][1]),
+            array('class' => 'value', 'data'=>$staff_count[3][2]),
+            array('class' => 'value staff', 'data'=>$staff_total),
+
+            array('class' => 'value header', 'data'=>$teacher_total + $staff_total),
+        );
+
+    // tid = 50
+    $teacher_count[4][] = information_teacher_count(50, 12);
+    $teacher_count[4][] = information_teacher_count(50, 13);
+    $teacher_count[4][] = information_teacher_count(50, 14);
+
+    $staff_count[4][] = information_staff_count(50, 12);
+    $staff_count[4][] = information_staff_count(50, 13);
+    $staff_count[4][] = information_staff_count(50, 14);
+
+    /*Lower than bc.*/
+    $staff_count[4][] = information_staff_count(50, 486);
+    $staff_count[4][] = information_staff_count(50, 487);
+    $staff_count[4][] = information_staff_count(50, 488);
+    $staff_count[4][] = information_staff_count(50, 489);
+    $staff_count[4][] = information_staff_none_ed_count(50);
+
+    $staff_under = 0;
+    $staff_under = $staff_count[4][3]+$staff_count[4][4]+$staff_count[4][5]+$staff_count[4][6]+$staff_count[4][7];
+    $under_grade_arr[] = $staff_under;
+    $under_grade_total += $staff_under;
+
+    $teacher_total = 0;
+    foreach ($teacher_count[4] as $key => $value) {
+        $teacher_total += $value;
+    }
+
+    $staff_total = 0;
+    foreach ($staff_count[4] as $key => $value) {
+        $staff_total += $value;
+    }
+
+    $rows[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.3 พนักงานจ้างตามภารกิจ")),
+            array('class' => 'value', 'data'=>$teacher_count[4][0]),
+            array('class' => 'value', 'data'=>$teacher_count[4][1]),
+            array('class' => 'value', 'data'=>$teacher_count[4][2]),
+            array('class' => 'value teacher', 'data'=>$teacher_total),
+
+            array('class' => 'value', 'data'=>$staff_under),
+            array('class' => 'value', 'data'=>$staff_count[4][0]),
+            array('class' => 'value', 'data'=>$staff_count[4][1]),
+            array('class' => 'value', 'data'=>$staff_count[4][2]),
+            array('class' => 'value staff', 'data'=>$staff_total),
+
+            array('class' => 'value header', 'data'=>$teacher_total + $staff_total),
+        );
+
+    /*Sumation*/
+    $teacher_level1_total = 0;
+    $teacher_level2_total = 0;
+    $teacher_level3_total = 0;
+
+    $staff_level1_total = 0;
+    $staff_level2_total = 0;
+    $staff_level3_total = 0;
+
+    foreach ($teacher_count as $key => $value) {
+        $teacher_level1_total += $value[0];
+        $teacher_level2_total += $value[1];
+        $teacher_level3_total += $value[2];
+    }
+
+    foreach ($staff_count as $key => $value) {
+        $staff_level1_total += $value[0];
+        $staff_level2_total += $value[1];
+        $staff_level3_total += $value[2];
+    }
+
+    $teacher_total_all = $teacher_level1_total+$teacher_level2_total+$teacher_level3_total;
+    $staff_total_all = $under_grade_total+$staff_level1_total+$staff_level2_total+$staff_level3_total;
+
+     $rows[] = array(
+            array('class' => 'lable header', 'data'=>t("รวม")),
+            array('class' => 'value header', 'data'=>$teacher_level1_total),
+            array('class' => 'value header', 'data'=>$teacher_level2_total),
+            array('class' => 'value header', 'data'=>$teacher_level3_total),
+            array('class' => 'value teacher header', 'data'=>$teacher_total_all),
+
+            array('class' => 'value header', 'data'=>$under_grade_total),
+            array('class' => 'value header', 'data'=>$staff_level1_total),
+            array('class' => 'value header', 'data'=>$staff_level2_total),
+            array('class' => 'value header', 'data'=>$staff_level3_total),
+            array('class' => 'value staff header', 'data'=>$staff_total_all),
+
+            array('class' => 'value header', 'data'=>$teacher_total_all+$staff_total_all),
+        );
+
+    $output .= '<div class="statistic ed-level">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+    /**
+     * Table 2
+     **/
+    $rows2 = array();
+    $rows2[] = array(
+        array('class' => 'header', 'data'=>t("ประเภทบุคลากร"), 'rowspan'=>3),
+        array('class' => 'header teacher', 'data'=>t("สายวิชาการ"), 'colspan'=>6),
+        array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>3),
+    );
+
+    $teacher_count2 = array();
+
+    $rows2[] = array(
+        array('class' => 'header', 'data'=>t("ปริญญาตรี"), 'colspan'=>2),
+        array('class' => 'header', 'data'=>t("ปริญญาโท"), 'colspan'=>2),
+        array('class' => 'header', 'data'=>t("ปริญญาเอก"), 'colspan'=>2),
+    );
+
+    $rows2[] = array(
+        array('class' => 'header teacher', 'data'=>t("ชาย")),
+        array('class' => 'header teacher', 'data'=>t("หญิง")),
+
+        array('class' => 'header teacher', 'data'=>t("ชาย")),
+        array('class' => 'header teacher', 'data'=>t("หญิง")),
+
+        array('class' => 'header teacher', 'data'=>t("ชาย")),
+        array('class' => 'header teacher', 'data'=>t("หญิง")),
+    );
+
+    $total_all = 0;
+    $total_male_1 = array();
+    $total_female_1 = array();
+
+    $total_male_2 = array();
+    $total_female_2 = array();
+
+    $total_male_3 = array();
+    $total_female_3 = array();
+
+    //tid = 18
+    $teacher_count2[0]['male'] = information_teacher_count(18, 12, 1);
+    $teacher_count2[0]['female'] = information_teacher_count(18, 12, 2);
+
+    $teacher_count2[1]['male'] = information_teacher_count(18, 13, 1);
+    $teacher_count2[1]['female'] = information_teacher_count(18, 13, 2);
+
+    $teacher_count2[2]['male'] = information_teacher_count(18, 14, 1);
+    $teacher_count2[2]['female'] = information_teacher_count(18, 14, 2);
+
+    $total_male_1[] = $teacher_count2[0]['male'];
+    $total_female_1[] = $teacher_count2[0]['female'];
+
+    $total_male_2[] = $teacher_count2[1]['male'];
+    $total_female_2[] = $teacher_count2[1]['female'];
+
+    $total_male_3[] = $teacher_count2[2]['male'];
+    $total_female_3[] = $teacher_count2[2]['female'];
+
+    $teacher_count2_total = 0;
+    foreach ($teacher_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $teacher_count2_total += $value;
+        }
+    }
+
+    $total_all += $teacher_count2_total;
+
+    $rows2[] = array(
+            array('class' => 'lable', 'data'=>t("1.ข้าราชการ")),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[1]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[2]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[2]['female']),
+            array('class' => 'value header', 'data'=>$teacher_count2_total),
+        );
+
+    //tid = 414
+    $teacher_count2[0]['male'] = information_teacher_count(414, 12, 1);
+    $teacher_count2[0]['female'] = information_teacher_count(414, 12, 2);
+
+    $teacher_count2[1]['male'] = information_teacher_count(414, 13, 1);
+    $teacher_count2[1]['female'] = information_teacher_count(414, 13, 2);
+
+    $teacher_count2[2]['male'] = information_teacher_count(414, 14, 1);
+    $teacher_count2[2]['female'] = information_teacher_count(414, 14, 2);
+
+    $total_male_1[] = $teacher_count2[0]['male'];
+    $total_female_1[] = $teacher_count2[0]['female'];
+
+    $total_male_2[] = $teacher_count2[1]['male'];
+    $total_female_2[] = $teacher_count2[1]['female'];
+
+    $total_male_3[] = $teacher_count2[2]['male'];
+    $total_female_3[] = $teacher_count2[2]['female'];
+
+    $teacher_count2_total = 0;
+    foreach ($teacher_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $teacher_count2_total += $value;
+        }
+    }
+
+    $rows2[] = array(
+            array('class' => 'lable', 'data'=>t("2.พนักงานราชการ")),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[1]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[2]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[2]['female']),
+            array('class' => 'value header', 'data'=>$teacher_count2_total),
+        );
+
+    $rows2[] = array(
+            array('class' => 'lable', 'data'=>t("3.พนักงานมหาวิทยาลัย")),
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value header', 'data'=>''),
+        );
+
+    //tid = 55
+    $teacher_count2[0]['male'] = information_teacher_count(55, 12, 1);
+    $teacher_count2[0]['female'] = information_teacher_count(55, 12, 2);
+
+    $teacher_count2[1]['male'] = information_teacher_count(55, 13, 1);
+    $teacher_count2[1]['female'] = information_teacher_count(55, 13, 2);
+
+    $teacher_count2[2]['male'] = information_teacher_count(55, 14, 1);
+    $teacher_count2[2]['female'] = information_teacher_count(55, 14, 2);
+
+    $total_male_1[] = $teacher_count2[0]['male'];
+    $total_female_1[] = $teacher_count2[0]['female'];
+
+    $total_male_2[] = $teacher_count2[1]['male'];
+    $total_female_2[] = $teacher_count2[1]['female'];
+
+    $total_male_3[] = $teacher_count2[2]['male'];
+    $total_female_3[] = $teacher_count2[2]['female'];
+
+    $teacher_count2_total = 0;
+    foreach ($teacher_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $teacher_count2_total += $value;
+        }
+    }
+
+    $rows2[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.1 พนักงานประจำเต็มเวลาถาวร")),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[1]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[2]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[2]['female']),
+            array('class' => 'value header', 'data'=>$teacher_count2_total),
+        );
+
+     //tid = 72
+    $teacher_count2[0]['male'] = information_teacher_count(72, 12, 1);
+    $teacher_count2[0]['female'] = information_teacher_count(72, 12, 2);
+
+    $teacher_count2[1]['male'] = information_teacher_count(72, 13, 1);
+    $teacher_count2[1]['female'] = information_teacher_count(72, 13, 2);
+
+    $teacher_count2[2]['male'] = information_teacher_count(72, 14, 1);
+    $teacher_count2[2]['female'] = information_teacher_count(72, 14, 2);
+
+    $total_male_1[] = $teacher_count2[0]['male'];
+    $total_female_1[] = $teacher_count2[0]['female'];
+
+    $total_male_2[] = $teacher_count2[1]['male'];
+    $total_female_2[] = $teacher_count2[1]['female'];
+
+    $total_male_3[] = $teacher_count2[2]['male'];
+    $total_female_3[] = $teacher_count2[2]['female'];
+
+    $teacher_count2_total = 0;
+    foreach ($teacher_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $teacher_count2_total += $value;
+        }
+    }
+
+    $rows2[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.2 พนักงานประจำเต็มเวลาตามสัญญาจ้าง")),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[1]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[2]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[2]['female']),
+            array('class' => 'value header', 'data'=>$teacher_count2_total),
+        );
+
+    //tid = 50
+    $teacher_count2[0]['male'] = information_teacher_count(50, 12, 1);
+    $teacher_count2[0]['female'] = information_teacher_count(50, 12, 2);
+
+    $teacher_count2[1]['male'] = information_teacher_count(50, 13, 1);
+    $teacher_count2[1]['female'] = information_teacher_count(50, 13, 2);
+
+    $teacher_count2[2]['male'] = information_teacher_count(50, 14, 1);
+    $teacher_count2[2]['female'] = information_teacher_count(50, 14, 2);
+
+    $total_male_1[] = $teacher_count2[0]['male'];
+    $total_female_1[] = $teacher_count2[0]['female'];
+
+    $total_male_2[] = $teacher_count2[1]['male'];
+    $total_female_2[] = $teacher_count2[1]['female'];
+
+    $total_male_3[] = $teacher_count2[2]['male'];
+    $total_female_3[] = $teacher_count2[2]['female'];
+
+    $teacher_count2_total = 0;
+    foreach ($teacher_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $teacher_count2_total += $value;
+        }
+    }
+    $rows2[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.3 พนักงานจ้างตามภารกิจ")),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[1]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$teacher_count2[2]['male']),
+            array('class' => 'value', 'data'=>$teacher_count2[2]['female']),
+            array('class' => 'value header', 'data'=>$teacher_count2_total),
+        );
+
+    // Summation
+    $result1 = 0;
+    foreach ($total_male_1 as $key => $value) {
+         $result1 += $value;
+    }
+
+    $result2 = 0;
+    foreach ($total_female_1 as $key => $value) {
+         $result2 += $value;
+    }
+
+    $result3 = 0;
+    foreach ($total_male_2 as $key => $value) {
+         $result3 += $value;
+    }
+
+    $result4 = 0;
+    foreach ($total_female_2 as $key => $value) {
+         $result4 += $value;
+    }
+
+    $result5 = 0;
+    foreach ($total_male_3 as $key => $value) {
+         $result5 += $value;
+    }
+
+    $result6 = 0;
+    foreach ($total_female_3 as $key => $value) {
+         $result6 += $value;
+    }
+
+    $total_all = $result1 + $result2 + $result3 + $result4 + $result5 + $result6;
+
+    $rows2[] = array(
+            array('class' => 'lable header', 'data'=>t("รวม"), 'rowspan' => 2),
+            array('class' => 'value', 'data'=>$result1),
+            array('class' => 'value', 'data'=>$result2),
+
+            array('class' => 'value', 'data'=>$result3),
+            array('class' => 'value', 'data'=>$result4),
+
+            array('class' => 'value', 'data'=>$result5),
+            array('class' => 'value', 'data'=>$result6),
+            array('class' => 'value header teacher', 'data'=>$total_all, 'rowspan' => 2),
+        );
+
+    $rows2[] = array(
+            array('class' => 'value', 'data'=>$result1+$result2, 'colspan' => 2),
+            array('class' => 'value', 'data'=>$result3+$result4, 'colspan' => 2),
+            array('class' => 'value', 'data'=>$result5+$result6, 'colspan' => 2),
+        );
+
+    $output .= '<div class="statistic ed-level">
+                    '.theme("table", array("rows"=>$rows2)).'
+                </div>';
+
+    /**
+     * Table 3
+     */
+    $rows3 = array();
+    $rows3[] = array(
+        array('class' => 'header', 'data'=>t("ประเภทบุคลากร"), 'rowspan'=>3),
+        array('class' => 'header staff', 'data'=>t("สายสนับสนุน"), 'colspan'=>8),
+        array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>3),
+    );
+
+    $rows3[] = array(
+        array('class' => 'header', 'data'=>t("ต่ำกว่า ตรี"), 'colspan'=>2),
+        array('class' => 'header', 'data'=>t("ปริญญาตรี"), 'colspan'=>2),
+        array('class' => 'header', 'data'=>t("ปริญญาโท"), 'colspan'=>2),
+        array('class' => 'header', 'data'=>t("ปริญญาเอก"), 'colspan'=>2),
+    );
+
+    $rows3[] = array(
+        array('class' => 'header staff', 'data'=>t("ชาย")),
+        array('class' => 'header staff', 'data'=>t("หญิง")),
+
+        array('class' => 'header staff', 'data'=>t("ชาย")),
+        array('class' => 'header staff', 'data'=>t("หญิง")),
+
+        array('class' => 'header staff', 'data'=>t("ชาย")),
+        array('class' => 'header staff', 'data'=>t("หญิง")),
+
+        array('class' => 'header staff', 'data'=>t("ชาย")),
+        array('class' => 'header staff', 'data'=>t("หญิง")),
+    );
+
+    // TID = 18
+    $staff_count2 = array();
+    $staff_count2[0]['male'] = information_staff_count(18, 12, 1);
+    $staff_count2[0]['female'] = information_staff_count(18, 12, 2);
+
+    $staff_count2[1]['male'] = information_staff_count(18, 13, 1);
+    $staff_count2[1]['female'] = information_staff_count(18, 13, 2);
+
+    $staff_count2[2]['male'] = information_staff_count(18, 14, 1);
+    $staff_count2[2]['female'] = information_staff_count(18, 14, 2);
+
+    /*Lower than bc.*/
+    $staff_count2[3]['male'] = information_staff_count(18, 486, 1);
+    $staff_count2[4]['male'] = information_staff_count(18, 487, 1);
+    $staff_count2[5]['male'] = information_staff_count(18, 488, 1);
+    $staff_count2[6]['male'] = information_staff_count(18, 489, 1);
+
+    $staff_count2[3]['female'] = information_staff_count(18, 486, 2);
+    $staff_count2[4]['female'] = information_staff_count(18, 487, 2);
+    $staff_count2[5]['female'] = information_staff_count(18, 488, 2);
+    $staff_count2[6]['female'] = information_staff_count(18, 489, 2);
+
+
+    $staff_female_under_bc = $staff_count2[3]['female']+$staff_count2[4]['female']+$staff_count2[5]['female']+$staff_count2[6]['female'];
+    $staff_male_under_bc = $staff_count2[3]['male']+$staff_count2[4]['male']+$staff_count2[5]['male']+$staff_count2[6]['male'];
+
+    /*initial value*/
+    $total_male_1 = array();
+    $total_female_1 = array();
+    $total_male_2 = array();
+    $total_female_2 = array();
+    $total_male_3 = array();
+    $total_female_3 = array();
+    $total_male_under = array();
+    $total_female_under = array();
+
+    /*get total value*/
+    $total_male_1[] = $staff_count2[0]['male'];
+    $total_female_1[] = $staff_count2[0]['female'];
+
+    $total_male_2[] = $staff_count2[1]['male'];
+    $total_female_2[] = $staff_count2[1]['female'];
+
+    $total_male_3[] = $staff_count2[2]['male'];
+    $total_female_3[] = $staff_count2[2]['female'];
+
+    $total_male_under[] = $staff_male_under_bc;
+    $total_female_under[] = $staff_female_under_bc;
+
+    $staff_count2_total = 0;
+    foreach ($staff_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $staff_count2_total += $value;
+        }
+    }
+
+    $rows3[] = array(
+            array('class' => 'lable', 'data'=>t("1.ข้าราชการ")),
+
+            array('class' => 'value', 'data'=>$staff_male_under_bc),
+            array('class' => 'value', 'data'=>$staff_female_under_bc),
+
+            array('class' => 'value', 'data'=>$staff_count2[0]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[1]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[2]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[2]['female']),
+
+            array('class' => 'value header', 'data'=>$staff_count2_total),
+        );
+
+    // TID = 414
+    $staff_count2 = array();
+    $staff_count2[0]['male'] = information_staff_count(414, 12, 1);
+    $staff_count2[0]['female'] = information_staff_count(414, 12, 2);
+
+    $staff_count2[1]['male'] = information_staff_count(414, 13, 1);
+    $staff_count2[1]['female'] = information_staff_count(414, 13, 2);
+
+    $staff_count2[2]['male'] = information_staff_count(414, 14, 1);
+    $staff_count2[2]['female'] = information_staff_count(414, 14, 2);
+
+    /*Lower than bc.*/
+    $staff_count2[3]['male'] = information_staff_count(414, 486, 1);
+    $staff_count2[4]['male'] = information_staff_count(414, 487, 1);
+    $staff_count2[5]['male'] = information_staff_count(414, 488, 1);
+    $staff_count2[6]['male'] = information_staff_count(414, 489, 1);
+
+    $staff_count2[3]['female'] = information_staff_count(414, 486, 2);
+    $staff_count2[4]['female'] = information_staff_count(414, 487, 2);
+    $staff_count2[5]['female'] = information_staff_count(414, 488, 2);
+    $staff_count2[6]['female'] = information_staff_count(414, 489, 2);
+
+    $staff_under_female = 0;
+    $staff_under_male = 0;
+
+    $staff_female_under_bc = $staff_count2[3]['female']+$staff_count2[4]['female']+$staff_count2[5]['female']+$staff_count2[6]['female'];
+    $staff_male_under_bc = $staff_count2[3]['male']+$staff_count2[4]['male']+$staff_count2[5]['male']+$staff_count2[6]['male'];
+
+    /*get total value*/
+    $total_male_1[] = $staff_count2[0]['male'];
+    $total_female_1[] = $staff_count2[0]['female'];
+
+    $total_male_2[] = $staff_count2[1]['male'];
+    $total_female_2[] = $staff_count2[1]['female'];
+
+    $total_male_3[] = $staff_count2[2]['male'];
+    $total_female_3[] = $staff_count2[2]['female'];
+
+    $total_male_under[] = $staff_male_under_bc;
+    $total_female_under[] = $staff_female_under_bc;
+
+    $staff_count2_total = 0;
+    foreach ($staff_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $staff_count2_total += $value;
+        }
+    }
+
+    $rows3[] = array(
+            array('class' => 'lable', 'data'=>t("2.พนักงานราชการ")),
+
+            array('class' => 'value', 'data'=>$staff_male_under_bc),
+            array('class' => 'value', 'data'=>$staff_female_under_bc),
+
+            array('class' => 'value', 'data'=>$staff_count2[0]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[1]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[2]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[2]['female']),
+
+            array('class' => 'value header', 'data'=>$staff_count2_total),
+    );
+
+    $rows3[] = array(
+            array('class' => 'lable', 'data'=>t("3.พนักงานมหาวิทยาลัย")),
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+            array('class' => 'value', 'data'=>''),
+        );
+
+    // TID = 55
+    $staff_count2 = array();
+    $staff_count2[0]['male'] = information_staff_count(55, 12, 1);
+    $staff_count2[0]['female'] = information_staff_count(55, 12, 2);
+
+    $staff_count2[1]['male'] = information_staff_count(55, 13, 1);
+    $staff_count2[1]['female'] = information_staff_count(55, 13, 2);
+
+    $staff_count2[2]['male'] = information_staff_count(55, 14, 1);
+    $staff_count2[2]['female'] = information_staff_count(55, 14, 2);
+
+    /*Lower than bc.*/
+    $staff_count2[3]['male'] = information_staff_count(55, 486, 1);
+    $staff_count2[4]['male'] = information_staff_count(55, 487, 1);
+    $staff_count2[5]['male'] = information_staff_count(55, 488, 1);
+    $staff_count2[6]['male'] = information_staff_count(55, 489, 1);
+
+    $staff_count2[3]['female'] = information_staff_count(55, 486, 2);
+    $staff_count2[4]['female'] = information_staff_count(55, 487, 2);
+    $staff_count2[5]['female'] = information_staff_count(55, 488, 2);
+    $staff_count2[6]['female'] = information_staff_count(55, 489, 2);
+
+
+    $staff_female_under_bc = $staff_count2[3]['female']+$staff_count2[4]['female']+$staff_count2[5]['female']+$staff_count2[6]['female'];
+    $staff_male_under_bc = $staff_count2[3]['male']+$staff_count2[4]['male']+$staff_count2[5]['male']+$staff_count2[6]['male'];
+
+    /*get total value*/
+    $total_male_1[] = $staff_count2[0]['male'];
+    $total_female_1[] = $staff_count2[0]['female'];
+
+    $total_male_2[] = $staff_count2[1]['male'];
+    $total_female_2[] = $staff_count2[1]['female'];
+
+    $total_male_3[] = $staff_count2[2]['male'];
+    $total_female_3[] = $staff_count2[2]['female'];
+
+    $total_male_under[] = $staff_male_under_bc;
+    $total_female_under[] = $staff_female_under_bc;
+
+    $staff_count2_total = 0;
+    foreach ($staff_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $staff_count2_total += $value;
+        }
+    }
+
+    $rows3[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.1 พนักงานประจำเต็มเวลาถาวร")),
+
+            array('class' => 'value', 'data'=>$staff_male_under_bc),
+            array('class' => 'value', 'data'=>$staff_female_under_bc),
+
+            array('class' => 'value', 'data'=>$staff_count2[0]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[1]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[2]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[2]['female']),
+
+            array('class' => 'value header', 'data'=>$staff_count2_total),
+    );
+
+    // TID = 72
+    $staff_count2 = array();
+    $staff_count2[0]['male'] = information_staff_count(72, 12, 1);
+    $staff_count2[0]['female'] = information_staff_count(72, 12, 2);
+
+    $staff_count2[1]['male'] = information_staff_count(72, 13, 1);
+    $staff_count2[1]['female'] = information_staff_count(72, 13, 2);
+
+    $staff_count2[2]['male'] = information_staff_count(72, 14, 1);
+    $staff_count2[2]['female'] = information_staff_count(72, 14, 2);
+
+    /*Lower than bc.*/
+    $staff_count2[3]['male'] = information_staff_count(72, 486, 1);
+    $staff_count2[4]['male'] = information_staff_count(72, 487, 1);
+    $staff_count2[5]['male'] = information_staff_count(72, 488, 1);
+    $staff_count2[6]['male'] = information_staff_count(72, 489, 1);
+
+    $staff_count2[3]['female'] = information_staff_count(72, 486, 2);
+    $staff_count2[4]['female'] = information_staff_count(72, 487, 2);
+    $staff_count2[5]['female'] = information_staff_count(72, 488, 2);
+    $staff_count2[6]['female'] = information_staff_count(72, 489, 2);
+
+
+    $staff_female_under_bc = $staff_count2[3]['female']+$staff_count2[4]['female']+$staff_count2[5]['female']+$staff_count2[6]['female'];
+    $staff_male_under_bc = $staff_count2[3]['male']+$staff_count2[4]['male']+$staff_count2[5]['male']+$staff_count2[6]['male'];
+
+    /*get total value*/
+    $total_male_1[] = $staff_count2[0]['male'];
+    $total_female_1[] = $staff_count2[0]['female'];
+
+    $total_male_2[] = $staff_count2[1]['male'];
+    $total_female_2[] = $staff_count2[1]['female'];
+
+    $total_male_3[] = $staff_count2[2]['male'];
+    $total_female_3[] = $staff_count2[2]['female'];
+
+    $total_male_under[] = $staff_male_under_bc;
+    $total_female_under[] = $staff_female_under_bc;
+
+    $staff_count2_total = 0;
+    foreach ($staff_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $staff_count2_total += $value;
+        }
+    }
+
+    $rows3[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.2 พนักงานประจำเต็มเวลาตามสัญญาจ้าง")),
+
+            array('class' => 'value', 'data'=>$staff_male_under_bc),
+            array('class' => 'value', 'data'=>$staff_female_under_bc),
+
+            array('class' => 'value', 'data'=>$staff_count2[0]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[1]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[2]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[2]['female']),
+
+            array('class' => 'value header', 'data'=>$staff_count2_total),
+    );
+
+    // TID = 50
+    $staff_count2 = array();
+    $staff_count2[0]['male'] = information_staff_count(50, 12, 1);
+    $staff_count2[0]['female'] = information_staff_count(50, 12, 2);
+
+    $staff_count2[1]['male'] = information_staff_count(50, 13, 1);
+    $staff_count2[1]['female'] = information_staff_count(50, 13, 2);
+
+    $staff_count2[2]['male'] = information_staff_count(50, 14, 1);
+    $staff_count2[2]['female'] = information_staff_count(50, 14, 2);
+
+    /*Lower than bc.*/
+    $staff_count2[3]['male'] = information_staff_count(50, 486, 1);
+    $staff_count2[4]['male'] = information_staff_count(50, 487, 1);
+    $staff_count2[5]['male'] = information_staff_count(50, 488, 1);
+    $staff_count2[6]['male'] = information_staff_count(50, 489, 1);
+    $staff_count2[7]['male'] = information_staff_none_ed_count(50, 1);
+
+    $staff_count2[3]['female'] = information_staff_count(50, 486, 2);
+    $staff_count2[4]['female'] = information_staff_count(50, 487, 2);
+    $staff_count2[5]['female'] = information_staff_count(50, 488, 2);
+    $staff_count2[6]['female'] = information_staff_count(50, 489, 2);
+    $staff_count2[7]['female'] = information_staff_none_ed_count(50, 2);
+
+    $staff_male_under_bc = $staff_count2[3]['male'] + $staff_count2[4]['male'] + $staff_count2[5]['male'] + $staff_count2[6]['male'] + $staff_count2[7]['male'];
+
+    $staff_female_under_bc = $staff_count2[3]['female'] + $staff_count2[4]['female'] + $staff_count2[5]['female'] + $staff_count2[6]['female'] + $staff_count2[7]['female'];
+
+    /*get total value*/
+    $total_male_1[] = $staff_count2[0]['male'];
+    $total_female_1[] = $staff_count2[0]['female'];
+
+    $total_male_2[] = $staff_count2[1]['male'];
+    $total_female_2[] = $staff_count2[1]['female'];
+
+    $total_male_3[] = $staff_count2[2]['male'];
+    $total_female_3[] = $staff_count2[2]['female'];
+
+    $total_male_under[] = $staff_male_under_bc;
+    $total_female_under[] = $staff_female_under_bc;
+
+    $staff_count2_total = 0;
+    foreach ($staff_count2 as $key => $values) {
+        foreach ($values as $key => $value) {
+            $staff_count2_total += $value;
+        }
+    }
+
+    $rows3[] = array(
+            array('class' => 'lable sub', 'data'=>t("3.3 พนักงานจ้างตามภารกิจ")),
+
+            array('class' => 'value', 'data'=>$staff_male_under_bc),
+            array('class' => 'value', 'data'=>$staff_female_under_bc),
+
+            array('class' => 'value', 'data'=>$staff_count2[0]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[0]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[1]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[1]['female']),
+
+            array('class' => 'value', 'data'=>$staff_count2[2]['male']),
+            array('class' => 'value', 'data'=>$staff_count2[2]['female']),
+
+            array('class' => 'value header', 'data'=>$staff_count2_total),
+    );
+
+    $sum_male_1 = 0;
+    foreach ($total_male_1 as $key => $value) {
+        $sum_male_1 += $value;
+    }
+
+    $sum_female_1 = 0;
+    foreach ($total_female_1 as $key => $value) {
+        $sum_female_1 += $value;
+    }
+
+    $sum_male_2 = 0;
+    foreach ($total_male_2 as $key => $value) {
+        $sum_male_2 += $value;
+    }
+
+    $sum_female_2 = 0;
+    foreach ($total_female_2 as $key => $value) {
+        $sum_female_2 += $value;
+    }
+
+    $sum_male_3 = 0;
+    foreach ($total_male_3 as $key => $value) {
+        $sum_male_3 += $value;
+    }
+
+    $sum_female_3 = 0;
+    foreach ($total_female_3 as $key => $value) {
+        $sum_female_3 += $value;
+    }
+
+    $sum_male_under = 0;
+    foreach ($total_male_under as $key => $value) {
+        $sum_male_under += $value;
+    }
+
+    $sum_female_under = 0;
+    foreach ($total_female_under as $key => $value) {
+        $sum_female_under += $value;
+    }
+
+    $total_all = $sum_male_under+$sum_female_under+$sum_male_1+$sum_female_1+$sum_male_2+$sum_female_2+$sum_male_3+$sum_female_3;
+
+    $rows3[] = array(
+            array('class' => 'lable header', 'data'=>t("รวม"), 'rowspan' => 2),
+            array('class' => 'value', 'data'=>$sum_male_under),
+            array('class' => 'value', 'data'=>$sum_female_under),
+
+            array('class' => 'value', 'data'=>$sum_male_1),
+            array('class' => 'value', 'data'=>$sum_female_1),
+
+            array('class' => 'value', 'data'=>$sum_male_2),
+            array('class' => 'value', 'data'=>$sum_female_2),
+
+            array('class' => 'value', 'data'=>$sum_male_3),
+            array('class' => 'value', 'data'=>$sum_female_3),
+
+            array('class' => 'value header staff', 'data'=>$total_all, 'rowspan' => 2),
+        );
+
+    $rows3[] = array(
+            array('class' => 'value', 'data'=>$sum_male_under+$sum_female_under, 'colspan' => 2),
+            array('class' => 'value', 'data'=>$sum_male_1+$sum_female_1, 'colspan' => 2),
+            array('class' => 'value', 'data'=>$sum_male_2+$sum_female_2, 'colspan' => 2),
+            array('class' => 'value', 'data'=>$sum_male_3+$sum_female_3, 'colspan' => 2),
+        );
+
+    $output .= '<div class="statistic ed-level">
+                    '.theme("table", array("rows"=>$rows3)).'
+                </div>';
+
+    /*graph*/
+    $graph_data1  = '"ประเภท":"ปริญญาตรี":"ปริญญาโท":"ปริญญาเอก",';
+    $graph_data1 .= '"1.ข้าราชการ":'.$teacher_count[0][0].':'.$teacher_count[0][1].':'.$teacher_count[0][2].',';
+    $graph_data1 .= '"2.พนักงานราชการ":'.$teacher_count[1][0].':'.$teacher_count[1][1].':'.$teacher_count[1][2].',';
+    $graph_data1 .= '"3.1.พนักงานประจำเต็มเวลาถาวร":'.$teacher_count[2][0].':'.$teacher_count[2][1].':'.$teacher_count[2][2].',';
+    $graph_data1 .= '"3.2.พนักงานประจำเต็มเวลาตามสัญญาจ้าง":'.$teacher_count[3][0].':'.$teacher_count[3][1].':'.$teacher_count[3][2].',';
+    $graph_data1 .= '"3.3.พนักงานจ้างตามภารกิจ":'.$teacher_count[4][0].':'.$teacher_count[4][1].':'.$teacher_count[4][2].'';
+
+    $graph_data2  = '"ประเภท":"ปริญญาตรี":"ปริญญาโท":"ปริญญาเอก":"ต่ำกว่าปริญญาตรี",';
+    $graph_data2 .= '"1.ข้าราชการ":'.$staff_count[0][0].':'.$staff_count[0][1].':'.$staff_count[0][2].':'.$under_grade_arr[0].',';
+    $graph_data2 .= '"2.พนักงานราชการ":'.$staff_count[1][0].':'.$staff_count[1][1].':'.$staff_count[1][2].':'.$under_grade_arr[1].',';
+    $graph_data2 .= '"3.1.พนักงานประจำเต็มเวลาถาวร":'.$staff_count[2][0].':'.$staff_count[2][1].':'.$staff_count[2][2].':'.$under_grade_arr[2].',';
+    $graph_data2 .= '"3.2.พนักงานประจำเต็มเวลาตามสัญญาจ้าง":'.$staff_count[3][0].':'.$staff_count[3][1].':'.$staff_count[3][2].':'.$under_grade_arr[3].',';
+    $graph_data2 .= '"3.3.พนักงานจ้างตามภารกิจ":'.$staff_count[4][0].':'.$staff_count[4][1].':'.$staff_count[4][2].':'.$under_grade_arr[4];
+
+    $args1 = array(
+        'label' => 'จำนวนบุคลากรสายวิชาการจำแนกตามประเภทบุคลากร',
+        'name' => 'chart1',
+        'data' => $graph_data1,
+        'width' => '450',
+        'height' => '300'
+    );
+
+    $args2 = array(
+        'label' => 'จำนวนบุคลากรสายสนับสนุนจำแนกตามประเภทบุคลากร',
+        'name' => 'chart2',
+        'data' => $graph_data2,
+        'width' => '450',
+        'height' => '300'
+    );
+
+    $arg_str1 = '';
+    foreach ($args1 as $key => $value) {
+        $arg_str1 .= $key."=".$value."&";
+    }
+
+    $arg_str2 = '';
+    foreach ($args2 as $key => $value) {
+        $arg_str2 .= $key."=".$value."&";
+    }
+
+    $path1 = 'http://'.$_SERVER['SERVER_NAME'].base_path().'graph/bar?'.$arg_str1;
+    $path2 = 'http://'.$_SERVER['SERVER_NAME'].base_path().'graph/bar?'.$arg_str2;
+
+    $output .= file_get_contents($path1);
+    $output .= file_get_contents($path2);
+
+    return $output;
+}
+
+function information_personal_3() {
+    $output = '';
+
+    $rows = array();
+    $rows[] = array(
+            array('class' => 'header', 'data'=>t("เลขที่"), 'rowspan'=>2),
+            array('class' => 'header', 'data'=>t("โปรแกรม"), 'rowspan'=>2),
+            array('class' => 'header teacher', 'data'=>t("วุฒิการศึกษา"), 'colspan'=>3),
+            array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>2),
+        );
+
+    $rows[] = array(
+            array('class' => 'header', 'data'=>t("ปริญญาตรี")),
+            array('class' => 'header', 'data'=>t("ปริญญาโท")),
+            array('class' => 'header', 'data'=>t("ปริญญาเอก")),
+        );
+
+    $result = db_select('taxonomy_term_data', 't')
+                ->fields('t', array('name', 'tid'))
+                ->condition('t.vid', 11, '=')
+                ->condition('t.name', 'โปรแกรม%', 'LIKE')
+                ->execute();
+
+    $count = 1;
+    $all_teacher = 0;
+    $all_level1 = 0;
+    $all_level2 = 0;
+    $all_level3 = 0;
+
+    while ($term = $result->fetchObject()) {
+        $level1 = information_teacher_count_by_program($term->tid, 12);
+        $level2 = information_teacher_count_by_program($term->tid, 13);
+        $level3 = information_teacher_count_by_program($term->tid, 14);
+
+        $total = $level1 + $level2 + $level3;
+
+        $all_level1 += $level1;
+        $all_level2 += $level2;
+        $all_level3 += $level3;
+
+        $all_teacher += $total;
+
+        $rows[] = array(
+            array('class' => 'number', 'data'=>$count),
+            array('class' => 'value program', 'data'=>$term->name),
+            array('class' => 'value', 'data'=>$level1),
+            array('class' => 'value', 'data'=>$level2),
+            array('class' => 'value', 'data'=>$level3),
+            array('class' => 'value', 'data'=>$total),
+        );
+
+        $count++;
+    }
+
+    $rows[] = array(
+        array('class' => 'value header', 'data'=>'รวม', 'colspan'=>2),
+        array('class' => 'value header', 'data'=>$all_level1),
+        array('class' => 'value header', 'data'=>$all_level2),
+        array('class' => 'value header', 'data'=>$all_level3),
+        array('class' => 'value header', 'data'=>$all_teacher),
+    );
+
+    $output .= '<div class="statistic program">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+
+    /*graph*/
+    $graph_data1  = 'ปริญญาตรี:'.$all_level1;
+    $graph_data1 .= ',ปริญญาโท:'.$all_level2;
+    $graph_data1 .= ',ปริญญาเอก:'.$all_level3;
+
+    $args1 = array(
+       'label' => 'จำนวนบุคลากรสายวิชาการจำแนกตามวุฒิการศึกษา',
+       'name' => 'chart1',
+       'data' => $graph_data1,
+       'width' => '640',
+       'height' => '480'
+    );
+
+    $arg_str1 = '';
+    foreach ($args1 as $key => $value) {
+        $arg_str1 .= $key."=".$value."&";
+    }
+
+    $path1 = 'http://'.$_SERVER['SERVER_NAME'].base_path().'graph/pie?'.$arg_str1;
+
+    $output .= '<div class="teacher-by-ed">
+                    <div class="graph">
+                        '.file_get_contents($path1).'
+                    </div>
+                </div>';
+
+    return $output;
+}
+
+function information_personal_4() {
+    $output = '';
+
+    $header = array(
+        array('class'=>'', 'data'=>t("วุฒิการศึกษา")),
+        array('class'=>'value', 'data'=>t("ปริญญาตรี")),
+        array('class'=>'value', 'data'=>t("ปริญญาโท")),
+        array('class'=>'value', 'data'=>t("ปริญญาเอก")),
+        array('class'=>'value', 'data'=>t("รวม")),
+    );
+
+    $teacher = information_count_teacher_non_edpostion();
+    $teacher_level_1 = information_count_teacher_edpostion(15);
+    $teacher_level_2 = information_count_teacher_edpostion(16);
+    $teacher_level_3 = information_count_teacher_edpostion(17);
+
+    $rows = array();
+    $total_teacher = 0;
+    foreach ($teacher as $key => $value) {
+        $total_teacher += $value;
+    }
+    $rows[] = array(
+        array('class'=>'', 'data'=>t("อาจารย์")),
+        array('class'=>'value', 'data'=>$teacher[0]),
+        array('class'=>'value', 'data'=>$teacher[1]),
+        array('class'=>'value', 'data'=>$teacher[2]),
+        array('class'=>'value', 'data'=>$total_teacher),
+    );
+
+    $total_teacher_level_1 = 0;
+    foreach ($teacher_level_1 as $key => $value) {
+        $total_teacher_level_1 += $value;
+    }
+
+    $rows[] = array(
+        array('class'=>'', 'data'=>t("ผู้ช่วยศาสตราจารย์")),
+        array('class'=>'value', 'data'=>$teacher_level_1[0]),
+        array('class'=>'value', 'data'=>$teacher_level_1[1]),
+        array('class'=>'value', 'data'=>$teacher_level_1[2]),
+        array('class'=>'value', 'data'=>$total_teacher_level_1),
+    );
+
+    $total_teacher_level_2 = 0;
+    foreach ($teacher_level_2 as $key => $value) {
+        $total_teacher_level_2 += $value;
+    }
+    $rows[] = array(
+        array('class'=>'', 'data'=>t("รองศาสตราจารย์")),
+        array('class'=>'value', 'data'=>$teacher_level_2[0]),
+        array('class'=>'value', 'data'=>$teacher_level_2[1]),
+        array('class'=>'value', 'data'=>$teacher_level_2[2]),
+        array('class'=>'value', 'data'=>$total_teacher_level_2),
+    );
+
+    $total_teacher_level_3 = 0;
+    foreach ($teacher_level_3 as $key => $value) {
+        $total_teacher_level_3 += $value;
+    }
+
+    $rows[] = array(
+        array('class'=>'', 'data'=>t("ศาสตราจารย์")),
+        array('class'=>'value', 'data'=>$teacher_level_3[0]),
+        array('class'=>'value', 'data'=>$teacher_level_3[1]),
+        array('class'=>'value', 'data'=>$teacher_level_3[2]),
+        array('class'=>'value', 'data'=>$total_teacher_level_3),
+    );
+
+    $total_all = $total_teacher_level_3 + $total_teacher_level_2 + $total_teacher_level_1 + $total_teacher;
+
+    $rows[] = array(
+        array('class'=>'', 'data'=>t("รวม"), 'colspan'=>4),
+        array('class'=>'value', 'data'=>$total_all),
+    );
+
+    $output .= '
+        <div class="person-education-postion">
+            '.theme('table', array('header'=>$header, 'rows'=>$rows)).'
+        </div>
+    ';
+
+    return $output;
+}
+
+function information_operations_form($form_state, $variables) {
+    $form = array();
+
+    if (isset($variables)) {
+        $time = $variables['build_info']['args'][0];
+        $date = explode('-', format_date($time, 'custom', 'd-m-Y'));
+
+        $d_1 = drupal_substr($date[0], 0, 1);
+        $d_2 = drupal_substr($date[0], 1);
+            if ($d_1 == 0) {
+                $d_1 = null;
+            }
+
+        $m_1 = drupal_substr($date[1], 0, 1);
+        $m_2 = drupal_substr($date[1], 1);
+            if ($m_1 == 0) {
+                $m_1 = null;
+            }
+
+        $def = array('year' => $date[2], 'month' => $m_1.$m_2, 'day' => $d_1.$d_2);
+    }
+    else {
+        $def = time();
+    }
+
+
+    $form['operations'] = array(
+        '#type' => 'date',
+        '#title' => t("นับจำนวนบุคลากรถึงวันที่"),
+        '#default_value' => $def
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => t('กรองข้อมูล')
+    );
+
+  return $form;
+}
+
+function information_operations_form_submit($form_id, &$form_state) {
+    $values = $form_state['values']['operations'];
+
+    $arr = array();
+    foreach ($values as $key => $value) {
+       $arr[] = $value;
+    }
+
+    $_SESSION["time"] = mktime(0, 0, 0, $arr[0], $arr[1], $arr[2]);
+
+    $form_state['redirect'] = 'info/persons/teacher-regular';
+
+}
+
+
+function information_personal_5() {
+    $output = '';
+
+    $currenttime = null;
+    if (isset($_SESSION["time"])) {
+        $currenttime = $_SESSION["time"];
+    }
+    else {
+        $currenttime = time();
+    }
+
+    $output .= drupal_render(drupal_get_form('information_operations_form', $currenttime));
+
+    $work_position_teacher_all = array(24);
+    $work_position_teacher_not_education_position = array(24);
+    $education_position_1 = array(15);
+    $education_position_2 = array(16);
+    $education_position_3 = array(17);
+
+    /*Department TID*/
+    $faculty_1 = array(527, 523, 530, 529, 528);
+    $faculty_2 = array(520);
+    $faculty_3 = array(526, 519, 543, 544, 524, 534, 533, 532, 531, 535, 540, 542, 539, 536, 537, 538, 522, 541, 521, 525);
+
+    $table_1 = 'work_position';
+    $table_2 = 'education_position';
+    $table_3 = 'faculty';
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ประจำ (ทั้งหมด)').'</div>';
+    $output .= information_personal_5_1($work_position_teacher_all, $table_1);
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ประจำ (ที่ไม่มีตำแหน่งทางวิชาการ)').'</div>';
+    $output .= information_personal_5_2();
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ประจำที่ดำรงตำแหน่งผู้ช่วยศาสตร์จารย์').'</div>';
+    $output .= information_personal_5_1($education_position_1, $table_2);
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ประจำที่ดำรงตำแหน่งรองศาสตร์จารย์').'</div>';
+    $output .= information_personal_5_1($education_position_2, $table_2);
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ประจำที่ดำรงตำแหน่งศาสตร์จารย์').'</div>';
+    $output .= information_personal_5_1($education_position_3, $table_2);
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ กลุ่มวิทยาศาสตร์และเทคโนโลยี').'</div>';
+    $output .= information_personal_5_4($faculty_1, $table_3);
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ กลุ่มวิทยาศาสตร์สุขภาพ').'</div>';
+    $output .= information_personal_5_4($faculty_2, $table_3);
+
+    $output .= '<div class="title-count">'.t('จำนวนอาจารย์ กลุ่มสาขาวิชามนุษศาสตร์และสังคมศาสตร์').'</div>';
+    $output .= information_personal_5_4($faculty_3, $table_3);
+
+    $output .= '<div class="title-count">'.t('จำนวนบุคลากรที่มีสถานะลาศึกษาต่อ').'</div>';
+    $output .= information_personal_5_3();
+
+    $output .= views_embed_view('teacher_regular', 'default');
+
+    return $output;
+}
+
+function information_get_time_work($nid) {
+    $output = '';
+
+    $node = node_load($nid);
+
+    $start_stamp = $node->field_start_working_date_first['und'][0]['value'];
+    if (isset($_SESSION["time"])) {
+        $end_stamp = $_SESSION["time"];
+    }
+    else {
+        $end_stamp = time();
+    }
+
+    $sum_day = thai_time_get_interval_day($start_stamp, $end_stamp);
+
+    $count = thai_time_count_time($sum_day);
+
+    if (isset($count['year'])) {
+        $output .= $count['year'].' '.t("ปี ");
+    }
+
+    if (isset($count['month'])) {
+        $output .= $count['month'].' '.t("เดือน ");
+    }
+
+    if (isset($count['day'])) {
+        $output .= $count['day'].' '.t("วัน");
+    }
+    
+    if (!isset($count)) {
+        $output .= t("0");
+    }
+
+    return $output;
+}
+
+function information_count_profile($nid) {
+    $output = '';
+
+    $node = node_load($nid);
+
+    $start_stamp = $node->field_start_working_date_first['und'][0]['value'];
+    if (isset($_SESSION["time"])) {
+        $end_stamp = $_SESSION["time"];
+    }
+    else {
+        $end_stamp = time();
+    }
+
+    $count_day = thai_time_get_interval_day($start_stamp, $end_stamp);
+
+    
+
+    if ($count_day > 270) {
+        $output .= t("1");
+    }
+    else if ($count_day >= 180 && $count_day < 270) {
+        $output .= t("0.5");
+    }
+    else {
+        $output .= t("0");
+    }
+
+    return $output;
+}
+
+function information_check_teacher_in_time($nid) {
+    $count_day = 0;
+
+    return $count_day;
+
+}
+
+function information_count_teacher_edpostion($edpositon_level) {
+    $teacher_tid = 24;
+    $query = db_select('field_data_field_work_position', 'p');
+    $query->join('field_data_field_education_level', 'ed', 'ed.entity_id=p.entity_id');
+    $query->join('field_data_field_working_status', 's', 's.entity_id=p.entity_id');
+
+    $query
+        ->fields('p', array('entity_id'))
+        ->fields('ed', array('field_education_level_tid'))
+        ->condition('p.bundle', 'personal_profile', '=')
+        ->condition('p.field_work_position_tid', $teacher_tid, '=')
+        ->condition('s.field_working_status_tid', 483, '!=')
+        ->condition('s.field_working_status_tid', 484, '!=')
+        ->condition('s.field_working_status_tid', 546, '!=');
+
+    $result = $query->execute();
+
+    $count1 = 0;
+    $count2 = 0;
+    $count3 = 0;
+
+    while ($entity = $result->fetchObject()) {
+        /*check has ed position or not*/
+        $check = 0;
+        $check = db_select('field_data_field_education_position', 'edp')
+                    ->fields('edp', array('entity_id'))
+                    ->condition('edp.entity_id', $entity->entity_id, '=')
+                    ->condition('edp.field_education_position_tid', $edpositon_level, '=')
+                    ->execute()
+                    ->fetchColumn();
+
+        if ($entity->field_education_level_tid == 12 && $check != 0) {
+            $count1++;
+        }
+        else if ($entity->field_education_level_tid == 13 && $check != 0) {
+            $count2++;
+        }
+        else if ($entity->field_education_level_tid == 14 && $check != 0) {
+            $count3++;
+        }
+    }
+
+    $teacher = array(
+        0 => $count1,
+        1 => $count2,
+        2 => $count3
+    );
+
+    return $teacher;
+}
+
+function information_count_teacher_non_edpostion() {
+    $teacher_tid = 24;
+    $query = db_select('field_data_field_work_position', 'p');
+    $query->join('field_data_field_education_level', 'ed', 'ed.entity_id=p.entity_id');
+    $query->join('field_data_field_working_status', 's', 's.entity_id=p.entity_id');
+
+    $query
+        ->fields('p', array('entity_id'))
+        ->fields('ed', array('field_education_level_tid'))
+        ->condition('p.bundle', 'personal_profile', '=')
+        ->condition('p.field_work_position_tid', $teacher_tid, '=')
+        ->condition('s.field_working_status_tid', 483, '!=')
+        ->condition('s.field_working_status_tid', 484, '!=')
+        ->condition('s.field_working_status_tid', 546, '!=');
+
+    $result = $query->execute();
+
+    $count1 = 0;
+    $count2 = 0;
+    $count3 = 0;
+
+    while ($entity = $result->fetchObject()) {
+        /*check has ed position or not*/
+        $check = db_select('field_data_field_education_position', 'edp')
+                    ->fields('edp', array('entity_id', 'field_education_position_tid'))
+                    ->condition('edp.entity_id', $entity->entity_id, '=')
+                    ->execute()
+                    ->fetchObject();
+
+        if (!isset($check->entity_id) ||
+                ($check->field_education_position_tid != 15 &&
+                $check->field_education_position_tid != 16 &&
+                $check->field_education_position_tid != 17) ) {
+            if ($entity->field_education_level_tid == 12) {
+                $count1++;
+            }
+            else if ($entity->field_education_level_tid == 13) {
+                $count2++;
+            }
+            else if ($entity->field_education_level_tid == 14) {
+                $count3++;
+            }
+        }
+    }
+
+    $teacher = array(
+        0 => $count1,
+        1 => $count2,
+        2 => $count3
+    );
+
+    return $teacher;
+}
+
+function information_teacher_count_by_program($program_tid, $ed_level) {
+    // Teacher tid = 24
+    $teacher_tid = 24;
+    $query = db_select('field_data_field_work_position', 'w');
+    $query->join('field_data_field_working_status', 's', 'w.entity_id=s.entity_id');
+    $query->join('field_data_field_education_level', 'e', 'w.entity_id=e.entity_id');
+    $query->join('field_data_field_faculty', 'f', 'f.entity_id=e.entity_id');
+
+    $query->fields('w', array('entity_id'))
+          ->condition('w.field_work_position_tid', $teacher_tid, '=')
+          ->condition('s.field_working_status_tid', 484, '!=')
+          ->condition('s.field_working_status_tid', 483, '!=')
+          ->condition('s.field_working_status_tid', 546, '!=');
+
+    $query->condition('e.field_education_level_tid', $ed_level, '=');
+    $query->condition('f.field_faculty_tid', $program_tid, '=');
+
+    $result = $query->execute();
+
+    $count = 0;
+    while ($nid = $result->fetchColumn()) {
+            $count++;
+    }
+
+    if ($count == 0) {
+        $count = "";
+    }
+
+    return $count;
+}
+
+function information_teacher_count($type, $ed_level=NULL, $gender=NULL) {
+    // Teacher tid = 24
+    $teacher_tid = 24;
+    $query = db_select('field_data_field_work_position', 'w');
+    $query->join('field_data_field_officer_type', 'o', 'w.entity_id=o.entity_id');
+    $query->join('field_data_field_working_status', 's', 'w.entity_id=s.entity_id');
+
+    if ($ed_level != NULL) {
+        $query->join('field_data_field_education_level', 'e', 'w.entity_id=e.entity_id');
+    }
+
+    if ($gender != NULL) {
+        $query->join('field_data_field_gender', 'g', 'w.entity_id=g.entity_id');
+    }
+
+    $query->fields('w', array('entity_id'))
+          ->condition('w.field_work_position_tid', $teacher_tid, '=')
+          ->condition('o.field_officer_type_tid', $type, '=')
+          ->condition('s.field_working_status_tid', 484, '!=')
+          ->condition('s.field_working_status_tid', 483, '!=')
+          ->condition('s.field_working_status_tid', 546, '!=');
+
+    if ($ed_level != NULL) {
+        $query->condition('e.field_education_level_tid', $ed_level, '=');
+    }
+
+    if ($gender != NULL) {
+        $query->condition('g.field_gender_tid', $gender, '=');
+    }
+
+    $result = $query->execute();
+
+    $count = 0;
+    while ($nid = $result->fetchColumn()) {
+            $count++;
+    }
+
+    return $count;
+
+}
+
+function information_staff_none_ed_count($type, $gender=NULL) {
+    $teacher_tid = 24;
+    $query = db_select('field_data_field_work_position', 'w');
+    $query->join('field_data_field_officer_type', 'o', 'w.entity_id=o.entity_id');
+    $query->join('field_data_field_working_status', 's', 'w.entity_id=s.entity_id');
+
+    if ($gender != NULL) {
+        $query->join('field_data_field_gender', 'g', 'w.entity_id=g.entity_id');
+    }
+
+    $query->fields('w', array('entity_id'))
+          ->condition('w.field_work_position_tid', $teacher_tid, '!=')
+          ->condition('o.field_officer_type_tid', $type, '=')
+          ->condition('s.field_working_status_tid', 484, '!=')
+          ->condition('s.field_working_status_tid', 483, '!=')
+          ->condition('s.field_working_status_tid', 546, '!=');
+
+    if ($gender != NULL) {
+        $query->condition('g.field_gender_tid', $gender, '=');
+    }
+
+    $result = $query->execute();
+
+    $count = 0;
+    while ($nid = $result->fetchColumn()) {
+        /*check have education or not*/
+        $entity_id = 0;
+        $entity_id = db_select('field_data_field_education_level', 'e')
+                        ->fields('e', array('entity_id'))
+                        ->condition('e.entity_id', $nid, '=')
+                        ->execute()
+                        ->fetchColumn();
+        if ($entity_id == 0) {
+            $count++;
+        }
+    }
+
+    return $count;
+}
+
+/**
+ *@param $value is array of department tid
+ *@param $table is table name
+ */
+function information_personal_5_1($value, $table) {
+    $output = '';
+    //$value, $table
+    $str = implode("+", $value);
+    $str = $str."+".$table;
+
+    $rows = information_personal_5_1_1($value, $table, 1);
+
+    if ($table != 'work_position') {
+        $rows[] = array(
+            array('class' => 'value header', 'data'=>'', 'colspan'=>4),
+            array('class' => 'header teacher', 'data'=>l(t("รายชื่อ"), "info/persons/teacher-list-1", array('query'=>array('str'=>$str)))),
+        );
+    }
+
+    
+
+    $output .= '<div class="statistic program">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+    return $output;
+}
+
+function information_info_persons_teacher_list_page_1() {
+    $output = '';
+
+    $str = $_REQUEST['str'];
+
+    $str_2 = explode("+", $str);
+    $count = count($str_2);
+
+    $value = array();
+    for ($a=0; $a < $count-1; $a++) { 
+        $value[] = $str_2[$a];
+    }
+
+    $table = $str_2[$count-1];
+   
+
+    $header = array(
+        array('class'=>'teacher-list-header', 'data'=>t('No.')),
+        array('class'=>'teacher-list-header', 'data'=>t('ชื่อ  - สกุล')),
+        array('class'=>'teacher-list-header', 'data'=>t('นับเป็น')),
+        array('class'=>'teacher-list-header', 'data'=>t('วันที่บรรจุแรกเข้า')),
+        array('class'=>'teacher-list-header', 'data'=>t('ระยะเวลาที่ปฏิบัติงานในตำแหน่ง')),
+    );
+   
+    $row = information_personal_5_1_1($value, $table, 2);
+
+
+    $output .= '<div class="statistic-program">
+                    '.theme("table", array("header"=>$header, "rows"=>$row)).'
+                </div>';
+
+    return $output;
+}
+
+function information_personal_5_1_1($value, $table, $check) {
+    $output = '';
+
+    $query = db_select('field_data_field_'.$table, 'i');
+    $query->join('field_data_field_working_status', 'n', 'i.entity_id=n.entity_id');
+
+    $db_or = db_or();
+
+    foreach ($value as $data) {
+        $db_or->condition('i.field_'.$table.'_tid', $data, '=');
+    }
+
+    $query
+        ->fields('i', array('entity_id'))
+        ->condition('n.field_working_status_tid', 546, '!=')
+        ->condition('n.field_working_status_tid', 483, '!=')
+        ->condition('n.field_working_status_tid', 484, '!=')
+        ->condition('i.bundle', 'personal_profile', '=');
+
+    $query->condition($db_or);
+    $result = $query->execute();
+
+    $sum_teacher_11 = 0;
+    $sum_teacher_12 = 0;
+    $sum_teacher_13 = 0;
+    $sum_teacher_21 = 0;
+    $sum_teacher_22 = 0;
+    $sum_teacher_23 = 0;
+    $sum_teacher_31 = 0;
+    $sum_teacher_32 = 0;
+    $sum_teacher_33 = 0;
+
+    $rows = array();
+    $profile = array();
+    $count_profile = array();
+
+    while ($entity_id = $result->fetchColumn()) {
+
+        $query_2 = db_select('field_data_field_education_level', 'j');
+        $result_2 = $query_2
+                        ->fields('j', array('entity_id'))
+                        ->condition('j.entity_id', $entity_id, '=')
+                        ->condition('j.field_education_level_tid', 12, '=')
+                        ->execute();
+
+        while ($entity_id_2 = $result_2->fetchColumn()) {
+            $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('field_start_working_date_first_value'))
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id_2, '=')
+                            ->execute();
+
+            while ($start_stamp = $result_3->fetchObject()) {
+
+                $node = node_load($start_stamp->entity_id);
+
+                if (isset($_SESSION["time"])) {
+                    $end_stamp = $_SESSION["time"];
+                }
+                else {
+                    $end_stamp = time();
+                }
+
+                $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                if ($count_day >= 180 && $count_day < 270) {
+                    $sum_teacher_21 += 0.5;
+                    $count_profile[] = 0.5;
+                    $profile[] = $node->nid;
+                }
+                else if ($count_day >= 270) {
+                    $sum_teacher_31 += 1;
+                    $count_profile[] = 1;
+                    $profile[] = $node->nid;
+                }
+            }
+        }
+
+        $query_3 = db_select('field_data_field_education_level', 'j');
+        $result_3 = $query_3
+                        ->fields('j', array('entity_id'))
+                        ->condition('j.entity_id', $entity_id, '=')
+                        ->condition('j.field_education_level_tid', 13, '=')
+                        ->execute();
+
+        while ($entity_id_3 = $result_3->fetchColumn()) {
+            $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('field_start_working_date_first_value'))
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id_3, '=')
+                            ->execute();
+
+            while ($start_stamp = $result_3->fetchObject()) {
+
+                $node = node_load($start_stamp->entity_id);
+
+                if (isset($_SESSION["time"])) {
+                    $end_stamp = $_SESSION["time"];
+                }
+                else {
+                    $end_stamp = time();
+                }
+
+                $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                if ($count_day >= 180 && $count_day < 270) {
+                    $sum_teacher_22 += 0.5;
+                    $count_profile[] = 0.5;
+                    $profile[] = $node->nid;
+                }
+                else if ($count_day >= 270) {
+                    $sum_teacher_32 += 1;
+                    $count_profile[] = 1;
+                    $profile[] = $node->nid;
+                }
+            }
+        }
+
+        $query_4 = db_select('field_data_field_education_level', 'j');
+        $result_4 = $query_4
+                        ->fields('j', array('entity_id'))
+                        ->condition('j.entity_id', $entity_id, '=')
+                        ->condition('j.field_education_level_tid', 14, '=')
+                        ->execute();
+
+        while ($entity_id_4 = $result_4->fetchColumn()) {
+            $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('field_start_working_date_first_value'))
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id_4, '=')
+                            ->execute();
+
+            while ($start_stamp = $result_3->fetchObject()) {
+
+                $node = node_load($start_stamp->entity_id);
+
+                if (isset($_SESSION["time"])) {
+                    $end_stamp = $_SESSION["time"];
+                }
+                else {
+                    $end_stamp = time();
+                }
+
+                $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                if ($count_day >= 180 && $count_day < 270) {
+                    $sum_teacher_23 += 0.5;
+                    $count_profile[] = 0.5;
+                    $profile[] = $node->nid;
+                }
+                else if ($count_day >= 270) {
+                    $sum_teacher_33 += 1;
+                    $count_profile[] = 1;
+                    $profile[] = $node->nid;
+                }
+            }
+        }
+
+    }
+
+    /*@Edit by Phisan Sookkhee*/
+    // $sum_teacher_1 = $sum_teacher_11 + $sum_teacher_12 + $sum_teacher_13;
+    // $rows[] = array(
+    //     array('class' => 'value 1', 'data'=>t("0 - 6")),
+    //     array('class' => 'value', 'data'=>$sum_teacher_11),
+    //     array('class' => 'value', 'data'=>$sum_teacher_12),
+    //     array('class' => 'value', 'data'=>$sum_teacher_13),
+    //     array('class' => 'value', 'data'=>$sum_teacher_1),
+    // );
+
+    if ($check == 1) {
+        $rows[] = array(
+                array('class' => 'header', 'data'=>t("ระยะเวลาการทำงาน/เดือน"), 'rowspan'=>2),
+                array('class' => 'header teacher', 'data'=>t("วุฒิการศึกษา"), 'colspan'=>3),
+                array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>2),
+            );
+
+        $rows[] = array(
+                array('class' => 'header', 'data'=>t("ปริญญาตรี")),
+                array('class' => 'header', 'data'=>t("ปริญญาโท")),
+                array('class' => 'header', 'data'=>t("ปริญญาเอก")),
+            );
+
+        $sum_teacher_2 = $sum_teacher_21 + $sum_teacher_22 + $sum_teacher_23;
+        $rows[] = array(
+            array('class' => 'value 2', 'data'=>t("6 - 9")),
+            array('class' => 'value', 'data'=>$sum_teacher_21),
+            array('class' => 'value', 'data'=>$sum_teacher_22),
+            array('class' => 'value', 'data'=>$sum_teacher_23),
+            array('class' => 'value', 'data'=>$sum_teacher_2),
+        );
+
+        $sum_teacher_3 = $sum_teacher_31 + $sum_teacher_32 + $sum_teacher_33;
+        $rows[] = array(
+            array('class' => 'value 3', 'data'=>t("9 ขึ้นไป")),
+            array('class' => 'value', 'data'=>$sum_teacher_31),
+            array('class' => 'value', 'data'=>$sum_teacher_32),
+            array('class' => 'value', 'data'=>$sum_teacher_33),
+            array('class' => 'value', 'data'=>$sum_teacher_3),
+        );
+
+        $sum_bachelor = $sum_teacher_11 + $sum_teacher_21 + $sum_teacher_31;
+        $sum_masters = $sum_teacher_12 + $sum_teacher_22 + $sum_teacher_32;
+        $sum_donna = $sum_teacher_13 + $sum_teacher_23 + $sum_teacher_33;
+        $sum_total = $sum_bachelor + $sum_masters + $sum_donna;
+
+        $rows[] = array(
+            array('class' => 'value header', 'data'=>t("รวม")),
+            array('class' => 'value header', 'data'=>$sum_bachelor),
+            array('class' => 'value header', 'data'=>$sum_masters),
+            array('class' => 'value header', 'data'=>$sum_donna),
+            array('class' => 'value header', 'data'=>$sum_total),
+        );
+
+    }
+    else {
+        foreach ($profile as $key => $value) {
+            $node = node_load($value);
+
+            $rows[] = array(
+                array('class' => 'a', 'data'=>$key+1),
+                array('class' => '', 'data'=>l($node->title, 'node/'.$node->nid)),
+                array('class' => 'a', 'data'=>$count_profile[$key]),        
+                array('class' => 'a', 'data'=>profile_manager_get_working_start_time($node->nid, 'field_start_working_date_first')),
+                array('class' => 'a', 'data'=>information_get_time_work($node->nid)), 
+            );
+        }
+        
+    }
+
+    return $rows;
+}
+
+/**
+ *@param $value is array of department tid
+ *@param $table is table name
+ */
+function information_personal_5_2() {
+    $output = '';
+
+    $rows = information_personal_5_2_1(1);
+
+    $rows[] = array(
+            array('class' => 'value header', 'data'=>'', 'colspan'=>4),
+            array('class' => 'header teacher', 'data'=>l(t("รายชื่อ"), "info/persons/teacher-list-2")),
+        );
+
+    $output .= '<div class="statistic program">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+    return $output;
+}
+
+function information_info_persons_teacher_list_page_2() {
+    $output = '';
+
+    $header = array(
+        array('class'=>'teacher-list-header', 'data'=>t('No.')),
+        array('class'=>'teacher-list-header', 'data'=>t('ชื่อ  - สกุล')),
+        array('class'=>'teacher-list-header', 'data'=>t('นับเป็น')),
+        array('class'=>'teacher-list-header', 'data'=>t('วันที่บรรจุแรกเข้า')),
+        array('class'=>'teacher-list-header', 'data'=>t('ระยะเวลาที่ปฏิบัติงานในตำแหน่ง')),
+    );
+   
+    $row = information_personal_5_2_1(2);
+
+    $output .= '<div class="statistic-program">
+                    '.theme("table", array("header"=>$header, "rows"=>$row)).'
+                </div>';
+
+    return $output;
+}
+
+function information_personal_5_2_1($check) {
+    $output = '';
+    
+    /*@Edit by Phisan Sookkhee 07-06-2013*/
+    $query = db_select('field_data_field_work_position', 'i');
+    $query->join('field_data_field_working_status', 'n', 'i.entity_id=n.entity_id');
+
+    /*get only teacher*/
+    $query
+        ->fields('i', array('entity_id'))
+        ->condition('i.field_work_position_tid', 24, '=')
+        ->condition('n.field_working_status_tid', 546, '!=')
+        ->condition('n.field_working_status_tid', 483, '!=')
+        ->condition('n.field_working_status_tid', 484, '!=')
+        ->condition('i.bundle', 'personal_profile', '=');
+
+    $result = $query->execute();
+
+    $sum_teacher_11 = 0;
+    $sum_teacher_12 = 0;
+    $sum_teacher_13 = 0;
+    $sum_teacher_21 = 0;
+    $sum_teacher_22 = 0;
+    $sum_teacher_23 = 0;
+    $sum_teacher_31 = 0;
+    $sum_teacher_32 = 0;
+    $sum_teacher_33 = 0;
+
+    $rows = array();
+    $profile = array();
+    $count_profile = array();
+
+    while ($entity_id = $result->fetchColumn()) {
+
+        /*check edication position*/
+        $ed_position_tid = db_select('field_data_field_education_position', 'p')
+                            ->fields('p', array('field_education_position_tid'))
+                            ->condition('p.entity_id', $entity_id, '=')
+                            ->execute()
+                            ->fetchColumn();
+
+        $fag = true;
+        if ($ed_position_tid == 15 || $ed_position_tid == 16 || $ed_position_tid == 17) {
+            $fag = false;
+        }
+
+
+        
+
+        /*get count data*/
+        if ($fag) {
+            $query_2 = db_select('field_data_field_education_level', 'j');
+            $result_2 = $query_2
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id, '=')
+                            ->condition('j.field_education_level_tid', 12, '=')
+                            ->execute();
+
+            while ($entity_id_2 = $result_2->fetchColumn()) {
+                $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+                $result_3 = $query_3
+                                ->fields('j', array('field_start_working_date_first_value'))
+                                ->fields('j', array('entity_id'))
+                                ->condition('j.entity_id', $entity_id_2, '=')
+                                ->execute();
+
+                while ($start_stamp = $result_3->fetchObject()) {
+
+                    $node = node_load($start_stamp->entity_id);
+
+                    if (isset($_SESSION["time"])) {
+                        $end_stamp = $_SESSION["time"];
+                    }
+                    else {
+                        $end_stamp = time();
+                    }
+
+                    $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                    if ($count_day >= 180 && $count_day < 270) {
+                        $sum_teacher_21 += 0.5;
+                        $count_profile[] = 0.5;
+                        $profile[] = $node->nid;
+                    }
+                    else if ($count_day >= 270) {
+                        $sum_teacher_31 += 1;
+                        $count_profile[] = 1;
+                        $profile[] = $node->nid;
+                    }
+                }
+            }
+
+            $query_3 = db_select('field_data_field_education_level', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id, '=')
+                            ->condition('j.field_education_level_tid', 13, '=')
+                            ->execute();
+
+            while ($entity_id_3 = $result_3->fetchColumn()) {
+                $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+                $result_3 = $query_3
+                                ->fields('j', array('field_start_working_date_first_value'))
+                                ->fields('j', array('entity_id'))
+                                ->condition('j.entity_id', $entity_id_3, '=')
+                                ->execute();
+
+                while ($start_stamp = $result_3->fetchObject()) {
+
+                    $node = node_load($start_stamp->entity_id);
+
+                    if (isset($_SESSION["time"])) {
+                        $end_stamp = $_SESSION["time"];
+                    }
+                    else {
+                        $end_stamp = time();
+                    }
+
+                    $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                    if ($count_day >= 180 && $count_day < 270) {
+                        $sum_teacher_22 += 0.5;
+                        $count_profile[] = 0.5;
+                        $profile[] = $node->nid;
+                    }
+                    else if ($count_day >= 270) {
+                        $sum_teacher_32 += 1;
+                        $count_profile[] = 1;
+                        $profile[] = $node->nid;
+                    }
+                }
+            }
+
+            $query_4 = db_select('field_data_field_education_level', 'j');
+            $result_4 = $query_4
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id, '=')
+                            ->condition('j.field_education_level_tid', 14, '=')
+                            ->execute();
+
+            while ($entity_id_4 = $result_4->fetchColumn()) {
+                $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+                $result_3 = $query_3
+                                ->fields('j', array('field_start_working_date_first_value'))
+                                ->fields('j', array('entity_id'))
+                                ->condition('j.entity_id', $entity_id_4, '=')
+                                ->execute();
+
+                while ($start_stamp = $result_3->fetchObject()) {
+
+                    $node = node_load($start_stamp->entity_id);
+
+                    if (isset($_SESSION["time"])) {
+                        $end_stamp = $_SESSION["time"];
+                    }
+                    else {
+                        $end_stamp = time();
+                    }
+
+                    $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                    if ($count_day >= 180 && $count_day < 270) {
+                        $sum_teacher_23 += 0.5;
+                        $count_profile[] = 0.5;
+                        $profile[] = $node->nid;
+                    }
+                    else if ($count_day >= 270) {
+                        $sum_teacher_33 += 1;
+                        $count_profile[] = 1;
+                        $profile[] = $node->nid;
+                    }
+                }
+            }
+         }
+    }
+
+    if ($check == 1) {
+
+        
+        $rows[] = array(
+                array('class' => 'header', 'data'=>t("ระยะเวลาการทำงาน/เดือน"), 'rowspan'=>2),
+                array('class' => 'header teacher', 'data'=>t("วุฒิการศึกษา"), 'colspan'=>3),
+                array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>2),
+            );
+
+        $rows[] = array(
+                array('class' => 'header', 'data'=>t("ปริญญาตรี")),
+                array('class' => 'header', 'data'=>t("ปริญญาโท")),
+                array('class' => 'header', 'data'=>t("ปริญญาเอก")),
+            );
+
+
+        /*@Edit by Phisan Sookkhee*/
+        // $sum_teacher_1 = $sum_teacher_11 + $sum_teacher_12 + $sum_teacher_13;
+        // $rows[] = array(
+        //     array('class' => 'value 1', 'data'=>t("0 - 6")),
+        //     array('class' => 'value', 'data'=>$sum_teacher_11),
+        //     array('class' => 'value', 'data'=>$sum_teacher_12),
+        //     array('class' => 'value', 'data'=>$sum_teacher_13),
+        //     array('class' => 'value', 'data'=>$sum_teacher_1),
+        // );
+
+        $sum_teacher_2 = $sum_teacher_21 + $sum_teacher_22 + $sum_teacher_23;
+        $rows[] = array(
+            array('class' => 'value 2', 'data'=>t("6 - 9")),
+            array('class' => 'value', 'data'=>$sum_teacher_21),
+            array('class' => 'value', 'data'=>$sum_teacher_22),
+            array('class' => 'value', 'data'=>$sum_teacher_23),
+            array('class' => 'value', 'data'=>$sum_teacher_2),
+        );
+
+        $sum_teacher_3 = $sum_teacher_31 + $sum_teacher_32 + $sum_teacher_33;
+        $rows[] = array(
+            array('class' => 'value 3', 'data'=>t("9 ขึ้นไป")),
+            array('class' => 'value', 'data'=>$sum_teacher_31),
+            array('class' => 'value', 'data'=>$sum_teacher_32),
+            array('class' => 'value', 'data'=>$sum_teacher_33),
+            array('class' => 'value', 'data'=>$sum_teacher_3),
+        );
+
+        $sum_bachelor = $sum_teacher_11 + $sum_teacher_21 + $sum_teacher_31;
+        $sum_masters = $sum_teacher_12 + $sum_teacher_22 + $sum_teacher_32;
+        $sum_donna = $sum_teacher_13 + $sum_teacher_23 + $sum_teacher_33;
+        $sum_total = $sum_bachelor + $sum_masters + $sum_donna;
+
+        $rows[] = array(
+            array('class' => 'value header', 'data'=>t("รวม")),
+            array('class' => 'value header', 'data'=>$sum_bachelor),
+            array('class' => 'value header', 'data'=>$sum_masters),
+            array('class' => 'value header', 'data'=>$sum_donna),
+            array('class' => 'value header', 'data'=>$sum_total),
+        );
+
+    }
+    else {
+        foreach ($profile as $key => $value) {
+            $node = node_load($value);
+
+            $rows[] = array(
+                array('class' => 'a', 'data'=>$key+1),
+                array('class' => '', 'data'=>l($node->title, 'node/'.$node->nid)),
+                array('class' => 'a', 'data'=>$count_profile[$key]),             
+                array('class' => 'a', 'data'=>profile_manager_get_working_start_time($node->nid, 'field_start_working_date_first')),
+                array('class' => 'a', 'data'=>information_get_time_work($node->nid)), 
+            );
+        }
+    }
+
+    return $rows;
+}
+
+function information_personal_5_3() {
+    $output = '';
+
+    $rows = information_personal_5_3_1(1);
+
+    $rows[] = array(
+            array('class' => 'value header', 'data'=>'', 'colspan'=>3),
+            array('class' => 'header teacher', 'data'=>l(t("รายชื่อ"), "info/persons/teacher-list-3")),
+        );
+
+    $output .= '<div class="statistic program">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+    $output .= '<div class="sc">'.t('').'</div>';
+
+    return $output;
+}
+
+function information_info_persons_teacher_list_page_3() {
+    $output = '';
+
+    $header = array(
+        array('class'=>'teacher-list-header', 'data'=>t('No.')),
+        array('class'=>'teacher-list-header', 'data'=>t('ชื่อ  - สกุล')),
+        array('class'=>'teacher-list-header', 'data'=>t('วันที่บรรจุแรกเข้า')),
+        array('class'=>'teacher-list-header', 'data'=>t('ระยะเวลาที่ปฏิบัติงานในตำแหน่ง')),
+    );
+   
+    $row = information_personal_5_3_1(2);
+
+    $output .= '<div class="statistic-program">
+                    '.theme("table", array("header"=>$header, "rows"=>$row)).'
+                </div>';
+
+    return $output;
+}
+
+function information_personal_5_3_1($check) {
+
+    $count1 = 0;
+    $count2 = 0;
+    $count3 = 0;
+
+    $query_a = db_select('field_data_field_work_position', 'a');
+    $query_a->join('field_data_field_working_status', 'b', 'a.entity_id=b.entity_id');
+    $result_a = $query_a
+                    ->fields('a', array('entity_id'))
+                    ->condition('a.field_work_position_tid', 24, '=')
+                    ->condition('b.field_working_status_tid', 480, '=')
+                    ->condition('a.bundle', 'personal_profile', '=')
+                    ->execute();
+
+    $rows2 = array();
+    $profile = array();
+    while ($entity_id_a = $result_a->fetchColumn()) {
+
+        $query_a_1 = db_select('field_data_field_education_level', 'c');
+        $result_a_1 = $query_a_1
+                        ->fields('c', array('entity_id'))
+                        ->condition('c.entity_id', $entity_id_a, '=')
+                        ->condition('c.field_education_level_tid', 12, '=')
+                        ->execute();
+
+        while ($entity_id_a_1 = $result_a_1->fetchColumn()) {
+            $node = node_load($entity_id_a_1);
+            $count1 += 1;
+
+            $profile[] = $node->nid;
+        }
+
+        $query_a_2 = db_select('field_data_field_education_level', 'd');
+        $result_a_2 = $query_a_2
+                        ->fields('d', array('entity_id'))
+                        ->condition('d.entity_id', $entity_id_a, '=')
+                        ->condition('d.field_education_level_tid', 13, '=')
+                        ->execute();
+
+        while ($entity_id_a_2 = $result_a_2->fetchColumn()) {
+            $node = node_load($entity_id_a_2);
+            $count2 += 1;
+
+            $profile[] = $node->nid;
+        }
+
+        $query_a_3 = db_select('field_data_field_education_level', 'e');
+        $result_a_3 = $query_a_3
+                        ->fields('e', array('entity_id'))
+                        ->condition('e.entity_id', $entity_id_a, '=')
+                        ->condition('e.field_education_level_tid', 14, '=')
+                        ->execute();
+
+        while ($entity_id_a_3 = $result_a_3->fetchColumn()) {
+            $node = node_load($entity_id_a_3);
+            $count3 += 1;
+
+            $profile[] = $node->nid;
+        }
+
+    }
+
+    if ($check == 1) {
+        $rows2[] = array(
+            array('class' => 'header teacher', 'data'=>t("วุฒิการศึกษา"), 'colspan'=>3),
+            array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>2),
+        );
+
+        $rows2[] = array(
+            array('class' => 'header', 'data'=>t("ปริญญาตรี")),
+            array('class' => 'header', 'data'=>t("ปริญญาโท")),
+            array('class' => 'header', 'data'=>t("ปริญญาเอก")),
+        );
+
+        $sum_count = $count1 + $count2 + $count3;
+
+        $rows2[] = array(
+            array('class' => 'value', 'data'=>$count1),
+            array('class' => 'value', 'data'=>$count2),
+            array('class' => 'value', 'data'=>$count3),
+            array('class' => 'value', 'data'=>$sum_count),
+        );
+    }
+    else {
+        foreach ($profile as $key => $value) {
+            $node = node_load($value);
+
+            $rows2[] = array(
+                array('class' => 'a', 'data'=>$key+1),
+                array('class' => '', 'data'=>l($node->title, 'node/'.$node->nid)),            
+                array('class' => 'a', 'data'=>profile_manager_get_working_start_time($node->nid, 'field_start_working_date_first')),
+                array('class' => 'a', 'data'=>information_get_time_work($node->nid)), 
+            );
+        }
+    }
+
+    return $rows2;
+}
+
+function information_personal_5_4($value, $table) {
+    $output = '';
+
+    $rows = information_personal_5_4_1($value, $table, 1);
+
+    //$value, $table
+
+    $str = implode("+", $value);
+    $str = $str."+".$table;
+
+    $rows[] = array(
+            array('class' => 'value header', 'data'=>'', 'colspan'=>4),
+            array('class' => 'header teacher', 'data'=>l(t("รายชื่อ"), "info/persons/teacher-list-4", array('query'=>array('str'=>$str)))),
+        );
+
+    $output .= '<div class="statistic program">
+                    '.theme("table", array("rows"=>$rows)).'
+                </div>';
+
+    return $output;
+}
+
+function information_info_persons_teacher_list_page_4() {
+    $output = '';
+
+    $str = $_REQUEST['str'];
+
+    $str_2 = explode("+", $str);
+    $count = count($str_2);
+
+    $value = array();
+    for ($a=0; $a < $count-1; $a++) { 
+        $value[] = $str_2[$a];
+    }
+
+    $table = $str_2[$count-1];
+   
+
+    $header = array(
+        array('class'=>'teacher-list-header', 'data'=>t('No.')),
+        array('class'=>'teacher-list-header', 'data'=>t('ชื่อ  - สกุล')),
+        array('class'=>'teacher-list-header', 'data'=>t('นับเป็น')),
+        array('class'=>'teacher-list-header', 'data'=>t('โปรแกรมวิชา')),
+        array('class'=>'teacher-list-header', 'data'=>t('วันที่บรรจุแรกเข้า')),
+        array('class'=>'teacher-list-header', 'data'=>t('ระยะเวลาที่ปฏิบัติงานในตำแหน่ง')),
+    );
+   
+    $row = information_personal_5_4_1($value, $table, 2);
+
+
+    $output .= '<div class="statistic-program">
+                    '.theme("table", array("header"=>$header, "rows"=>$row)).'
+                </div>';
+
+    return $output;
+}
+
+function information_personal_5_4_1($value, $table, $check) {
+    $output = '';
+
+    $query = db_select('field_data_field_'.$table, 'i');
+    $query->join('field_data_field_working_status', 'n', 'i.entity_id=n.entity_id');
+
+    $db_or = db_or();
+
+    foreach ($value as $data) {
+        $db_or->condition('i.field_'.$table.'_tid', $data, '=');
+    }
+
+    $query
+        ->fields('i', array('entity_id'))
+        ->condition('n.field_working_status_tid', 546, '!=')
+        ->condition('n.field_working_status_tid', 483, '!=')
+        ->condition('n.field_working_status_tid', 484, '!=')
+        ->condition('i.bundle', 'personal_profile', '=')
+        ->orderBy('i.field_faculty_tid', 'ASC');
+
+    $query->condition($db_or);
+    $result = $query->execute();
+
+    $sum_teacher_11 = 0;
+    $sum_teacher_12 = 0;
+    $sum_teacher_13 = 0;
+    $sum_teacher_21 = 0;
+    $sum_teacher_22 = 0;
+    $sum_teacher_23 = 0;
+    $sum_teacher_31 = 0;
+    $sum_teacher_32 = 0;
+    $sum_teacher_33 = 0;
+
+    $rows = array();
+    $profile = array();
+    $count_profile = array();
+
+    while ($entity_id = $result->fetchColumn()) {
+
+        $query_2 = db_select('field_data_field_education_level', 'j');
+        $result_2 = $query_2
+                        ->fields('j', array('entity_id'))
+                        ->condition('j.entity_id', $entity_id, '=')
+                        ->condition('j.field_education_level_tid', 12, '=')
+                        ->execute();
+
+        while ($entity_id_2 = $result_2->fetchColumn()) {
+            $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('field_start_working_date_first_value'))
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id_2, '=')
+                            ->execute();
+
+            while ($start_stamp = $result_3->fetchObject()) {
+
+                $node = node_load($start_stamp->entity_id);
+
+                if (isset($_SESSION["time"])) {
+                    $end_stamp = $_SESSION["time"];
+                }
+                else {
+                    $end_stamp = time();
+                }
+
+                $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                if ($count_day >= 180 && $count_day < 270) {
+                    $sum_teacher_21 += 0.5;
+                    $count_profile[] = 0.5;
+                    $profile[] = $node->nid;
+                }
+                else if ($count_day >= 270) {
+                    $sum_teacher_31 += 1;
+                    $count_profile[] = 1;
+                    $profile[] = $node->nid;
+                }
+            }
+        }
+
+        $query_3 = db_select('field_data_field_education_level', 'j');
+        $result_3 = $query_3
+                        ->fields('j', array('entity_id'))
+                        ->condition('j.entity_id', $entity_id, '=')
+                        ->condition('j.field_education_level_tid', 13, '=')
+                        ->execute();
+
+        while ($entity_id_3 = $result_3->fetchColumn()) {
+            $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('field_start_working_date_first_value'))
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id_3, '=')
+                            ->execute();
+
+            while ($start_stamp = $result_3->fetchObject()) {
+
+                $node = node_load($start_stamp->entity_id);
+
+                if (isset($_SESSION["time"])) {
+                    $end_stamp = $_SESSION["time"];
+                }
+                else {
+                    $end_stamp = time();
+                }
+
+                $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                if ($count_day >= 180 && $count_day < 270) {
+                    $sum_teacher_22 += 0.5;
+                    $count_profile[] = 0.5;
+                    $profile[] = $node->nid;
+                }
+                else if ($count_day >= 270) {
+                    $sum_teacher_32 += 1;
+                    $count_profile[] = 1;
+                    $profile[] = $node->nid;
+                }
+            }
+        }
+
+        $query_4 = db_select('field_data_field_education_level', 'j');
+        $result_4 = $query_4
+                        ->fields('j', array('entity_id'))
+                        ->condition('j.entity_id', $entity_id, '=')
+                        ->condition('j.field_education_level_tid', 14, '=')
+                        ->execute();
+
+        while ($entity_id_4 = $result_4->fetchColumn()) {
+            $query_3 = db_select('field_data_field_start_working_date_first', 'j');
+            $result_3 = $query_3
+                            ->fields('j', array('field_start_working_date_first_value'))
+                            ->fields('j', array('entity_id'))
+                            ->condition('j.entity_id', $entity_id_4, '=')
+                            ->execute();
+
+            while ($start_stamp = $result_3->fetchObject()) {
+
+                $node = node_load($start_stamp->entity_id);
+
+                if (isset($_SESSION["time"])) {
+                    $end_stamp = $_SESSION["time"];
+                }
+                else {
+                    $end_stamp = time();
+                }
+
+                $count_day = thai_time_get_interval_day($start_stamp->field_start_working_date_first_value, $end_stamp);
+
+                if ($count_day >= 180 && $count_day < 270) {
+                    $sum_teacher_23 += 0.5;
+                    $count_profile[] = 0.5;
+                    $profile[] = $node->nid;
+                }
+                else if ($count_day >= 270) {
+                    $sum_teacher_33 += 1;
+                    $count_profile[] = 1;
+                    $profile[] = $node->nid;
+                }
+            }
+        }
+
+    }
+
+    /*@Edit by Phisan Sookkhee*/
+    // $sum_teacher_1 = $sum_teacher_11 + $sum_teacher_12 + $sum_teacher_13;
+    // $rows[] = array(
+    //     array('class' => 'value 1', 'data'=>t("0 - 6")),
+    //     array('class' => 'value', 'data'=>$sum_teacher_11),
+    //     array('class' => 'value', 'data'=>$sum_teacher_12),
+    //     array('class' => 'value', 'data'=>$sum_teacher_13),
+    //     array('class' => 'value', 'data'=>$sum_teacher_1),
+    // );
+
+    if ($check == 1) {
+        $rows[] = array(
+                array('class' => 'header', 'data'=>t("ระยะเวลาการทำงาน/เดือน"), 'rowspan'=>2),
+                array('class' => 'header teacher', 'data'=>t("วุฒิการศึกษา"), 'colspan'=>3),
+                array('class' => 'header', 'data'=>t("รวม"), 'rowspan'=>2),
+            );
+
+        $rows[] = array(
+                array('class' => 'header', 'data'=>t("ปริญญาตรี")),
+                array('class' => 'header', 'data'=>t("ปริญญาโท")),
+                array('class' => 'header', 'data'=>t("ปริญญาเอก")),
+            );
+
+        $sum_teacher_2 = $sum_teacher_21 + $sum_teacher_22 + $sum_teacher_23;
+        $rows[] = array(
+            array('class' => 'value 2', 'data'=>t("6 - 9")),
+            array('class' => 'value', 'data'=>$sum_teacher_21),
+            array('class' => 'value', 'data'=>$sum_teacher_22),
+            array('class' => 'value', 'data'=>$sum_teacher_23),
+            array('class' => 'value', 'data'=>$sum_teacher_2),
+        );
+
+        $sum_teacher_3 = $sum_teacher_31 + $sum_teacher_32 + $sum_teacher_33;
+        $rows[] = array(
+            array('class' => 'value 3', 'data'=>t("9 ขึ้นไป")),
+            array('class' => 'value', 'data'=>$sum_teacher_31),
+            array('class' => 'value', 'data'=>$sum_teacher_32),
+            array('class' => 'value', 'data'=>$sum_teacher_33),
+            array('class' => 'value', 'data'=>$sum_teacher_3),
+        );
+
+        $sum_bachelor = $sum_teacher_11 + $sum_teacher_21 + $sum_teacher_31;
+        $sum_masters = $sum_teacher_12 + $sum_teacher_22 + $sum_teacher_32;
+        $sum_donna = $sum_teacher_13 + $sum_teacher_23 + $sum_teacher_33;
+        $sum_total = $sum_bachelor + $sum_masters + $sum_donna;
+
+        $rows[] = array(
+            array('class' => 'value header', 'data'=>t("รวม")),
+            array('class' => 'value header', 'data'=>$sum_bachelor),
+            array('class' => 'value header', 'data'=>$sum_masters),
+            array('class' => 'value header', 'data'=>$sum_donna),
+            array('class' => 'value header', 'data'=>$sum_total),
+        );
+    }
+    else {
+        foreach ($profile as $key => $value) {
+            $node = node_load($value);
+
+            //taxonomy_term_load($node->field_faculty['und'][0]['tid']);
+            $rows[] = array(
+                array('class' => 'a', 'data'=>$key+1),
+                array('class' => '', 'data'=>l($node->title, 'node/'.$node->nid)),
+                array('class' => 'a', 'data'=>$count_profile[$key]),
+                array('class' => '', 'data'=>taxonomy_term_load($node->field_faculty['und'][1]['tid'])->name),
+                array('class' => 'a', 'data'=>profile_manager_get_working_start_time($node->nid, 'field_start_working_date_first')),
+                array('class' => 'a', 'data'=>information_get_time_work($node->nid)), 
+            );
+        }
+        
+    }
+
+    return $rows;
+}
+
+function information_staff_count($type, $ed_level=NULL, $gender=NULL) {
+    $teacher_tid = 24;
+    $query = db_select('field_data_field_work_position', 'w');
+    $query->join('field_data_field_officer_type', 'o', 'w.entity_id=o.entity_id');
+    $query->join('field_data_field_working_status', 's', 'w.entity_id=s.entity_id');
+
+    if ($ed_level != NULL) {
+        $query->join('field_data_field_education_level', 'e', 'w.entity_id=e.entity_id');
+    }
+
+    if ($gender != NULL) {
+        $query->join('field_data_field_gender', 'g', 'w.entity_id=g.entity_id');
+    }
+
+    $query->fields('w', array('entity_id'))
+          ->condition('w.field_work_position_tid', $teacher_tid, '!=')
+          ->condition('o.field_officer_type_tid', $type, '=')
+          ->condition('s.field_working_status_tid', 484, '!=')
+          ->condition('s.field_working_status_tid', 483, '!=')
+          ->condition('s.field_working_status_tid', 546, '!=');
+
+    if ($ed_level != NULL) {
+        $query->condition('e.field_education_level_tid', $ed_level, '=');
+    }
+
+    if ($gender != NULL) {
+        $query->condition('g.field_gender_tid', $gender, '=');
+    }
+
+    $result = $query->execute();
+
+    $count = 0;
+    while ($nid = $result->fetchColumn()) {
+            $count++;
+    }
+
+    return $count;
+}

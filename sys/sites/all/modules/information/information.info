@@ -1,0 +1,5 @@
+name = Information
+description = Information Manager
+package = SSKRU
+core = 7.x
+files[] = information.module
